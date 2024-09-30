@@ -1,5 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const connectDB = require("./config/db");
 const dotenv = require("dotenv");
 const userRouter = require("./routers/user.routers");
 const imageRouter = require("./routers/imageRouters");
@@ -11,7 +11,7 @@ const authRouter = require("./routers/authRouter");
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+connectDB();
 app.use(express.json());
 
 app.use("/api/users", userRouter);
@@ -23,14 +23,6 @@ app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("sever đã khởi động ......");
-
-  mongoose
-    .connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.log("MongoDB connection error:", err));
 });
 
 app.listen(PORT, () => {
