@@ -1,11 +1,21 @@
+const mongoose = require("mongoose");
 
-const mongoose = require('mongoose');
-
-const reviewSchema = new mongoose.Schema({
-    listingId: { type: mongoose.Schema.Types.ObjectId, ref: 'Listing', required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+const reviewSchema = new mongoose.Schema(
+  {
+    listingId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Listing",
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     rating: { type: Number, required: true, min: 1, max: 5 },
-    comment: { type: String },
-}, { timestamps: true });
+    comment: { type: String, maxlength: 500 },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = mongoose.model("Review", reviewSchema);
