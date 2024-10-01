@@ -1,8 +1,7 @@
 const { body, validationResult } = require('express-validator');
 const Category = require('../models/category.model');
-const category = [
-    body('name')
-    .notEmpty().withMessage('Tên là bắt buộc')
+const validateCategory = [
+    body('name').notEmpty().withMessage('Tên là bắt buộc')
     .custom(async (value) => {
         const existingCategory = await Category.findOne({ name: value });
         if (existingCategory) {
@@ -10,9 +9,6 @@ const category = [
         }
         return true;
     }),
-    body('description').notEmpty().isString(),
-    body('icon_url').notEmpty().isURL(),
-    body('available').notEmpty().isBoolean(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -22,4 +18,4 @@ const category = [
     },
 ];
 
-module.exports = category;
+module.exports = validateCategory;

@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use("/api/users", userRouter);
 app.use("/api/images", imageRouter);
-app.use("/api/categorys", categoryRouter);
+app.use("/api/categories", categoryRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/listings", listingRouter);
 app.use("/api/auth", authRouter);

@@ -4,21 +4,18 @@ exports.createCategory = async (req, res) => {
   try {
     const category = new Category({
       name: req.body.name,
-      description: req.body.description,
-      icon_url: req.body.icon_url,
-      available: req.body.available,
     });
     await category.save();
     res.status(201).send(category);
   } catch (error) {
-    res.status(400).send({ message: "Error creating category", error });
+    console.log(error)
   }
 };
 
 exports.getCategories = async (req, res) => {
   try {
     const categories = await Category.find().select(
-      "name description icon_url available"
+      "name"
     );
     res.send(categories);
   } catch (error) {

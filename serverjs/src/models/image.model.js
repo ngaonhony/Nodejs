@@ -7,10 +7,6 @@ const imageSchema = new mongoose.Schema({
     required: true,
   },
   imageUrl: { type: String, required: [true, "Image phải có URL"] },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 module.exports = mongoose.model("Image", imageSchema);
