@@ -10,7 +10,7 @@ export const PagesRoutes: Routes = [
     },
   },
   {
-    path: 'user-manage', // Đường dẫn cho trang quản lý người dùng
+    path: 'user-manage',
     component: UserManagementComponent,
     data: {
       title: 'User Management',

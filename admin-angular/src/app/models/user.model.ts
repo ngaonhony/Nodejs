@@ -1,6 +1,10 @@
-// admin/src/app/models/user.model.ts
 export interface User {
-    id?: string;   // ID có thể không có trong trường hợp thêm mới
-    name: string;
-    email: string;
-  }
+  _id?:string;
+  username: string;
+  password: string;
+  email: string;
+  phone?: string;
+  address: string;
+  balance: number;
+  role: 'tenant' | 'landlord' | 'admin';
+}

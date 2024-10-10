@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const imageSchema = new mongoose.Schema({
-  listingId: {
+  postId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Listing",
+    ref: "post",
     required: true,
   },
   imageUrl: { type: String, required: [true, "Image phải có URL"] },

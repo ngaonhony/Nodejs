@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 const routes: Routes = [
@@ -18,14 +17,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/pages.module').then((m) => m.PagesModule),
       },
-      {
-        path: 'ui-components',
-        loadChildren: () =>
-          import('./pages/ui-components/ui-components.module').then(
-            (m) => m.UicomponentsModule
-          ),
-      },  
-      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent }
     ],
   },
 ];

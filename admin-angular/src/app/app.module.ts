@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar'; 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
+import { RouterModule } from '@angular/router';
 // icons
 import { TablerIconsModule } from 'angular-tabler-icons';
 import * as TablerIcons from 'angular-tabler-icons/icons';
@@ -25,6 +25,7 @@ import { BrandingComponent } from './layouts/full/sidebar/branding.component';
 import { AppNavItemComponent } from './layouts/full/sidebar/nav-item/nav-item.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { UserDialogComponent } from './pages/user-management/user-dialog/user-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +34,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     SidebarComponent, 
     HeaderComponent,
     BrandingComponent,
+    UserDialogComponent,
     UserManagementComponent,
     AppNavItemComponent,
   ],
@@ -46,6 +48,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     ReactiveFormsModule,
     MaterialModule,
     TablerIconsModule.pick(TablerIcons),
+    RouterModule,
   ],
   exports: [TablerIconsModule],
   bootstrap: [AppComponent],

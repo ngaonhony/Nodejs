@@ -6,7 +6,14 @@
     width: 100%;
   }
   
+  .example-spacer {
+    flex: 1 1 auto; // Chiếm không gian còn lại
+  }
+  
   .user-management {
     display: flex;
     flex-direction: column;
+  }
+  .toolbar-actions {
+    margin-left: auto; /* Đẩy nút sang bên phải */
   }

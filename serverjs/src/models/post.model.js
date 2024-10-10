@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const listingSchema = new mongoose.Schema(
+const postSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -11,7 +11,7 @@ const listingSchema = new mongoose.Schema(
     description: { type: String, required: true, maxlength: 1000 },
     price: { type: Number, required: true, min: 0 },
     location: { type: String, required: true },
-    area: { type: Number, required: true, min: 0 },
+    area: { type: String, required: true, min: 0 },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -21,4 +21,4 @@ const listingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Listing", listingSchema);
+module.exports = mongoose.model("Post", postSchema);

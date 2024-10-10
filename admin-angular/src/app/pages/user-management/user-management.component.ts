@@ -1,47 +1,84 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { UserDialogComponent } from './user-dialog/user-dialog.component';
+
+declare var $: any;
 
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management.component.scss'],
 })
-export class UserManagementComponent implements OnInit {
+export class UserManagementComponent implements OnInit, OnDestroy {
   users: User[] = [];
-  newUser: User = { name: '', email: '' };
-  displayedColumns: string[] = ['name', 'email', 'actions'];
-  dataSource = new MatTableDataSource<User>(this.users);
+  dataTable: any;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    this.userService.getUsers().subscribe(data => {
-      this.users = data;
-      this.dataSource.data = this.users;
+    this.userService.getUsers().subscribe(
+      (data: any) => {
+        this.users = data.data.users;
+        this.initializeDataTable();
+      },
+      (error: any) => {
+        console.error('Lỗi khi lấy người dùng', error);
+        this.users = [];
+      }
+    );
+  }
+
+  initializeDataTable() {
+    setTimeout(() => {
+      this.dataTable = $('#userTable').DataTable();
+    }, 100);
+  }
+
+  addUser() {
+    const dialogRef = this.dialog.open(UserDialogComponent, {
+      data: { user: null },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUsers();
+      }
     });
   }
 
-  addUser(): void {
-    this.userService.addUser(this.newUser).subscribe(user => {
-      this.users.push(user);
-      this.dataSource.data = this.users;
-      this.newUser = { name: '', email: '' }; // Reset form
+  editUser(user: User) {
+    const dialogRef = this.dialog.open(UserDialogComponent, {
+      data: { user },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUsers();
+      }
     });
   }
 
-  deleteUser(id: string): void {
-    this.userService.deleteUser(id).subscribe(() => {
-      this.users = this.users.filter(user => user.id !== id);
-      this.dataSource.data = this.users;
-    });
+  deleteUser(user: User) {
+    if (user._id) {
+      if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
+        this.userService.deleteUser(user._id).subscribe(() => {
+          this.loadUsers();
+        });
+      }
+    } else {
+      console.error('Không thể xóa người dùng vì ID không hợp lệ.');
+    }
   }
 
-  updateUser(user: User): void {
-    // Thêm logic cập nhật nếu cần
+  ngOnDestroy(): void {
+    if (this.dataTable) {
+      this.dataTable.destroy();
+    }
   }
 }
