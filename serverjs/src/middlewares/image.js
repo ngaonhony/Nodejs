@@ -1,6 +1,6 @@
 const Image = require('../models/image.model');
 
-const checkDuplicateImage = async (req, res, next) => {
+const middlewareImage = async (req, res, next) => {
     const { url } = req.body;
     if (url) {
         const existingImage = await Image.findOne({ url });
@@ -11,4 +11,4 @@ const checkDuplicateImage = async (req, res, next) => {
     next();
 };
 
-module.exports = checkDuplicateImage;
+module.exports = middlewareImage;

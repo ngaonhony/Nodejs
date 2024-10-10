@@ -12,7 +12,7 @@ router
 router
   .route("/:id")
   .get(imageController.getImageById)
-  .patch(middlewareImage,imageController.updateImage)
+  .patch(imageController.updateImage)
   .delete(imageController.deleteImage);
 
 module.exports = router;
