@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema(
       enum: ["tenant", "landlord", "admin"],
       required: true,
     },
+    paymentIds: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment", // Liên kết với mô hình Payment
+    }],
   },
   { timestamps: true }
 );

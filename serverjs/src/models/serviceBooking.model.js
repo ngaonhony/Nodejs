@@ -25,6 +25,10 @@ const serviceBookingSchema = new mongoose.Schema({
     type: String, 
     required: true,
   },
+  expiryDate: {
+    type: Date, 
+    required: true, 
+  },
 });
 
 module.exports = mongoose.model("ServiceBooking", serviceBookingSchema);
