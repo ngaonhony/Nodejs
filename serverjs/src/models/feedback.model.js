@@ -15,12 +15,12 @@ const feedbackSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      maxlength: 100, // Giới hạn chiều dài tên
+      maxlength: 100, 
     },
     phone: {
       type: String,
       required: true,
-      maxlength: 15, // Giới hạn chiều dài số điện thoại
+      maxlength: 15, 
     },
     rating: { 
       type: Number, 

@@ -17,6 +17,11 @@ const postSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    servicesId: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Service',
+      required: true, },
+    created_at: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
