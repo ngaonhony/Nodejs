@@ -11,18 +11,13 @@ const serviceBookingSchema = new mongoose.Schema({
     ref: "Service",
     required: true, 
   },
-  postId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Post",
-    required: true, 
-  },
   bookingDate: { 
     type: Date, 
     default: Date.now, 
     required: true,
   },
   bookingTime: { 
-    type: String, 
+    type: Number, 
     required: true,
   },
   expiryDate: {
