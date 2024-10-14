@@ -1,8 +1,77 @@
 import 'package:flutter/material.dart';
 import './login.dart';
 import './home.dart';
+import 'package:go_router/go_router.dart';
+import '../services/auth_service.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
+  final AuthService _authService = AuthService();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  bool _isLoading = false;
+  String? _selectedRole;
+
+  void _register() async {
+    if (_usernameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _phoneController.text.isEmpty ||
+        _addressController.text.isEmpty ||
+        _selectedRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
+      );
+      return;
+    }
+
+    if (!_emailController.text.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email không hợp lệ')),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Mật khẩu phải có ít nhất 6 ký tự')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _authService.register(
+        _usernameController.text.trim(),
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        _phoneController.text.trim(),
+        _addressController.text.trim(),
+        _selectedRole!,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng ký thành công')),
+      );
+
+      context.go('/');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng ký thất bại: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,8 +102,8 @@ class Register extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(height: 16),
-              // Các trường nhập thông tin
               TextField(
+                controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'HỌ VÀ TÊN',
                   labelStyle:
@@ -49,6 +118,7 @@ class Register extends StatelessWidget {
               ),
               SizedBox(height: 16),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'EMAIL',
                   labelStyle:
@@ -63,6 +133,7 @@ class Register extends StatelessWidget {
               ),
               SizedBox(height: 16),
               TextField(
+                controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'SỐ ĐIỆN THOẠI',
                   labelStyle:
@@ -77,6 +148,7 @@ class Register extends StatelessWidget {
               ),
               SizedBox(height: 16),
               TextField(
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'MẬT KHẨU',
@@ -92,9 +164,9 @@ class Register extends StatelessWidget {
               ),
               SizedBox(height: 16),
               TextField(
-                obscureText: true,
+                controller: _addressController,
                 decoration: InputDecoration(
-                  labelText: 'XÁC NHẬN MẬT KHẨU',
+                  labelText: 'ĐỊA CHỈ',
                   labelStyle:
                       TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   filled: true,
@@ -105,11 +177,27 @@ class Register extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedRole,
+                decoration: InputDecoration(labelText: 'Vai trò'),
+                items: ['tenant', 'landlord', 'admin'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedRole = newValue;
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Vui lòng chọn vai trò' : null,
+              ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {
-                  // Xử lý logic đăng ký
-                },
+                onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: EdgeInsets.symmetric(vertical: 14),
@@ -117,73 +205,12 @@ class Register extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
-                  'Đăng ký',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Đã có tài khoản?',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: Text(
-                      'Đăng nhập',
-                      style: TextStyle(fontSize: 16, color: Colors.blue),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              // Phần hỗ trợ khách hàng
-              Container(
-                color: Colors.blue[800],
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hỗ trợ khách hàng',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                child: _isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        'Đăng ký',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.phone, color: Colors.green, size: 16),
-                        SizedBox(width: 8),
-                        Text(
-                          '0909316890',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.phone, color: Colors.green, size: 16),
-                        SizedBox(width: 8),
-                        Text(
-                          '0909316890',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                  ],
-                ),
               ),
             ],
           ),

@@ -10,7 +10,7 @@ const generateToken = (userId, role) => {
 
 // Đăng ký
 exports.register = async (req, res) => {
-  const { username, password, email, phone, role } = req.body;
+  const { username, password, email, address, phone, role } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
       password,
       email,
       phone,
+      address,
       role,
     });
 
@@ -38,6 +39,7 @@ exports.register = async (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      address: user.address,
       token: generateToken(user._id, user.role),
     });
   } catch (error) {
@@ -45,15 +47,16 @@ exports.register = async (req, res) => {
   }
 };
 
-// Đăng nhập
+// Đăng nhập bằng số điện thoại
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { phone, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ phone });
 
     if (user && (await user.matchPassword(password))) {
       res.json({
+        message: "Đăng nhập thành công",
         _id: user._id,
         username: user.username,
         email: user.email,
@@ -61,8 +64,14 @@ exports.login = async (req, res) => {
         role: user.role,
         token: generateToken(user._id, user.role),
       });
+    } else if (!user) {
+      res
+        .status(401)
+        .json({ message: "Số điện thoại hoặc mật khẩu không đúng" });
     } else {
-      res.status(401).json({ message: "Email hoặc mật khẩu không đúng" });
+      res
+        .status(401)
+        .json({ message: "Số điện thoại hoặc mật khẩu không đúng" });
     }
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });

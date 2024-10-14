@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
 import '../components/UI/MenuDrawer.dart';
-import '../components/UI/searchbox.dart';
+import '../screens/search_box.dart';
 import '../components/UI/product.dart';
+import '../components/UI/DanhMuc.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -16,6 +17,11 @@ class Home extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SearchBox(),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 420,
+              child: DanhMuc(),
+            ),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -73,9 +79,13 @@ class Home extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Đảm bảo kích thước hiển thị của ProductForm
             SizedBox(
-              // Hoặc bất kỳ giá trị nào phù hợp
+              child: ProductForm(),
+            ),
+            SizedBox(
+              child: ProductForm(),
+            ),
+            SizedBox(
               child: ProductForm(),
             ),
           ],
