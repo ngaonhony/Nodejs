@@ -1,8 +1,49 @@
 import 'package:flutter/material.dart';
 import './register.dart';
 import './home.dart';
+import '../services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final AuthService _authService = AuthService();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  void _login() async {
+    if (_phoneController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vui lòng điền đầy đủ thông tin đăng nhập')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _authService.login(
+        _phoneController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (mounted) {
+        context.go('/');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập thất bại: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +74,7 @@ class LoginPage extends StatelessWidget {
           children: [
             SizedBox(height: 16),
             TextField(
+              controller: _phoneController,
               decoration: InputDecoration(
                 labelText: 'SỐ ĐIỆN THOẠI',
                 labelStyle:
@@ -47,6 +89,7 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'MẬT KHẨU',
@@ -62,9 +105,7 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // Xử lý logic đăng nhập
-              },
+              onPressed: _isLoading ? null : _login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 padding: EdgeInsets.symmetric(vertical: 14),
@@ -72,10 +113,12 @@ class LoginPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                'Đăng nhập',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
+              child: _isLoading
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      'Đăng nhập',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
             ),
             SizedBox(height: 16),
             Row(
@@ -114,16 +157,6 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.phone, color: Colors.green, size: 16),
-                      SizedBox(width: 8),
-                      Text(
-                        '0909316890',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
                   Row(
                     children: [
                       Icon(Icons.phone, color: Colors.green, size: 16),
