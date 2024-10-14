@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ isEditMode ? 'Sửa Người Dùng' : 'Thêm Người Dùng' }}</h2>
 <mat-dialog-content>
-  <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+  <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="column-form">
     <mat-form-field>
       <mat-label>Tên Tài Khoản</mat-label>
       <input matInput formControlName="username" required>
@@ -38,17 +38,4 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Vai Trò</mat-label>
-      <mat-select formControlName="role" required>
-        <mat-option value="tenant">Người Thuê</mat-option>
-        <mat-option value="landlord">Chủ Nhà</mat-option>
-        <mat-option value="admin">Quản Trị Viên</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div mat-dialog-actions>
-      <button mat-button (click)="close()">Hủy</button>
-      <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Cập Nhật' : 'Thêm Người Dùng' }}</button>
-    </div>
-  </form>
-</mat-dialog-content>
+      <mat-label>Vai Trò</

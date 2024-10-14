@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 app.use(cors({
   origin: process.env.ADMIN_URL,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 }))
 app.use(express.json());
 initRoutes(app)
