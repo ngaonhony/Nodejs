@@ -17,7 +17,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/pages.module').then((m) => m.PagesModule),
       },
-      { path: 'user-management/list', component: UserManagementComponent }
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
+      { path: 'user-management/list', component: UserManagementComponent },
     ],
   },
 ];

@@ -1,41 +1,85 @@
 <h2 mat-dialog-title>{{ isEditMode ? 'Sửa Người Dùng' : 'Thêm Người Dùng' }}</h2>
 <mat-dialog-content>
-  <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="column-form">
-    <mat-form-field>
-      <mat-label>Tên Tài Khoản</mat-label>
-      <input matInput formControlName="username" required>
-      <mat-error *ngIf="userForm.get('username')?.hasError('required')">Tên tài khoản là bắt buộc!</mat-error>
-    </mat-form-field>
+  <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="grid-form">
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Tên Tài Khoản</mat-label>
+        <input matInput formControlName="username" required>
+        <mat-error *ngIf="userForm.get('username')?.hasError('required')">Tên tài khoản là bắt buộc!</mat-error>
+      </mat-form-field>
 
-    <mat-form-field *ngIf="!isEditMode">
-      <mat-label>Mật Khẩu</mat-label>
-      <input matInput type="password" formControlName="password" required>
-    </mat-form-field>
+      <mat-form-field class="full-width" *ngIf="!isEditMode">
+        <mat-label>Mật Khẩu</mat-label>
+        <input matInput type="password" formControlName="password" required>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" required>
-      <mat-error *ngIf="userForm.get('email')?.hasError('required')">Email là bắt buộc!</mat-error>
-      <mat-error *ngIf="userForm.get('email')?.hasError('email')">Email không hợp lệ!</mat-error>
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required>
+        <mat-error *ngIf="userForm.get('email')?.hasError('required')">Email là bắt buộc!</mat-error>
+        <mat-error *ngIf="userForm.get('email')?.hasError('email')">Email không hợp lệ!</mat-error>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Điện Thoại</mat-label>
-      <input matInput formControlName="phone">
-    </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Điện Thoại</mat-label>
+        <input matInput formControlName="phone">
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
-      <mat-label>Địa Chỉ</mat-label>
-      <input matInput formControlName="address" required>
-      <mat-error *ngIf="userForm.get('address')?.hasError('required')">Địa chỉ là bắt buộc!</mat-error>
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Địa Chỉ</mat-label>
+        <input matInput formControlName="address" required>
+        <mat-error *ngIf="userForm.get('address')?.hasError('required')">Địa chỉ là bắt buộc!</mat-error>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Số Dư</mat-label>
-      <input matInput type="number" formControlName="balance" required>
-      <mat-error *ngIf="userForm.get('balance')?.hasError('required')">Số dư là bắt buộc!</mat-error>
-      <mat-error *ngIf="userForm.get('balance')?.hasError('min')">Số dư không được âm!</mat-error>
-    </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Số Dư</mat-label>
+        <input matInput type="number" formControlName="balance" required>
+        <mat-error *ngIf="userForm.get('balance')?.hasError('required')">Số dư là bắt buộc!</mat-error>
+        <mat-error *ngIf="userForm.get('balance')?.hasError('min')">Số dư không được âm!</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
-      <mat-label>Vai Trò</
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Vai Trò</mat-label>
+        <mat-select formControlName="role" required>
+          <mat-option value="tenant">Người Thuê</mat-option>
+          <mat-option value="landlord">Chủ Nhà</mat-option>
+          <mat-option value="admin">Quản Trị Viên</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button (click)="close()">Hủy</button>
+      <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Cập Nhật' : 'Thêm Người Dùng' }}</button>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<style>
+  .grid-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Space between form rows */
+  }
+
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px; /* Space between fields in the same row */
+  }
+
+  .full-width {
+    flex: 1; /* Each input takes equal space */
+  }
+
+  /* Optional: Adjust the width of the dialog */
+  mat-dialog-content {
+    min-width: 400px; /* Adjust as needed */
+  }
+</style>
