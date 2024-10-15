@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/home.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -6,30 +7,17 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      title: const Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'PHONGTRO',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              Text(
-                '123.com',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-        ],
+      title: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Home()),
+            (route) => false,
+          );
+        },
+        child: Image.asset(
+          'assets/logo.png',
+          height: 50,
+        ),
       ),
       actions: [
         Row(
