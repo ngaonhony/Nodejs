@@ -1,0 +1,21 @@
+.example-spacer {
+    flex: 1 1 auto; // Chiếm không gian còn lại
+  }
+  
+  .toolbar-actions {
+    margin-left: auto; /* Đẩy nút sang bên phải */
+  }
+  .toolbar-container {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: space-between; /* Đẩy không gian giữa các phần tử */
+  }
+  
+  .add-category-button {
+    background-color: #4CAF50; /* Màu xanh lá cây */
+    color: white; /* Màu chữ trắng */
+    
+    &:hover {
+      background-color: #45a049; /* Màu khi hover */
+    }
+  }

@@ -10,7 +10,7 @@ connectDB();
 app.use(
   cors({
     origin: "*",
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "DELETE",'PUT', "OPTIONS"],
   })
 );
 app.use(express.json());

@@ -1,71 +1,55 @@
-const Post = require("../models/post.model");
+const Post = require('../models/post.model'); // Đường dẫn đến mô hình Post
 
+// Tạo bài viết mới
 exports.createPost = async (req, res) => {
   try {
-    const post = new Post({
-      userId: req.body.userId,
-      title: req.body.title,
-      description: req.body.description,
-      price: req.body.price,
-      location: req.body.location,
-      area: req.body.area,
-      categoryId: req.body.categoryId,
-    });
+    const post = new Post(req.body);
     await post.save();
-    res.status(201).send(post);
+    res.status(201).json(post);
   } catch (error) {
-    res.status(400).send({ message: "Error creating post", error });
+    res.status(400).json({ message: error.message });
   }
 };
 
-exports.getAllPosts = async (req, res) => {
+// Lấy tất cả bài viết
+exports.getPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate("userId", "name")
-      .populate("categoryId", "name");
-    res.send(posts);
+    const posts = await Post.find().populate('userId').populate('categoryId').populate('serviceBookingId');
+    res.status(200).json(posts);
   } catch (error) {
-    res.status(500).send({ message: "Error fetching posts", error });
+    res.status(500).json({ message: error.message });
   }
 };
 
+// Lấy bài viết theo ID
 exports.getPostById = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id)
-      .populate("userId", "name")
-      .populate("categoryId", "name");
-    if (!post) {
-      return res.status(404).send({ message: "post not found" });
-    }
-    res.send(post);
+    const post = await Post.findById(req.params.id).populate('userId').populate('categoryId').populate('serviceBookingId');
+    if (!post) return res.status(404).json({ message: 'Bài viết không tồn tại' });
+    res.status(200).json(post);
   } catch (error) {
-    res.status(500).send({ message: "Error fetching post by ID", error });
+    res.status(500).json({ message: error.message });
   }
 };
 
+// Cập nhật bài viết
 exports.updatePost = async (req, res) => {
   try {
-    const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!post) {
-      return res.status(404).send({ message: "post not found" });
-    }
-    res.send(post);
+    const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!post) return res.status(404).json({ message: 'Bài viết không tồn tại' });
+    res.status(200).json(post);
   } catch (error) {
-    res.status(400).send({ message: "Error updating post", error });
+    res.status(400).json({ message: error.message });
   }
 };
 
+// Xóa bài viết
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findByIdAndDelete(req.params.id);
-    if (!post) {
-      return res.status(404).send({ message: "post not found" });
-    }
-    res.send({ message: "post deleted successfully" });
+    if (!post) return res.status(404).json({ message: 'Bài viết không tồn tại' });
+    res.status(204).send();
   } catch (error) {
-    res.status(500).send({ message: "Error deleting post", error });
+    res.status(500).json({ message: error.message });
   }
 };

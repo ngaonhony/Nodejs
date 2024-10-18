@@ -1,1 +1,87 @@
-<p>service-management works!</p>
+<mat-toolbar color="primary">
+  <span>Quản Lý Dịch Vụ</span>
+  <span class="example-spacer"></span>
+</mat-toolbar>
+
+<div class="table-responsive">
+  <div class="toolbar-container">
+    <mat-form-field>
+      <mat-label>Tìm kiếm</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Tìm kiếm người dùng">
+    </mat-form-field>
+    
+    <span class="example-spacer"></span>
+    
+    <button mat-raised-button color="primary" class="add-service-button" (click)="addService()">
+      Thêm Dịch vụ
+    </button>
+  </div>  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    
+    <!-- Tên Dịch Vụ Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Tên Dịch Vụ </th>
+      <td mat-cell *matCellDef="let service">{{ service.name }}</td>
+    </ng-container>
+
+    <!-- Giá Theo Ngày Column -->
+    <ng-container matColumnDef="price_per_day">
+      <th mat-header-cell *matHeaderCellDef> Giá Theo Ngày </th>
+      <td mat-cell *matCellDef="let service">{{ service.price_per_day | currency: 'VND' }}</td>
+    </ng-container>
+
+    <!-- Giá Theo Tuần Column -->
+    <ng-container matColumnDef="price_per_week">
+      <th mat-header-cell *matHeaderCellDef> Giá Theo Tuần </th>
+      <td mat-cell *matCellDef="let service">{{ service.price_per_week | currency: 'VND' }}</td>
+    </ng-container>
+
+    <!-- Giá Theo Tháng Column -->
+    <ng-container matColumnDef="price_per_month">
+      <th mat-header-cell *matHeaderCellDef> Giá Theo Tháng </th>
+      <td mat-cell *matCellDef="let service">{{ service.price_per_month | currency: 'VND' }}</td>
+    </ng-container>
+
+    <!-- Có Ưu Điểm Column -->
+    <ng-container matColumnDef="advantages">
+      <th mat-header-cell *matHeaderCellDef> Có Ưu Điểm </th>
+      <td mat-cell *matCellDef="let service">{{ service.advantages ? 'Có' : 'Không' }}</td>
+    </ng-container>
+
+    <!-- Màu Tiêu Đề Column -->
+    <ng-container matColumnDef="title_color">
+      <th mat-header-cell *matHeaderCellDef> Màu Tiêu Đề </th>
+      <td mat-cell *matCellDef="let service" [style.color]="service.title_color">{{ service.title_color }}</td>
+    </ng-container>
+
+    <!-- Tự Động Phê Duyệt Column -->
+    <ng-container matColumnDef="auto_approval">
+      <th mat-header-cell *matHeaderCellDef> Tự Động Phê Duyệt </th>
+      <td mat-cell *matCellDef="let service">{{ service.auto_approval ? 'Có' : 'Không' }}</td>
+    </ng-container>
+
+    <!-- Biểu Tượng Nổi Bật Column -->
+    <ng-container matColumnDef="prominent_badge">
+      <th mat-header-cell *matHeaderCellDef> Biểu Tượng Nổi Bật </th>
+      <td mat-cell *matCellDef="let service">{{ service.prominent_badge ? 'Có' : 'Không' }}</td>
+    </ng-container>
+
+    <!-- Hành Động Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Hành Động </th>
+      <td mat-cell *matCellDef="let service">
+        <button mat-icon-button color="accent" (click)="editService(service)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteService(service)">
+          <mat-icon>delete</mat-icon></button>
+          
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
+<mat-paginator [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

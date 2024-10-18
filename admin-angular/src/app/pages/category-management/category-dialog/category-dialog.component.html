@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Sửa Danh Mục' : 'Thêm Danh Mục' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="grid-form">
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Tên Danh Mục</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="categoryForm.get('name')?.hasError('required')">Tên danh mục là bắt buộc!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Mô Tả</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Trạng Thái</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option value="active">Kích Hoạt</mat-option>
+          <mat-option value="inactive">Không Kích Hoạt</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button (click)="close()">Hủy</button>
+      <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Cập Nhật' : 'Thêm Danh Mục' }}</button>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<style>
+  .grid-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Space between form rows */
+  }
+
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px; /* Space between fields in the same row */
+  }
+
+  .full-width {
+    flex: 1; /* Each input takes equal space */
+  }
+
+  /* Optional: Adjust the width of the dialog */
+  mat-dialog-content {
+    min-width: 400px; /* Adjust as needed */
+  }
+</style>

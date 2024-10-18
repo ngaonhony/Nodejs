@@ -3,7 +3,7 @@ const middlewareCategory=require("../middlewares/category")
 const router = express.Router();
 const categoryController = require("../controllers/category.controller");
 
-router.post("/add",middlewareCategory, categoryController.createCategory);
+router.post("/",middlewareCategory, categoryController.createCategory);
 
 router.get("/",categoryController.getCategories);
 
