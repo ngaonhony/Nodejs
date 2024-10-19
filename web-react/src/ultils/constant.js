@@ -1,6 +1,7 @@
 export const path = {
     HOME: '/*',
     LOGIN: '/login',
+    Detailpage: '/Detailpage'
 }
 
 export const text = {

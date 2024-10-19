@@ -27,7 +27,7 @@ const Item = () => {
                 <GrStar className='star-item' size={18} color='yellow'/>
                 <GrStar className='star-item' size={18} color='yellow'/>
                 <GrStar className='star-item' size={18} color='yellow'/>
-                CHO THUÊ CĂN HỘ HOẶC VĂN PHÒNG LÀM VIỆC
+                <a href="Detailpage">CHO THUÊ CĂN HỘ HOẶC VĂN PHÒNG LÀM VIỆC</a>
             </div>
             <div className='w-[10%] flex justify-between'>
                 <BsBookmarkStarFill size={24} color='orange'/>
