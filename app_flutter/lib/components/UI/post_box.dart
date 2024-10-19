@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './ChiTietSP.dart';
+import 'Post_Details.dart';
 
 class ProductForm extends StatelessWidget {
   @override

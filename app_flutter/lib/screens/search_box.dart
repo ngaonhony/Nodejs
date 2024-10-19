@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './SelectAddress.dart';
-import './ChonGiaBox.dart';
-import './DienTichbox.dart';
+import 'PriceSelect.dart';
+import 'AreaSelect.dart';
 
 class SearchBox extends StatefulWidget {
   @override

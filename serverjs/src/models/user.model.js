@@ -3,28 +3,48 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true },
-    password: { type: String, required: true, minlength: 6 },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String },
-    address:{ type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    password: { type: String, required: true, minlength: 6, select: false }, // Ẩn password khi truy vấn
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      match: [/.+\@.+\..+/, "Email không hợp lệ"],
+    },
+    phone: {
+      type: String,
+      minlength: 10,
+      maxlength: 15,
+      match: [/^\d+$/, "Số điện thoại chỉ chứa số"],
+      trim: true,
+    },
+    address: { type: String, required: true, trim: true },
     balance: {
       type: Number,
-      default: 0.00
-  },
+      default: 0.0,
+    },
     role: {
       type: String,
       enum: ["tenant", "landlord", "admin"],
       required: true,
     },
-    feedbackIds: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Feedback",
-    }],
-    paymentIds: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Payment", // Liên kết với mô hình Payment
-    }],
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationCode: {
+      type: String,
+      default: null,
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );
@@ -38,6 +58,12 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+  delete userObject.password;
+  return userObject;
 };
 
 module.exports = mongoose.model("User", userSchema);
