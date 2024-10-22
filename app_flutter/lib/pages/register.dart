@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import './login.dart';
-import './home.dart';
+import '../screens/verify_email.dart'; // Màn hình xác thực email
 import '../services/auth_service.dart';
 
 class Register extends StatefulWidget {
@@ -18,11 +17,13 @@ class _RegisterState extends State<Register> {
   bool _isLoading = false;
   String? _selectedRole;
 
+  // Hàm đăng ký người dùng
   void _register() async {
     if (_isFormValid()) {
       setState(() => _isLoading = true);
 
       try {
+        // Thực hiện đăng ký
         await _authService.register(
           _usernameController.text.trim(),
           _emailController.text.trim(),
@@ -32,9 +33,16 @@ class _RegisterState extends State<Register> {
           _selectedRole!,
         );
 
-        _showMessage('Đăng ký thành công');
+        _showMessage(
+            'Đăng ký thành công. Vui lòng kiểm tra email để xác thực.');
+
+        // Chuyển người dùng đến màn hình xác thực email
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(
+            builder: (context) => VerifyEmailScreen(
+              email: _emailController.text.trim(),
+            ),
+          ),
           (route) => false,
         );
       } catch (e) {
@@ -45,6 +53,7 @@ class _RegisterState extends State<Register> {
     }
   }
 
+  // Kiểm tra hợp lệ form
   bool _isFormValid() {
     if (_usernameController.text.isEmpty ||
         _emailController.text.isEmpty ||
@@ -100,17 +109,6 @@ class _RegisterState extends State<Register> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.home, color: Colors.black),
-            onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Home()),
-                (route) => false,
-              );
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

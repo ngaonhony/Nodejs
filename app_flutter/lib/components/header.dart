@@ -25,8 +25,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               icon: Icon(Icons.menu, color: Colors.black),
               onPressed: () {
-                Scaffold.of(context)
-                    .openEndDrawer(); // Mở endDrawer khi nhấn vào "Danh mục"
+                Scaffold.of(context).openEndDrawer();
               },
             ),
             const Text(

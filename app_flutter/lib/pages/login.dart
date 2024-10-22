@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './register.dart';
 import './home.dart';
 import '../services/auth_service.dart';
+import '../screens/ForgotPass.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,26 +11,26 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthService _authService = AuthService();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController emailOrPhone = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
   bool _isLoading = false;
 
   void _login() async {
-    if (_phoneController.text.isEmpty || _passwordController.text.isEmpty) {
-      _showMessage('Vui lòng điền đầy đủ thông tin đăng nhập');
+    final emailOrPhoneText = emailOrPhone.text.trim();
+    final passwordText = password.text.trim();
+
+    if (emailOrPhoneText.isEmpty || passwordText.isEmpty) {
+      _showMessage('Vui lòng nhập email hoặc số điện thoại và mật khẩu');
       return;
     }
 
     setState(() => _isLoading = true);
 
     try {
-      await _authService.login(
-        _phoneController.text.trim(),
-        _passwordController.text.trim(),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đăng Nhập  thành công')),
-      );
+      await _authService.login(emailOrPhoneText, passwordText);
+
+      _showMessage('Đăng nhập thành công');
 
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -38,7 +39,13 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      _showMessage('Đăng nhập thất bại: ${e.toString()}');
+      if (e.toString().contains('401')) {
+        _showMessage('Thông tin đăng nhập không chính xác');
+      } else if (e.toString().contains('Tài khoản chưa được xác thực')) {
+        _showMessage('Tài khoản chưa được xác thực. Vui lòng kiểm tra email.');
+      } else {
+        _showMessage('Đăng nhập thất bại: ${e.toString()}');
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -49,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
+  // Hàm tạo ô nhập liệu
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -70,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Widget hỗ trợ khách hàng
   Widget _buildCustomerSupport() {
     return Container(
       color: Colors.blue[800],
@@ -125,13 +134,13 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             SizedBox(height: 16),
             _buildTextField(
-              label: 'SỐ ĐIỆN THOẠI',
-              controller: _phoneController,
+              label: 'EMAIL / SỐ ĐIỆN THOẠI',
+              controller: emailOrPhone,
             ),
             SizedBox(height: 16),
             _buildTextField(
               label: 'MẬT KHẨU',
-              controller: _passwordController,
+              controller: password,
               obscureText: true,
             ),
             SizedBox(height: 24),
@@ -157,7 +166,12 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    // Xử lý quên mật khẩu
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ForgotPasswordPage()), // Điều hướng đến trang quên mật khẩu
+                    );
                   },
                   child: Text('Bạn quên mật khẩu?'),
                 ),
