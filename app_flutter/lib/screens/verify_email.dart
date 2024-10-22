@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../pages/login.dart';
+import '../pages/home.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;
+  final String password;
 
-  VerifyEmailScreen({required this.email});
+  VerifyEmailScreen({required this.email, required this.password});
 
   @override
   _VerifyEmailScreenState createState() => _VerifyEmailScreenState();
@@ -28,10 +29,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     try {
       await _authService.verifyEmail(_verificationCodeController.text.trim());
 
-      _showMessage('Xác thực thành công! Bạn có thể đăng nhập.');
-      Navigator.push(
+      await _authService.login(widget.email, widget.password);
+
+      _showMessage('Xác thực thành công và đăng nhập tự động!');
+
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => Home()),
+        (route) => false,
       );
     } catch (e) {
       _showMessage('Xác thực thất bại: ${e.toString()}');
@@ -82,7 +87,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               ),
               child: _isLoading
                   ? CircularProgressIndicator(
-                      color: const Color.fromARGB(255, 45, 48, 131))
+                      color: const Color.fromARGB(255, 0, 0, 0))
                   : Text('Xác thực',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
