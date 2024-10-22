@@ -14,7 +14,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class ServiceManagementComponent implements OnInit {
   services: Service[] = [];
   dataSource = new MatTableDataSource<Service>();
-  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month', 'advantages', 'title_color', 'auto_approval', 'prominent_badge', 'actions'];
+  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month', 'advantages', 'title_color', 'auto_approval', 'prominent_badge','list', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -52,13 +52,20 @@ export class ServiceManagementComponent implements OnInit {
   }
 
   editService(service: Service) {
-    const dialogRef = this.dialog.open(ServiceDialogComponent, { data: { service } });
-
+    if (!service) {
+      console.error('Dịch vụ không hợp lệ để chỉnh sửa.'); // Log nếu dịch vụ không hợp lệ
+      return;
+    }
+  
+    const dialogRef = this.dialog.open(ServiceDialogComponent, { data: { service, isEditMode: true } });
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.serviceManagementService.updateService(result).subscribe(() => {
-          this.loadServices();
-        });
+        console.log('Đã chỉnh sửa dịch vụ:', result); // Log kết quả chỉnh sửa dịch vụ
+        // Cập nhật dịch vụ trong danh sách
+        this.loadServices();
+      } else {
+        console.log('Chỉnh sửa dịch vụ bị hủy hoặc không thành công.'); // Log nếu không có kết quả
       }
     });
   }
@@ -74,5 +81,12 @@ export class ServiceManagementComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+  viewBookedServices() {
+    // Logic để hiển thị dịch vụ đã đặt
+    // Bạn có thể mở một dialog hoặc chuyển hướng đến một component khác
+    console.log('Xem danh sách dịch vụ đã đặt');
+    // Ví dụ: mở dialog
+    // const dialogRef = this.dialog.open(BookedServicesDialogComponent);
   }
 }

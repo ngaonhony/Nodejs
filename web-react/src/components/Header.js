@@ -1,7 +1,7 @@
 import React from 'react';
-import logo from '../../assets/logo.png';
-import { Button } from '../../components';
-import icons from '../../ultils/icons';
+import logo from '../assets/images/logo.png';
+import { Button } from '../components';
+import icons from '../ultils/icons';
 
 const { AiOutlinePlusCircle } = icons;
 

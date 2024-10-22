@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header';
+import Header from '../components/Header';
 import Navigator from './Navigator';
 
 
@@ -44,7 +44,7 @@ function Login() {
               <input type="checkbox" className="mr-2" />
               Ghi nhớ mật khẩu
             </label>
-            <a href="#" className="text-blue-600">Quên mật khẩu ?</a>
+            <a href="https://example.com" className="text-blue-600">Quên mật khẩu ?</a>
           </div>
           <button className="bg-orange-500 text-white py-2 px-4 rounded-lg">
             Đăng nhập

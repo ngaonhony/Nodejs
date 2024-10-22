@@ -53,7 +53,7 @@ import { PaymentDialogComponent } from './pages/payment-management/payment-dialo
     PostManagementComponent,
     PostDialogComponent,
     ServiceManagementComponent,
-    //ServiceDialogComponent,
+    ServiceDialogComponent,
     ServiceBookingManagementComponent,
     ServiceBookingDialogComponent,
     FeedbackManagementComponent,

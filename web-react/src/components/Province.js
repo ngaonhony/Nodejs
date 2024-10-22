@@ -2,14 +2,6 @@ import React from 'react';
 import { ProvinceBtn } from './index'
 import { location } from '../ultils/constant'; // Đảm bảo import đúng
 
-const ProvinceItem = ({ image, name }) => {
-    return (
-        <div className='province-item'>
-            <img src={image} alt={name} className='w-full h-auto' />
-            <p>{name}</p>
-        </div>
-    );
-};
 
 const Province = () => {
     return (

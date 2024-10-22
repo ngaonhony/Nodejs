@@ -33,11 +33,6 @@ export const navItems: NavItem[] = [
     route: '/service-management/list',
   },
   {
-    displayName: 'Service Booking List',
-    iconName: 'calendar-check', // Ví dụ: 'fa-calendar-check' từ Font Awesome
-    route: '/service-booking-management/list',
-  },
-  {
     displayName: 'Feedback List',
     iconName: 'messages', // Ví dụ: 'fa-comments' từ Font Awesome
     route: '/feedback-management/list',

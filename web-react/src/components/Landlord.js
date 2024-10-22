@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Nguoidang() {
+function Landlord() {
   return (
     <div className="w-72 m-5 p-5 rounded-lg bg-yellow-400 text-center font-sans">
       <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-2"></div>
@@ -24,4 +24,4 @@ function Nguoidang() {
   );
 }
 
-export default Nguoidang;
+export default Landlord;

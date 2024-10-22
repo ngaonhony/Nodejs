@@ -23,7 +23,7 @@ export class ServiceService {
 
   // Update an existing service
   updateService(service: Service): Observable<Service> {
-    return this.http.patch<Service>(`${this.apiUrl}/${service._id}`, service);
+    return this.http.put<Service>(`${this.apiUrl}/${service._id}`, service);
   }
 
   // Delete a service

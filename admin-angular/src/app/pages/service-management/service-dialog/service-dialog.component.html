@@ -1,1 +1,64 @@
-<p>service-dialog works!</p>
+<h2 mat-dialog-title>{{ isEditMode ? 'Sửa Dịch Vụ' : 'Thêm Dịch Vụ' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="serviceForm" (ngSubmit)="saveService()" class="grid-form">
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Tên Dịch Vụ</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="serviceForm.get('name')?.hasError('required')">Tên dịch vụ là bắt buộc!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Giá Theo Ngày</mat-label>
+        <input matInput type="number" formControlName="price_per_day" required>
+        <mat-error *ngIf="serviceForm.get('price_per_day')?.hasError('required')">Giá theo ngày là bắt buộc!</mat-error>
+        <mat-error *ngIf="serviceForm.get('price_per_day')?.hasError('min')">Giá phải lớn hơn hoặc bằng 0!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Giá Theo Tuần</mat-label>
+        <input matInput type="number" formControlName="price_per_week" required>
+        <mat-error *ngIf="serviceForm.get('price_per_week')?.hasError('required')">Giá theo tuần là bắt buộc!</mat-error>
+        <mat-error *ngIf="serviceForm.get('price_per_week')?.hasError('min')">Giá phải lớn hơn hoặc bằng 0!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Giá Theo Tháng</mat-label>
+        <input matInput type="number" formControlName="price_per_month" required>
+        <mat-error *ngIf="serviceForm.get('price_per_month')?.hasError('required')">Giá theo tháng là bắt buộc!</mat-error>
+        <mat-error *ngIf="serviceForm.get('price_per_month')?.hasError('min')">Giá phải lớn hơn hoặc bằng 0!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
+        <mat-label>Màu Tiêu Đề</mat-label>
+        <input matInput formControlName="title_color" required>
+        <mat-error *ngIf="serviceForm.get('title_color')?.hasError('required')">Màu tiêu đề là bắt buộc!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-checkbox formControlName="advantages">Có lợi ích</mat-checkbox>
+    </div>
+
+    <div class="form-row">
+      <mat-checkbox formControlName="auto_approval">Tự động phê duyệt</mat-checkbox>
+    </div>
+
+    <div class="form-row">
+      <mat-checkbox formControlName="prominent_badge">Nổi bật</mat-checkbox>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button (click)="close()">Hủy</button>
+      <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Cập Nhật' : 'Thêm Dịch Vụ' }}</button>
+    </div>
+  </form>
+</mat-dialog-content>

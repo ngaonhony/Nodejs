@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import anhphong1 from "../../assets/anhphong1.png";
-import anhphong2 from "../../assets/anhphong2.png";
-import anhphong3 from "../../assets/anhphong3.png";
-import anhphong4 from "../../assets/anhphong4.png";
-import phong5 from "../../assets/phong5.png";
+import anhphong1 from "../assets/images/anhphong1.png";
+import anhphong2 from "../assets/images/anhphong2.png";
+import anhphong3 from "../assets/images/anhphong3.png";
+import anhphong4 from "../assets/images/anhphong4.png";
+import anhphong5 from "../assets/images/phong5.png";
 
 const Slideshow = () => {
   const images = [
@@ -11,7 +11,7 @@ const Slideshow = () => {
     anhphong2,
     anhphong3,
     anhphong4,
-    phong5,
+    anhphong5,
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

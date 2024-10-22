@@ -38,15 +38,6 @@ export class UserManagementComponent implements OnInit {
     );
   }
 
-  addUser() {
-    const dialogRef = this.dialog.open(UserDialogComponent, { data: { user: null } });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadUsers(); // Reload users after adding
-      }
-    });
-  }
 
   editUser(user: User) {
     const dialogRef = this.dialog.open(UserDialogComponent, { data: { user } });
