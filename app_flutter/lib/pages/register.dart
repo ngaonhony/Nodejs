@@ -15,22 +15,19 @@ class _RegisterState extends State<Register> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   bool _isLoading = false;
-  String? _selectedRole;
 
-  // Hàm đăng ký người dùng
   void _register() async {
     if (_isFormValid()) {
       setState(() => _isLoading = true);
 
       try {
-        // Thực hiện đăng ký
         await _authService.register(
           _usernameController.text.trim(),
           _emailController.text.trim(),
           _passwordController.text.trim(),
           _phoneController.text.trim(),
           _addressController.text.trim(),
-          _selectedRole!,
+          "tenant",
         );
 
         _showMessage(
@@ -59,8 +56,7 @@ class _RegisterState extends State<Register> {
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty ||
         _phoneController.text.isEmpty ||
-        _addressController.text.isEmpty ||
-        _selectedRole == null) {
+        _addressController.text.isEmpty) {
       _showMessage('Vui lòng điền đầy đủ thông tin');
       return false;
     }
@@ -132,16 +128,6 @@ class _RegisterState extends State<Register> {
             SizedBox(height: 16),
             _buildTextField(label: 'ĐỊA CHỈ', controller: _addressController),
             SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedRole,
-              decoration: InputDecoration(labelText: 'Vai trò'),
-              items: ['tenant', 'landlord', 'admin'].map((role) {
-                return DropdownMenuItem(value: role, child: Text(role));
-              }).toList(),
-              onChanged: (value) => setState(() => _selectedRole = value),
-              validator: (value) =>
-                  value == null ? 'Vui lòng chọn vai trò' : null,
-            ),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: _isLoading ? null : _register,
