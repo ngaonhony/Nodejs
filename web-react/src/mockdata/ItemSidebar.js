@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import icons from '../ultils/icons'
 
 const { GrNext } = icons
-const Itemsidebar = () => {
+const ItemSidebar = () => {
     return (
 <div className='p-4 rounded-md bg-white w-full'>
     <h3 className='text-lg font-semibold'>Danh sách cho thuê</h3>
@@ -33,4 +33,4 @@ const Itemsidebar = () => {
     )
 }
 
-export default memo(Itemsidebar)
+export default memo(ItemSidebar)

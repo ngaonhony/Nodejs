@@ -1,13 +1,14 @@
 import React from 'react';
-import Header from './Header';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { Outlet } from 'react-router-dom';
-import Navigator from './Navigator';
+import Navigator from '../components/Navigator';
 import Search from './Search';
-import { text } from '../../ultils/constant';  
-import { ProvinceBtn, Itemsidebar } from '../../components/'; 
-import { location } from '../../ultils/constant';
+import { text } from '../ultils/constant';  
+import { ProvinceBtn, ItemSidebar } from '../components/'; 
+import { location } from '../ultils/constant';
 import { List } from './index' 
-import Footer from './Footer';
+
 
 const Home = () => {
     return (
@@ -39,11 +40,14 @@ const Home = () => {
                     <List />
                     </div>
                 <div className='w-[30%] border flex flex-col gap-4 justify-start items-center'>
-                    <Itemsidebar />
+                    <ItemSidebar />
                    
                 </div>
                 </div>
-               
+                <div className='w-[1100px] flex justify-center items-center '>
+                  
+              
+                </div>
             </div>
             <div className='w-screen'>
                     <Footer />

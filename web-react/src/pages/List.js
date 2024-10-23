@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Item } from '../../components'
+import { Button, Item } from '../components'
 
 const List = () => {
     return (
