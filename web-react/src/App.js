@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home, Login,Register,ForgetPassword,DetailPage} from './pages'
+  import { Home, Login,Register,ForgetPassword,DetailPage,ServicePage} from './pages'
   import { path} from './ultils/constant'
 
   function App() {
@@ -11,6 +11,7 @@
           <Route path={path.Register} element={<Register />} />
           <Route path={path.ForgetPassword} element={<ForgetPassword />} />
           <Route path={path.DetailPage} element={<DetailPage />} />
+          <Route path={path.ServicePage} element={<ServicePage />} />
         </Routes>
       </div>
     );

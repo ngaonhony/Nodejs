@@ -27,7 +27,7 @@ class AuthService {
           'password': password,
           'phone': phone,
           'address': address,
-          'role': role,
+          'role': role = 'tenant',
         }),
       );
 
@@ -99,7 +99,6 @@ class AuthService {
           'phone': emailOrPhone
       };
 
-      // Gửi yêu cầu POST đến API
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -135,7 +134,6 @@ class AuthService {
     }
   }
 
-// Hàm kiểm tra định dạng email
   bool _isValidEmail(String input) {
     final emailRegex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
     return emailRegex.hasMatch(input);
@@ -166,7 +164,6 @@ class AuthService {
     }
   }
 
-  // Đặt lại mật khẩu
   Future<void> resetPassword(
       String verificationCode, String newPassword) async {
     final email = await _getUserEmail();
@@ -201,71 +198,35 @@ class AuthService {
     }
   }
 
-  // Cập nhật thông tin người dùng
-  Future<void> updateUser(String userId, Map<String, String> updates) async {
-    final url = Uri.parse('$baseUrl/$userId');
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (connectivityResult == ConnectivityResult.none) {
-      throw Exception('Không có kết nối mạng');
-    }
-
-    try {
-      final response = await http.patch(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${await getToken()}'
-        },
-        body: jsonEncode(updates),
-      );
-
-      if (response.statusCode == 200) {
-        print("Cập nhật thông tin thành công.");
-      } else {
-        _handleError(response);
-      }
-    } catch (e) {
-      throw Exception('Cập nhật thất bại: $e');
-    }
-  }
-
-  // Lưu token vào FlutterSecureStorage
   Future<void> _saveToken(String token) async {
     await storage.write(key: 'authToken', value: token);
   }
 
-  // Lưu email người dùng để xác thực hoặc đặt lại mật khẩu
   Future<void> _saveUserEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', email);
   }
 
-  // Lấy email đã lưu từ SharedPreferences
   Future<String?> _getUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('email');
   }
 
-  // Xóa email khỏi SharedPreferences sau khi đặt lại mật khẩu hoặc xác thực xong
   Future<void> _clearUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('email');
   }
 
-  // Lấy token đã lưu từ FlutterSecureStorage
   Future<String?> getToken() async {
     return await storage.read(key: 'authToken');
   }
 
-  // Đăng xuất và xóa thông tin token
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('name');
   }
 
-  // Xử lý lỗi từ API
   void _handleError(http.Response response) {
     final errorData = jsonDecode(response.body);
     final message = errorData['message'] ?? 'Lỗi không xác định';

@@ -7,6 +7,22 @@ const {
 } = require("../utils/email");
 const winston = require("winston");
 
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      balance: user.balance,
+      phone: user.phone,
+      address: user.address,
+      name: user.name,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+};
+
 exports.register = async (req, res) => {
   const { email, password, name, address, phone, role } = req.body;
   try {
@@ -46,9 +62,69 @@ exports.register = async (req, res) => {
     await user.save();
     await sendVerificationEmail(email, verificationCode);
 
+    const token = generateToken(user);
     res.status(201).json({
       message: "Đăng ký thành công, vui lòng kiểm tra email để xác thực",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        balance: user.balance,
+        phone: user.phone,
+        role: user.role,
+        address: user.address,
+      },
     });
+  } catch (error) {
+    res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, phone, password } = req.body;
+
+    const user = await User.findOne({
+      $or: [{ email }, { phone }],
+    }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Email, số điện thoại hoặc mật khẩu không chính xác",
+      });
+    }
+
+    const isMatch = await user.matchPassword(password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Email, số điện thoại hoặc mật khẩu không chính xác",
+      });
+    }
+
+    const token = generateToken(user);
+    res.status(200).json({
+      message: "Đăng nhập thành công",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        balance: user.balance,
+        phone: user.phone,
+        role: user.role,
+        address: user.address,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
+  }
+};
+
+exports.logout = (req, res) => {
+  try {
+    res.status(200).json({ message: "Đăng xuất thành công" });
   } catch (error) {
     res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
   }
@@ -72,94 +148,6 @@ exports.verifyEmail = async (req, res) => {
     res.status(200).json({ message: "Xác thực email thành công" });
   } catch (error) {
     winston.error("Lỗi xác thực email: ", error);
-    res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
-  }
-};
-exports.login = async (req, res) => {
-  try {
-    const { email, phone, password } = req.body;
-    console.log("Email hoặc số điện thoại nhận được:", email || phone);
-    console.log("Password nhận được:", password);
-
-    const user = await User.findOne({
-      $or: [{ email }, { phone }],
-    }).select("+password");
-
-    console.log("Người dùng tìm thấy:", user);
-
-    if (!user) {
-      console.log("Không tìm thấy người dùng với email hoặc số điện thoại này");
-      return res
-        .status(401)
-        .json({
-          message: "Email, số điện thoại hoặc mật khẩu không chính xác",
-        });
-    }
-
-    console.log("Mật khẩu mã hóa trong CSDL:", user.password);
-    const isMatch = await user.matchPassword(password);
-    console.log("Kết quả so sánh mật khẩu:", isMatch);
-
-    if (!isMatch) {
-      console.log("Mật khẩu không khớp");
-      return res
-        .status(401)
-        .json({
-          message: "Email, số điện thoại hoặc mật khẩu không chính xác",
-        });
-    }
-
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        balance: user.balance,
-        phone: user.phone,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    console.log("Đăng nhập thành công. Token:", token);
-    res.status(200).json({
-      message: "Đăng nhập thành công",
-      token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        balance: user.balance,
-        phone: user.phone,
-      },
-    });
-  } catch (error) {
-    console.error("Lỗi trong quá trình đăng nhập:", error);
-    res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
-  }
-};
-
-exports.update = async (req, res) => {
-  const { id } = req.params;
-  const updates = req.body;
-
-  try {
-    if (updates.password) {
-      const salt = await bcrypt.genSalt(10);
-      updates.password = await bcrypt.hash(updates.password, salt);
-    }
-
-    const user = await User.findByIdAndUpdate(id, updates, { new: true });
-
-    if (!user) {
-      return res.status(404).json({ message: "Người dùng không tìm thấy" });
-    }
-
-    winston.info(`Cập nhật thành công cho người dùng: ${user.email}`);
-
-    res.status(200).json({ message: "Cập nhật thành công", user });
-  } catch (error) {
-    winston.error("Lỗi cập nhật người dùng: ", error);
     res.status(500).json({ message: "Có lỗi xảy ra", error: error.message });
   }
 };

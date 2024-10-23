@@ -2,13 +2,15 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'auth_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class UserService {
   final String baseUrl = 'http://localhost:3000/api/users';
   final AuthService _authService = AuthService();
 
-  // Lấy thông tin người dùng hiện tại từ API và tạo mã thành viên nếu chưa có
+  // Fetching current user details
   Future<Map<String, dynamic>> getCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
@@ -33,10 +35,8 @@ class UserService {
         final responseData = jsonDecode(response.body);
         final user = responseData['data']['user'];
 
-        // Kiểm tra xem mã thành viên đã tồn tại chưa
         String? memberId = prefs.getString('memberId');
         if (memberId == null) {
-          // Tạo mã thành viên ngẫu nhiên gồm 6 chữ số nếu chưa có
           memberId = _generateMemberId();
           await prefs.setString('memberId', memberId);
         }
@@ -57,14 +57,13 @@ class UserService {
     return {};
   }
 
-  // Hàm tạo mã thành viên ngẫu nhiên gồm 6 chữ số
+  // Generate a random member ID
   String _generateMemberId() {
     final random = Random();
-    return (random.nextInt(900000) + 100000)
-        .toString(); // Tạo số ngẫu nhiên trong khoảng 100000 - 999999
+    return (random.nextInt(900000) + 100000).toString();
   }
 
-  // Hàm xử lý lỗi từ API
+  // Handle errors from API responses
   void _handleError(http.Response response) {
     final errorData = jsonDecode(response.body);
     final message = errorData['message'] ?? 'Lỗi không xác định';
@@ -82,6 +81,34 @@ class UserService {
         throw Exception('Lỗi từ server: $message');
       default:
         throw Exception('Lỗi: $message');
+    }
+  }
+
+  Future<void> updateUser(String userId, Map<String, String> updates) async {
+    final url = Uri.parse('$baseUrl/$userId');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${await _authService.getToken()}',
+        },
+        body: jsonEncode(updates),
+      );
+
+      if (response.statusCode == 200) {
+        print("Cập nhật thông tin thành công.");
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Cập nhật thất bại: $e');
     }
   }
 }

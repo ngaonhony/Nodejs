@@ -4,6 +4,7 @@ export const path = {
     Register:'/register',
     ForgetPassword:'/forget-password',
     DetailPage: '/detail-page',
+    ServicePage: '/service-page',
 }
 
 export const text = {
