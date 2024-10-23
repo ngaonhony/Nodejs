@@ -1,7 +1,9 @@
 export const path = {
-    HOME: '/*',
-    LOGIN: '/login',
-    Detailpage: '/Detailpage'
+    Home: '/*',
+    Login: '/login',
+    Register:'/register',
+    ForgetPassword:'/forget-password',
+    DetailPage: '/detail-page',
 }
 
 export const text = {

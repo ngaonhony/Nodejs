@@ -1,38 +1,40 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; 
 import logo from '../assets/images/logo.png';
-import { Button } from '../components';
+import Button from './Button';
 import icons from '../ultils/icons';
 
 const { AiOutlinePlusCircle } = icons;
 
 const Header = () => {
     return (
-        <div className='w-1100 flex items-center justify-between'>
-            <img
-                src={logo}
-                alt="logo"
-                className='w-[240px] h-[70px] object-contain'
-            />
+        <div className='fixed-header w-1100 flex items-center justify-between'>
+            <Link to="/" className='flex items-center'>
+                <img
+                    src={logo}
+                    alt="logo"
+                    className='w-[240px] h-[70px] object-contain'
+                />
+            </Link>
             <div className='flex items-center gap-1'>
-                <small>Phongtronhom1.com xin chào!</small>
                 <Button 
                     text={'đăng nhập'} 
                     textColor='text-white' 
                     bgColor='bg-[#3961fb]' 
-                    link="/login" // Thêm đường dẫn đến trang đăng nhập
+                    path="/login"  
                 />
                 <Button 
                     text={'đăng ký'} 
                     textColor='text-white' 
                     bgColor='bg-[#3961fb]' 
-                    link="/register" // Thêm đường dẫn đến trang đăng ký (nếu cần)
+                    path="/register" 
                 />
                 <Button 
                     text={'đăng tin mới'} 
                     textColor='text-white' 
                     bgColor='bg-[#8717fb]' 
                     IcAfter={AiOutlinePlusCircle} 
-                    link="/new-post" // Thêm đường dẫn đến trang đăng tin mới (nếu cần)
+                    path="/new-post" 
                 />
             </div>
         </div>

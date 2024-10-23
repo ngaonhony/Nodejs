@@ -5,7 +5,7 @@ import anhphong3 from "../assets/images/anhphong3.png";
 import anhphong4 from "../assets/images/anhphong4.png";
 import anhphong5 from "../assets/images/phong5.png";
 
-const Slideshow = () => {
+const SlideShow = () => {
   const images = [
     anhphong1,
     anhphong2,
@@ -29,34 +29,40 @@ const Slideshow = () => {
   };
 
   return (
-    <div className="flex w-full h-500px items-center justify-center space-x-4 bg-black p-4">
-      {/* Nút Previous */}
-      <button 
-        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400" 
+    <div className="flex   
+ w-full h-500px items-center justify-center space-x-4 bg-black p-4">
+      <button
+        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400"
         onClick={handlePrev}
       >
-        Trước
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6   
+ h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
       </button>
 
-      {/* Hiển thị ảnh */}
-      <div className="w-[500px] h-[500px] overflow-hidden rounded-lg">
-        <img 
-          src={images[currentImageIndex]} 
-          alt="Nội dung chuyển ảnh" 
-          className="w-full h-full object-cover transition duration-500 ease-in-out transform hover:scale-110" 
+      <div   
+ className="w-[500px] h-[500px] overflow-hidden rounded-lg">
+        <img
+          src={images[currentImageIndex]}
+          alt="Nội dung chuyển ảnh"
+          className="w-full h-full object-cover transition duration-500 ease-in-out transform hover:scale-110"
           style={{ maxHeight: '100%', maxWidth: '100%' }}
         />
       </div>
 
-      {/* Nút Next */}
-      <button 
-        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400" 
+      <button
+        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400"
         onClick={handleNext}
       >
-        Tiếp theo
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6   
+ h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
       </button>
-    </div>
+    </div>   
+
   );
 };
 
-export default Slideshow;
+export default SlideShow;
