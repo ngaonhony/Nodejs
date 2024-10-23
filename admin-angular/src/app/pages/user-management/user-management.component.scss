@@ -1,7 +1,39 @@
 .container {
     margin: 20px;
+    padding:0!important;;
   }
-  
+  .user-management,
+.user-management * {
+  padding-top: 0 !important;  
+  padding-bottom: 0 !important; 
+}
+
+.toolbar-container {
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  gap: 16px; 
+}
+
+.table-responsive {
+  padding: 0; /* Đặt padding 0 cho bảng nếu cần */
+}
+
+.mat-card-content {
+  padding: 0 !important;; /* Đặt padding 0 cho nội dung của mat-card */
+}
+  .user-management {
+    padding:0;
+    display: flex;
+    flex-direction: column;
+    .search-field {
+      margin-left: auto; // Đẩy ô tìm kiếm sang bên phải
+      margin-right: 16px; // Khoảng cách bên phải
+    }
+    table {
+      width: 100%;
+    }
+  }  
   .mat-table {
     width: 100%;
   }
@@ -10,10 +42,20 @@
     flex: 1 1 auto; // Chiếm không gian còn lại
   }
   
-  .user-management {
-    display: flex;
-    flex-direction: column;
-  }
   .toolbar-actions {
     margin-left: auto; /* Đẩy nút sang bên phải */
+  }
+  .toolbar-container {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: space-between; /* Đẩy không gian giữa các phần tử */
+  }
+  
+  .add-user-button {
+    background-color: #4CAF50; /* Màu xanh lá cây */
+    color: white; /* Màu chữ trắng */
+    
+    &:hover {
+      background-color: #45a049; /* Màu khi hover */
+    }
   }

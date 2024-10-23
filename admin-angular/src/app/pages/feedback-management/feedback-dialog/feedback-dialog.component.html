@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>{{ feedback._id ? 'Chỉnh Sửa Phản Hồi' : 'Thêm Phản Hồi' }}</h1>
+
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>ID Bài Viết</mat-label>
+    <input matInput [(ngModel)]="feedback.postId" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>ID Người Dùng</mat-label>
+    <input matInput [(ngModel)]="feedback.userId" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Tên</mat-label>
+    <input matInput [(ngModel)]="feedback.name" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Điện Thoại</mat-label>
+    <input matInput [(ngModel)]="feedback.phone" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Đánh Giá</mat-label>
+    <input matInput type="number" [(ngModel)]="feedback.rating" required min="1" max="5">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Nhận Xét</mat-label>
+    <textarea matInput [(ngModel)]="feedback.comment"></textarea>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Hủy</button>
+  <button mat-button color="primary" (click)="onSave()">Lưu</button>
+</div>

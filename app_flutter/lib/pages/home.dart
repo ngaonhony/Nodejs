@@ -4,10 +4,9 @@ import '../components/footer.dart';
 import '../components/header.dart';
 import '../components/UI/MenuDrawer.dart';
 import '../screens/search_box.dart';
-import '../components/UI/product.dart';
-import '../components/UI/DanhMuc.dart';
-import '../components//UI/auth_info.dart';
-import '../services/auth_service.dart';
+import '../components/UI/post_box.dart';
+import '../components/UI/directory.dart';
+import '../components/UI/info_box.dart'; // Import InfoBox
 
 class Home extends StatefulWidget {
   @override
@@ -15,19 +14,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? username;
+  String? userId; // Khai báo biến để lưu userId
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
   }
 
   Future<void> _checkLoginStatus() async {
+    // Lấy token và userId từ SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      username = prefs.getString('username');
-    });
+    final String? token = prefs.getString('token');
+    final String? id = prefs.getString('userId');
+
+    // Nếu đã có token và userId, cập nhật state để hiển thị InfoBox
+    if (token != null && id != null) {
+      setState(() {
+        userId = id; // Gán giá trị userId
+      });
+    }
   }
 
   @override
@@ -41,14 +47,12 @@ class _HomeState extends State<Home> {
           children: [
             SearchBox(),
             const SizedBox(height: 8),
-            if (username != null)
+            if (userId != null) // Kiểm tra nếu đã đăng nhập
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0), // Thiết lập padding trái và phải
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SizedBox(
-                  width:
-                      double.infinity, // Chiều rộng 90% của màn hình (nếu cần)
-                  child: AuthInfo(username: username!),
+                  width: double.infinity,
+                  child: AuthInfo(), // Hiển thị AuthInfo nếu đã đăng nhập
                 ),
               ),
             const SizedBox(height: 8),
@@ -62,14 +66,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      bottomNavigationBar: Footer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.add),
-        tooltip: 'Đăng tin miễn phí',
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: Footer(), // Footer includes the button now
     );
   }
 

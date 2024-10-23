@@ -1,1 +1,58 @@
-<p>service-booking-management works!</p>
+<mat-toolbar color="primary">
+    <span>Quản Lý Đặt Chỗ</span>
+    <span class="example-spacer"></span>
+    <button mat-raised-button color="accent" (click)="addBooking()">Thêm Đặt Chỗ</button>
+  </mat-toolbar>
+  
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      
+      <!-- User ID Column -->
+      <ng-container matColumnDef="userId">
+        <th mat-header-cell *matHeaderCellDef> ID Người Dùng </th>
+        <td mat-cell *matCellDef="let booking">{{ booking.userId }}</td>
+      </ng-container>
+  
+      <!-- Service ID Column -->
+      <ng-container matColumnDef="serviceId">
+        <th mat-header-cell *matHeaderCellDef> ID Dịch Vụ </th>
+        <td mat-cell *matCellDef="let booking">{{ booking.serviceId }}</td>
+      </ng-container>
+  
+      <!-- Booking Date Column -->
+      <ng-container matColumnDef="bookingDate">
+        <th mat-header-cell *matHeaderCellDef> Ngày Đặt </th>
+        <td mat-cell *matCellDef="let booking">{{ booking.bookingDate | date }}</td>
+      </ng-container>
+  
+      <!-- Booking Time Column -->
+      <ng-container matColumnDef="bookingTime">
+        <th mat-header-cell *matHeaderCellDef> Thời Gian Đặt (giờ) </th>
+        <td mat-cell *matCellDef="let booking">{{ booking.bookingTime }}</td>
+      </ng-container>
+  
+      <!-- Expiry Date Column -->
+      <ng-container matColumnDef="expiryDate">
+        <th mat-header-cell *matHeaderCellDef> Ngày Hết Hạn </th>
+        <td mat-cell *matCellDef="let booking">{{ booking.expiryDate | date }}</td>
+      </ng-container>
+  
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Hành Động </th>
+        <td mat-cell *matCellDef="let booking">
+          <button mat-icon-button (click)="editBooking(booking)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteBooking(booking)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  
+  <mat-paginator [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

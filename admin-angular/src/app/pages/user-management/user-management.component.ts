@@ -1,19 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-
-declare var $: any;
-
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss'],
 })
-export class UserManagementComponent implements OnInit, OnDestroy {
+export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  dataTable: any;
+  dataSource = new MatTableDataSource<User>();
+  displayedColumns: string[] = ['username', 'email', 'phone', 'address', 'balance', 'role', 'actions'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private userService: UserService, private dialog: MatDialog) {}
 
@@ -25,41 +27,24 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.userService.getUsers().subscribe(
       (data: any) => {
         this.users = data.data.users;
-        this.initializeDataTable();
+        this.dataSource.data = this.users; // Cập nhật dữ liệu cho MatTableDataSource
+        this.dataSource.paginator = this.paginator; // Gán paginator cho dataSource
       },
       (error: any) => {
         console.error('Lỗi khi lấy người dùng', error);
         this.users = [];
+        this.dataSource.data = []; // Cập nhật dữ liệu nếu có lỗi
       }
     );
   }
 
-  initializeDataTable() {
-    setTimeout(() => {
-      this.dataTable = $('#userTable').DataTable();
-    }, 100);
-  }
-
-  addUser() {
-    const dialogRef = this.dialog.open(UserDialogComponent, {
-      data: { user: null },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadUsers();
-      }
-    });
-  }
 
   editUser(user: User) {
-    const dialogRef = this.dialog.open(UserDialogComponent, {
-      data: { user },
-    });
+    const dialogRef = this.dialog.open(UserDialogComponent, { data: { user } });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadUsers();
+        this.loadUsers(); // Reload users after editing
       }
     });
   }
@@ -68,7 +53,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (user._id) {
       if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
         this.userService.deleteUser(user._id).subscribe(() => {
-          this.loadUsers();
+          this.loadUsers(); // Reload users after deleting
         });
       }
     } else {
@@ -76,9 +61,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.dataTable) {
-      this.dataTable.destroy();
-    }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase(); // Áp dụng bộ lọc
   }
 }

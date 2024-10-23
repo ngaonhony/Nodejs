@@ -1,1 +1,74 @@
-<p>post-management works!</p>
+<div class="post-management">
+    <mat-toolbar color="primary">
+      <span>Quản Lý Bài Viết</span>
+    </mat-toolbar>
+  
+    <div class="col-lg-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <div class="toolbar-container">
+            <mat-form-field>
+              <mat-label>Tìm kiếm</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Tìm kiếm bài viết">
+            </mat-form-field>
+            
+            <span class="example-spacer"></span>
+            
+            <button mat-raised-button color="primary" class="add-post-button" (click)="addPost()">
+              Thêm Bài Viết
+            </button>
+          </div>  
+          
+          <div class="table-responsive m-t-16">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef> Tiêu Đề </th>
+                <td mat-cell *matCellDef="let post">{{ post.title }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> Mô Tả </th>
+                <td mat-cell *matCellDef="let post">
+                  <mat-form-field appearance="fill">
+                    <textarea matInput [(ngModel)]="post.description" rows="1" readonly></textarea>
+                  </mat-form-field>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Giá </th>
+                <td mat-cell *matCellDef="let post">{{ post.price | currency }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef> Địa Điểm </th>
+                <td mat-cell *matCellDef="let post">{{ post.location }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="area">
+                <th mat-header-cell *matHeaderCellDef> Khu Vực </th>
+                <td mat-cell *matCellDef="let post">{{ post.area }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Hành Động </th>
+                <td mat-cell *matCellDef="let post">
+                  <button mat-icon-button color="accent" (click)="editPost(post)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deletePost(post)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+  
+          <mat-paginator [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

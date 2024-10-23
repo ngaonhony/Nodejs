@@ -1,0 +1,70 @@
+<!-- src/app/pages/post-dialog/post-dialog.component.html -->
+<h2 mat-dialog-title>{{ post._id ? 'Cập nhật bài viết' : 'Thêm bài viết' }}</h2>
+<mat-dialog-content>
+  <form>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Tiêu đề</mat-label>
+      <input matInput [(ngModel)]="post.title" name="title" required />
+      <mat-error *ngIf="!post.title">Tiêu đề là bắt buộc.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Mô tả</mat-label>
+      <textarea matInput [(ngModel)]="post.description" name="description" required></textarea>
+      <mat-error *ngIf="!post.description">Mô tả là bắt buộc.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Giá</mat-label>
+      <input type="number" matInput [(ngModel)]="post.price" name="price" required />
+      <mat-error *ngIf="post.price <= 0">Giá phải lớn hơn 0.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Địa điểm</mat-label>
+      <input matInput [(ngModel)]="post.location" name="location" required />
+      <mat-error *ngIf="!post.location">Địa điểm là bắt buộc.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Diện tích</mat-label>
+      <input matInput [(ngModel)]="post.area" name="area" required />
+      <mat-error *ngIf="!post.area">Diện tích là bắt buộc.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Người dùng</mat-label>
+      <mat-select [(ngModel)]="post.userId" name="userId" required>
+        <mat-option *ngFor="let user of users" [value]="user._id">
+          {{ user.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="!post.userId">Người dùng là bắt buộc.</mat-error>
+    </mat-form-field>
+    
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Dịch vụ đặt chỗ</mat-label>
+      <mat-select [(ngModel)]="post.serviceBookingId" name="serviceBookingId" required>
+        <mat-option *ngFor="let booking of serviceBookings" [value]="booking._id">
+          {{ booking.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="!post.serviceBookingId">Dịch vụ đặt chỗ là bắt buộc.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Danh mục</mat-label>
+      <mat-select [(ngModel)]="post.categoryId" name="categoryId" required>
+        <mat-option *ngFor="let category of categories" [value]="category._id">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="!post.categoryId">Danh mục là bắt buộc.</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Hủy</button>
+  <button mat-button (click)="onSave()" [disabled]="!post.title || !post.description || !post.price || !post.location || !post.area || !post.userId || !post.categoryId || !post.serviceBookingId">Lưu</button>
+</mat-dialog-actions>

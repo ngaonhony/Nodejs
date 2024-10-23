@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -9,63 +8,123 @@ class AuthService {
   final String baseUrl = 'http://localhost:3000/api/auth';
   final storage = FlutterSecureStorage();
 
-  // Đăng ký
-  Future<void> register(String username, String email, String password,
+  Future<void> register(String name, String email, String password,
       String phone, String address, String role) async {
     final url = Uri.parse('$baseUrl/register');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
 
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'username': username,
+          'name': name,
           'email': email,
           'password': password,
           'phone': phone,
           'address': address,
-          'role': role,
+          'role': role = 'tenant',
         }),
       );
 
       if (response.statusCode == 201) {
-        print("Đăng ký thành công");
-        await _saveUserInfo(username); // Lưu username khi đăng ký thành công
+        await _saveUserEmail(email);
       } else {
         _handleError(response);
       }
     } catch (e) {
-      print("Exception: $e");
       throw Exception('Đăng ký thất bại: $e');
     }
   }
 
-  // Đăng nhập
-  Future<void> login(String phone, String password) async {
+  Future<void> verifyEmail(String verificationCode) async {
+    final email = await _getUserEmail();
+    if (email == null) {
+      throw Exception("Không có email để xác thực");
+    }
+
+    final url = Uri.parse('$baseUrl/verify');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'verificationCode': verificationCode,
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        await _clearUserEmail();
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Xác thực thất bại: $e');
+    }
+  }
+
+  Future<void> login(String emailOrPhone, String password) async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw Exception('Không có kết nối mạng');
     }
 
+    if (emailOrPhone.isEmpty) {
+      throw Exception('Email hoặc số điện thoại phải được nhập');
+    }
+
+    if (password.isEmpty) {
+      throw Exception('Mật khẩu không được để trống');
+    }
+
     final url = Uri.parse('$baseUrl/login');
+
     try {
+      final bodyData = {
+        'password': password,
+        if (_isValidEmail(emailOrPhone))
+          'email': emailOrPhone
+        else
+          'phone': emailOrPhone
+      };
+
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'phone': phone,
-          'password': password,
-        }),
+        body: jsonEncode(bodyData),
       );
+
+      print('Phản hồi từ API: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        final token = responseData['token'];
-        final username = responseData['username']; // Lấy username từ phản hồi
 
-        await _saveToken(token);
-        await _saveUserInfo(username); // Lưu username khi đăng nhập thành công
-        print("Đăng nhập thành công");
+        if (responseData['user'] != null &&
+            responseData['user']['_id'] != null) {
+          final String userId = responseData['user']['_id'];
+          final String token = responseData['token'];
+
+          // Lưu token và userId vào SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+          await prefs.setString('userId', userId);
+
+          print("Đăng nhập thành công với userId: $userId và token: $token");
+          await _saveToken(token);
+        } else {
+          throw Exception('Phản hồi không chứa thông tin người dùng hợp lệ.');
+        }
       } else {
         _handleError(response);
       }
@@ -75,65 +134,99 @@ class AuthService {
     }
   }
 
-  // Lưu token vào Secure Storage
+  bool _isValidEmail(String input) {
+    final emailRegex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+    return emailRegex.hasMatch(input);
+  }
+
+  Future<void> forgotPassword(String email) async {
+    final url = Uri.parse('$baseUrl/forgot-password');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        await _saveUserEmail(email);
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Quên mật khẩu thất bại: $e');
+    }
+  }
+
+  Future<void> resetPassword(
+      String verificationCode, String newPassword) async {
+    final email = await _getUserEmail();
+    if (email == null) {
+      throw Exception("Không có email để đặt lại mật khẩu");
+    }
+
+    final url = Uri.parse('$baseUrl/reset-password');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'verificationCode': verificationCode,
+          'password': newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        await _clearUserEmail();
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Đặt lại mật khẩu thất bại: $e');
+    }
+  }
+
   Future<void> _saveToken(String token) async {
     await storage.write(key: 'authToken', value: token);
   }
 
-  // Lưu username vào SharedPreferences
-  Future<void> _saveUserInfo(String username) async {
+  Future<void> _saveUserEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
+    await prefs.setString('email', email);
   }
 
-  // Kiểm tra trạng thái đăng nhập
-  Future<bool> isLoggedIn() async {
+  Future<String?> _getUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs
-        .containsKey('username'); // Kiểm tra username trong SharedPreferences
+    return prefs.getString('email');
   }
 
-  // Lấy token từ Secure Storage
+  Future<void> _clearUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+  }
+
   Future<String?> getToken() async {
     return await storage.read(key: 'authToken');
   }
 
-  // Đăng xuất
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username'); // Xóa username khỏi SharedPreferences
-    print("Đăng xuất thành công");
+    await prefs.remove('name');
   }
 
-  // Yêu cầu HTTP với xác thực tự động
-  Future<http.Response> authenticatedRequest(Uri url, String method,
-      {Map<String, String>? headers, dynamic body}) async {
-    final token = await getToken();
-    final authHeaders = {
-      ...?headers,
-      'Authorization': 'Bearer $token',
-    };
-
-    switch (method) {
-      case 'POST':
-        return http.post(url, headers: authHeaders, body: jsonEncode(body));
-      case 'GET':
-      default:
-        return http.get(url, headers: authHeaders);
-    }
-  }
-
-  // Xử lý phản hồi thành công
-  void _handleResponse(http.Response response, String successMessage) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      print(successMessage);
-    } else {
-      _handleError(response);
-    }
-  }
-
-  // Xử lý lỗi từ phản hồi
   void _handleError(http.Response response) {
     final errorData = jsonDecode(response.body);
     final message = errorData['message'] ?? 'Lỗi không xác định';
@@ -148,11 +241,5 @@ class AuthService {
       default:
         throw Exception('Lỗi: $message');
     }
-  }
-
-  // Kiểm tra định dạng email
-  bool validateEmail(String email) {
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    return emailRegex.hasMatch(email);
   }
 }
