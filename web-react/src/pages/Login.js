@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../components/Header';
 import Navigator from '../components/Navigator';
 import Footer from "../components/Footer";
-
+import {Link} from "react-router-dom";
 function Login() {
   return (
     <div className=''>
@@ -40,7 +40,7 @@ function Login() {
                   <input type="checkbox" className="form-checkbox" />
                   <span className="ml-2 text-gray-700 text-lg">Ghi nhớ tôi</span>
                 </label>
-                <a href="/forget-password" className="text-blue-500 hover:underline">Quên mật khẩu?</a>
+                <Link to="/forget-password" className="text-blue-500 hover:underline">Quên mật khẩu?</Link>
               </div>
               <button 
                 type="submit" 
@@ -50,7 +50,7 @@ function Login() {
               </button>
             </form>
             <p className="mt-6 text-center text-gray-700 text-lg">
-              Chưa có tài khoản? <a href="/register" className="text-blue-500 hover:underline">Đăng ký ngay</a>
+              Chưa có tài khoản? <Link to="/register" className="text-blue-500 hover:underline">Đăng ký ngay</Link>
             </p>
           </div>
         </div>

@@ -1,37 +1,64 @@
-import React from 'react';
-
+import React from "react";
+import { Link } from "react-router-dom";
 const RoomListing = () => {
   return (
     <div className="font-sans max-w-2xl mx-auto p-5 border border-gray-300 bg-white">
       {/* Title and Price */}
       <div className="border-b border-gray-300 pb-2 mb-5">
-        <h2 className="text-orange-500 text-xl">⭐ Phòng trọ dạng căn hộ mini cao cấp tại 796 Lê Đức Thọ, P.15, Quận Gò Vấp</h2>
+        <h2 className="text-orange-500 text-xl">
+          ⭐ Phòng trọ dạng căn hộ mini cao cấp tại 796 Lê Đức Thọ, P.15, Quận
+          Gò Vấp
+        </h2>
         <p className="text-2xl text-green-600 font-bold">3 triệu/tháng</p>
       </div>
 
       {/* Location */}
       <div className="mt-5">
-        <p><strong>Địa chỉ:</strong> 796 Đường Lê Đức Thọ, Phường 15, Quận Gò Vấp, Hồ Chí Minh</p>
-        <p><strong>Diện tích:</strong> 30m²</p>
-        <p><strong>Đăng lúc:</strong> 11 giờ trước</p>
-        <p><strong>Mã tin:</strong> 277830</p>
+        <p>
+          <strong>Địa chỉ:</strong> 796 Đường Lê Đức Thọ, Phường 15, Quận Gò
+          Vấp, Hồ Chí Minh
+        </p>
+        <p>
+          <strong>Diện tích:</strong> 30m²
+        </p>
+        <p>
+          <strong>Đăng lúc:</strong> 11 giờ trước
+        </p>
+        <p>
+          <strong>Mã tin:</strong> 277830
+        </p>
       </div>
 
       {/* Listing Details */}
       <div className="mt-5">
-        <h3 className="text-gray-800 border-b border-gray-300 pb-1">Thông tin mô tả</h3>
-        <p>Cho thuê căn hộ mini cao cấp tại 796 Lê Đức Thọ, Phường 15, Quận Gò Vấp, Tp. Hồ Chí Minh.</p>
+        <h3 className="text-gray-800 border-b border-gray-300 pb-1">
+          Thông tin mô tả
+        </h3>
+        <p>
+          Cho thuê căn hộ mini cao cấp tại 796 Lê Đức Thọ, Phường 15, Quận Gò
+          Vấp, Tp. Hồ Chí Minh.
+        </p>
         <p>Diện tích 30m², giá 3 triệu/tháng.</p>
-        <p>Full nội thất: tủ, điều hòa, chăn máy, giường, bếp đầy đủ và 24/24.</p>
+        <p>
+          Full nội thất: tủ, điều hòa, chăn máy, giường, bếp đầy đủ và 24/24.
+        </p>
         <p>Wifi miễn phí, máy nước nóng lạnh.</p>
       </div>
 
       {/* Contact Info */}
       <div className="mt-5">
-        <h3 className="text-gray-800 border-b border-gray-300 pb-1">Thông tin liên hệ</h3>
-        <p><strong>Liên hệ:</strong> Chị Giang</p>
-        <p><strong>Điện thoại:</strong> 0328837249</p>
-        <p><strong>Zalo:</strong> 0328837249</p>
+        <h3 className="text-gray-800 border-b border-gray-300 pb-1">
+          Thông tin liên hệ
+        </h3>
+        <p>
+          <strong>Liên hệ:</strong> Chị Giang
+        </p>
+        <p>
+          <strong>Điện thoại:</strong> 0328837249
+        </p>
+        <p>
+          <strong>Zalo:</strong> 0328837249
+        </p>
       </div>
 
       {/* Map */}
@@ -44,11 +71,12 @@ const RoomListing = () => {
           height="300"
           className="border-none"
           allowFullScreen=""
-          loading="lazy"
-        ></iframe>
+          loading="lazy"></iframe>
       </div>
+      <Link className="btn btn-report btn-outline" to="/feedback-page">
+        <i></i> Gửi phản hồi
+      </Link>
     </div>
   );
 };
-
 export default RoomListing;

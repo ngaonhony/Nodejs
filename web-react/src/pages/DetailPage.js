@@ -3,8 +3,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 import Navigator from "../components/Navigator";
-import { text, location } from "../ultils/constant"; 
-import { ProvinceBtn, ItemSidebar, Landlord } from "../components";
+import { text } from "../ultils/constant"; 
+import { ItemSidebar, Landlord } from "../components";
 import { List } from "./index";
 import Slideshow from "./SlideShow";
 import Detailitem from "../mockdata/DetailItem";
@@ -45,6 +45,7 @@ const DetailPage = () => {
           </div>
           <div className="w-[30%] border flex flex-col gap-4 justify-start items-center">
             <ItemSidebar />
+            
           </div>
         </div>
       </div>

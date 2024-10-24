@@ -1,0 +1,50 @@
+.flame-text {
+    display: inline-block;
+    color: #ff4500; /* Màu chữ chính */
+    font-weight: bold;
+    position: relative;
+    animation: flicker 0.3s infinite alternate;
+  }
+  
+  @keyframes flicker {
+    0% {
+      text-shadow: 
+        0 0 5px #ff4500, 
+        0 0 10px #ff4500, 
+        0 0 20px #ff6347, 
+        0 0 40px #ff4500, 
+        0 0 80px #ff6347;
+      transform: translateY(0);
+    }
+    25% {
+      text-shadow: 
+        0 0 10px #ff6347, 
+        0 0 20px #ff4500, 
+        0 0 30px #ff6347, 
+        0 0 40px #ff4500; 
+      transform: translateY(-2px); /* Di chuyển lên nhẹ */
+    }
+    50% {
+      text-shadow: 
+        0 0 5px #ff4500, 
+        0 0 10px #ff6347, 
+        0 0 20px #ff4500, 
+        0 0 40px #ff6347;
+      transform: translateY(0);
+    }
+    75% {
+      text-shadow: 
+        0 0 15px #ff6347, 
+        0 0 30px #ff4500, 
+        0 0 40px #ff6347; 
+      transform: translateY(-1px); /* Di chuyển lên nhẹ */
+    }
+    100% {
+      text-shadow: 
+        0 0 5px #ff4500, 
+        0 0 10px #ff6347, 
+        0 0 20px #ff4500, 
+        0 0 40px #ff6347;
+      transform: translateY(0);
+    }
+  }

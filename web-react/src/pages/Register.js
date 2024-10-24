@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Navigator from "../components/Navigator";
 import Footer from "../components/Footer";
-
+import {Link} from "react-router-dom";
 function Register() {
   return (
     <div className=''>
@@ -74,9 +74,9 @@ function Register() {
           </form>
           <p className="mt-6 text-center text-gray-700">
             Đã có tài khoản?{" "}
-            <a href="/login" className="text-blue-500 hover:underline">
+            <Link to="/login" className="text-blue-500 hover:underline">
               Đăng nhập ngay
-            </a>
+            </Link>
           </p>
         </div>
       </div>

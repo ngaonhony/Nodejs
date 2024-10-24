@@ -5,6 +5,7 @@ export const path = {
     ForgetPassword:'/forget-password',
     DetailPage: '/detail-page',
     ServicePage: '/service-page',
+    FeedbackPage:'/feedback-page'
 }
 
 export const text = {
