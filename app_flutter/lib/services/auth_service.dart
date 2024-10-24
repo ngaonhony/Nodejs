@@ -3,13 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import "package:jwt_decode/jwt_decode.dart";
 
 class AuthService {
   final String baseUrl = 'http://localhost:3000/api/auth';
   final storage = FlutterSecureStorage();
 
   Future<void> register(String name, String email, String password,
-      String phone, String address, String role) async {
+      String phone, String role) async {
     final url = Uri.parse('$baseUrl/register');
     final connectivityResult = await Connectivity().checkConnectivity();
 
@@ -26,8 +27,7 @@ class AuthService {
           'email': email,
           'password': password,
           'phone': phone,
-          'address': address,
-          'role': role = 'tenant',
+          'role': 'tenant',
         }),
       );
 
@@ -43,6 +43,7 @@ class AuthService {
 
   Future<void> verifyEmail(String verificationCode) async {
     final email = await _getUserEmail();
+
     if (email == null) {
       throw Exception("Không có email để xác thực");
     }
@@ -79,15 +80,12 @@ class AuthService {
     if (connectivityResult == ConnectivityResult.none) {
       throw Exception('Không có kết nối mạng');
     }
-
     if (emailOrPhone.isEmpty) {
       throw Exception('Email hoặc số điện thoại phải được nhập');
     }
-
     if (password.isEmpty) {
       throw Exception('Mật khẩu không được để trống');
     }
-
     final url = Uri.parse('$baseUrl/login');
 
     try {
@@ -105,8 +103,6 @@ class AuthService {
         body: jsonEncode(bodyData),
       );
 
-      print('Phản hồi từ API: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
 
@@ -115,12 +111,10 @@ class AuthService {
           final String userId = responseData['user']['_id'];
           final String token = responseData['token'];
 
-          // Lưu token và userId vào SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
           await prefs.setString('userId', userId);
 
-          print("Đăng nhập thành công với userId: $userId và token: $token");
           await _saveToken(token);
         } else {
           throw Exception('Phản hồi không chứa thông tin người dùng hợp lệ.');
@@ -129,7 +123,6 @@ class AuthService {
         _handleError(response);
       }
     } catch (e) {
-      print("Exception: $e");
       throw Exception('Đăng nhập thất bại: $e');
     }
   }
@@ -224,7 +217,22 @@ class AuthService {
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('name');
+    await prefs.remove('token');
+    await prefs.remove('userId');
+  }
+
+  Future<void> checkTokenExpiration() async {
+    final token = await getToken();
+    if (token == null) {
+      throw Exception('Không tìm thấy token');
+    }
+
+    bool isExpired = Jwt.isExpired(token);
+
+    if (isExpired) {
+      await logout();
+      throw Exception('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+    }
   }
 
   void _handleError(http.Response response) {

@@ -15,7 +15,7 @@ class _AuthInfoState extends State<AuthInfo> {
   @override
   void initState() {
     super.initState();
-    _userData = _userService.getCurrentUser(); // Lấy thông tin người dùng
+    _userData = _userService.getCurrentUser();
   }
 
   @override
@@ -28,7 +28,6 @@ class _AuthInfoState extends State<AuthInfo> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Lỗi: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          // Kiểm tra name từ API có trả về hay không
           final String username = snapshot.data?['name'] ?? 'Người dùng';
           final int balance = snapshot.data?['balance'] ?? 0;
 

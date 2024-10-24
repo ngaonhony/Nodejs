@@ -20,11 +20,10 @@ class _FooterState extends State<Footer> {
     _checkLoginStatus();
   }
 
-  // Kiểm tra trạng thái đăng nhập dựa trên việc có token hay không
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      isLoggedIn = prefs.containsKey('token'); // Kiểm tra có token không
+      isLoggedIn = prefs.containsKey('token');
     });
   }
 

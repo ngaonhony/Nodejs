@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController password = TextEditingController();
 
   bool _isLoading = false;
-
+  bool _obscurePassword = true;
   void _login() async {
     final emailOrPhoneText = emailOrPhone.text.trim();
     final passwordText = password.text.trim();
@@ -61,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
     required String label,
     required TextEditingController controller,
     bool obscureText = false,
+    VoidCallback? togglePasswordVisibility,
   }) {
     return TextField(
       controller: controller,
@@ -74,11 +75,18 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
+        suffixIcon: togglePasswordVisibility != null
+            ? IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: togglePasswordVisibility,
+              )
+            : null,
       ),
     );
   }
 
-  // Widget hỗ trợ khách hàng
   Widget _buildCustomerSupport() {
     return Container(
       color: Colors.blue[800],
@@ -100,6 +108,14 @@ class _LoginPageState extends State<LoginPage> {
               Icon(Icons.phone, color: Colors.green, size: 16),
               SizedBox(width: 8),
               Text('0909316890', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.phone, color: Colors.green, size: 16),
+              SizedBox(width: 8),
+              Text('0374905975', style: TextStyle(color: Colors.white)),
             ],
           ),
         ],
@@ -141,7 +157,12 @@ class _LoginPageState extends State<LoginPage> {
             _buildTextField(
               label: 'MẬT KHẨU',
               controller: password,
-              obscureText: true,
+              obscureText: _obscurePassword,
+              togglePasswordVisibility: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
             ),
             SizedBox(height: 24),
             ElevatedButton(
@@ -169,8 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ForgotPasswordPage()), // Điều hướng đến trang quên mật khẩu
+                          builder: (context) => ForgotPasswordPage()),
                     );
                   },
                   child: Text('Bạn quên mật khẩu?'),

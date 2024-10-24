@@ -6,7 +6,7 @@ import '../components/UI/MenuDrawer.dart';
 import '../screens/search_box.dart';
 import '../components/UI/post_box.dart';
 import '../components/UI/directory.dart';
-import '../components/UI/info_box.dart'; // Import InfoBox
+import '../components/UI/info_box.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,24 +14,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? userId; // Khai báo biến để lưu userId
-
+  String? userId;
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
+    _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
-    // Lấy token và userId từ SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     final String? id = prefs.getString('userId');
 
-    // Nếu đã có token và userId, cập nhật state để hiển thị InfoBox
     if (token != null && id != null) {
       setState(() {
-        userId = id; // Gán giá trị userId
+        userId = id;
       });
     }
   }

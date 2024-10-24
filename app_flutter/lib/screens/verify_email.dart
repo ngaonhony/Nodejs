@@ -1,12 +1,12 @@
+import 'package:app_flutter/pages/login.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../pages/home.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;
-  final String password;
 
-  VerifyEmailScreen({required this.email, required this.password});
+  VerifyEmailScreen({required this.email});
 
   @override
   _VerifyEmailScreenState createState() => _VerifyEmailScreenState();
@@ -21,6 +21,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   void _verifyEmail() async {
     if (_verificationCodeController.text.isEmpty) {
       _showMessage('Vui lòng nhập mã xác thực');
+
       return;
     }
 
@@ -28,14 +29,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     try {
       await _authService.verifyEmail(_verificationCodeController.text.trim());
-
-      await _authService.login(widget.email, widget.password);
-
       _showMessage('Xác thực thành công và đăng nhập tự động!');
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => Home()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
         (route) => false,
       );
     } catch (e) {
@@ -65,7 +63,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-                'Vui lòng nhập mã xác thực đã được gửi tới email ${widget.email}.'),
+                'Vui lòng nhập mã xác thực đã được gửi tới email ${widget.email} ,  .'),
             SizedBox(height: 24),
             TextField(
               controller: _verificationCodeController,

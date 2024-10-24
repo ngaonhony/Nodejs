@@ -14,7 +14,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController phone = TextEditingController();
-  final TextEditingController address = TextEditingController();
+
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -30,8 +30,7 @@ class _RegisterState extends State<Register> {
           email.text.trim(),
           password.text.trim(),
           phone.text.trim(),
-          address.text.trim(),
-          "tenant", // role mặc định là 'tenant'
+          "tenant",
         );
 
         _showMessage(
@@ -41,7 +40,6 @@ class _RegisterState extends State<Register> {
           MaterialPageRoute(
             builder: (context) => VerifyEmailScreen(
               email: email.text.trim(),
-              password: password.text.trim(),
             ),
           ),
           (route) => false,
@@ -59,8 +57,7 @@ class _RegisterState extends State<Register> {
     if (name.text.isEmpty ||
         email.text.isEmpty ||
         password.text.isEmpty ||
-        phone.text.isEmpty ||
-        address.text.isEmpty) {
+        phone.text.isEmpty) {
       _showMessage('Vui lòng điền đầy đủ thông tin');
       return false;
     }
@@ -143,8 +140,6 @@ class _RegisterState extends State<Register> {
                 });
               },
             ),
-            SizedBox(height: 16),
-            _buildTextField(label: 'ĐỊA CHỈ', controller: address),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: _isLoading ? null : _register,

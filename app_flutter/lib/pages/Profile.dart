@@ -1,5 +1,6 @@
 import 'package:app_flutter/pages/home.dart';
 import 'package:app_flutter/pages/login.dart';
+
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,15 +13,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final UserService _userService = UserService(); // Khởi tạo UserService
-  late Future<Map<String, dynamic>>
-      _userData; // Tương lai để chứa dữ liệu người dùng
-  bool isLoggedIn = true; // Khai báo biến kiểm tra trạng thái đăng nhập
-
+  final UserService _userService = UserService();
+  late Future<Map<String, dynamic>> _userData;
+  bool isLoggedIn = true;
   @override
   void initState() {
     super.initState();
-    _userData = _userService.getCurrentUser(); // Gọi API lấy dữ liệu người dùng
+    _userData = _userService.getCurrentUser();
   }
 
   @override
@@ -33,12 +32,9 @@ class _ProfileState extends State<Profile> {
         future: _userData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child:
-                    CircularProgressIndicator()); // Hiển thị khi đang tải dữ liệu
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Lỗi: ${snapshot.error}')); // Hiển thị nếu có lỗi
+            return Center(child: Text('Lỗi: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data != null) {
             final String username = snapshot.data?['name'] ?? 'Người dùng';
             final String memberId = snapshot.data?['memberId'] ?? 'N/A';
@@ -163,9 +159,9 @@ class _ProfileState extends State<Profile> {
       child: ElevatedButton.icon(
         onPressed: () async {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('token'); // Xóa token đăng nhập
+          await prefs.remove('token');
           setState(() {
-            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            isLoggedIn = false;
           });
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => Home()),

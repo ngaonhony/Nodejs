@@ -18,12 +18,8 @@ const sendVerificationEmail = async (email, verificationCode) => {
     console.log("Verification email sent successfully");
   } catch (err) {
     console.error("Error sending verification email:", err);
-    throw new Error("Unable to send verification email"); // Ném lỗi ra để xử lý sau
+    throw new Error("Unable to send verification email");
   }
-};
-
-const generateResetPasswordToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 const sendResetPasswordEmail = async (email, verificationCode) => {
@@ -49,6 +45,5 @@ const sendResetPasswordEmail = async (email, verificationCode) => {
 
 module.exports = {
   sendVerificationEmail,
-  generateResetPasswordToken,
   sendResetPasswordEmail,
 };
