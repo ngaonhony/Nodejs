@@ -7,7 +7,6 @@ const router = express.Router();
 router
   .route("/")
   .get(protect, authorize("admin"), userController.getAllUsers)
-  .post(middlewareUser, userController.createUser);
 
 router
   .route("/:id")

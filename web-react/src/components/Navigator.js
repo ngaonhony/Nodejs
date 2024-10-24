@@ -9,12 +9,12 @@ const nav = [
     { name: "Bảng dịch vụ", path: '/service-page' }
 ]
 
-const notActive = 'hover:bg-[#fb173d] px-4 h-full flex items-center bg-[#8717fb]'
-const active = 'hover:bg-[#fb173d] px-4 h-full flex items-center bg-[#8717fb]'
+const notActive = 'hover:bg-[#fb173d] px-4 h-full flex items-center bg-[#3961fb]'
+const active = 'hover:bg-[#fb173d] px-4 h-full flex items-center bg-[#3961fb]'
 
 const Navigator = () => {
     return (
-        <div className='w-screen flex justify-center items-center h-[50px] bg-[#8717fb] text-white'>
+        <div className='w-screen flex justify-center items-center h-[50px] bg-[#3961fb] text-white'>
             <div className='max-w-1100 flex items-center gap-5 text-sm font-medium '>
                 {nav.length > 0 && nav.map((item, index) => {
 

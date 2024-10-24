@@ -32,7 +32,7 @@ const Header = () => {
                 <Button 
                     text={'đăng tin mới'} 
                     textColor='text-white' 
-                    bgColor='bg-[#8717fb]' 
+                    bgColor='bg-[#3961fb]' 
                     IcAfter={AiOutlinePlusCircle} 
                     path="/new-post" 
                 />
