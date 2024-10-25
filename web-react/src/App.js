@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home, Login,Register,ForgetPassword,DetailPage,ServicePage,FeedbackPage} from './pages'
+  import { Home, Login,Register,ForgetPassword,DetailPage,ServicePage,FeedbackPage,NewPost} from './pages'
   import { path} from './ultils/constant'
 
   function App() {
@@ -13,6 +13,7 @@
           <Route path={path.DetailPage} element={<DetailPage />} />
           <Route path={path.ServicePage} element={<ServicePage />} />
           <Route path={path.FeedbackPage} element={<FeedbackPage />} />
+          <Route path={path.NewPost} element={<NewPost />} />
         </Routes>
       </div>
     );
