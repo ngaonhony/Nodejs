@@ -1,10 +1,12 @@
 export interface User {
   _id?:string;
-  username: string;
+  name: string;
   password: string;
   email: string;
   phone?: string;
   address: string;
   balance: number;
-  role: 'tenant' | 'landlord' | 'admin';
+  role: 'user' | 'admin';
+  createdAt?: Date;
+  updatedAt?: Date;
 }

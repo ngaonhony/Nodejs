@@ -8,21 +8,16 @@ import { ServiceManagementComponent } from './pages/service-management/service-m
 import { ServiceBookingManagementComponent } from './pages/service-booking-management/service-booking-management.component';
 import { FeedbackManagementComponent } from './pages/feedback-management/feedback-management.component';
 import { PaymentManagementComponent } from './pages/payment-management/payment-management.component';
+import { AuthGuard } from './auth/auth.guard'; // Giả sử bạn đã định nghĩa AuthGuard
+import { LoginComponent } from './pages/login/login.component';
 const routes: Routes = [
   {
     path: '',
     component: FullComponent,
+    canActivate: [AuthGuard], 
     children: [
-      {
-        path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
-      },
-      {
-        path: 'dashboard',  
-        loadChildren: () =>
-          import('./pages/pages.module').then((m) => m.PagesModule),
-      },
+      { path: '',redirectTo: '/dashboard',pathMatch: 'full',},
+      { path: 'dashboard',loadChildren: () =>import('./pages/pages.module').then(m => m.PagesModule),},
       { path: 'user-management/list', component: UserManagementComponent },
       { path: 'category-management/list', component: CategoryManagementComponent },
       { path: 'post-management/list', component: PostManagementComponent },
@@ -32,10 +27,13 @@ const routes: Routes = [
       { path: 'payment-management/list', component: PaymentManagementComponent },
     ],
   },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '/login' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule {}

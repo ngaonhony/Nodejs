@@ -38,6 +38,7 @@ import { FeedbackManagementComponent } from './pages/feedback-management/feedbac
 import { FeedbackDialogComponent } from './pages/feedback-management/feedback-dialog/feedback-dialog.component';
 import { PaymentManagementComponent } from './pages/payment-management/payment-management.component';
 import { PaymentDialogComponent } from './pages/payment-management/payment-dialog/payment-dialog.component';
+import { LoginComponent } from './pages/login/login.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,6 +62,7 @@ import { PaymentDialogComponent } from './pages/payment-management/payment-dialo
     //PaymentManagementComponent,
     //PaymentDialogComponent,
     AppNavItemComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

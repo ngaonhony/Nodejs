@@ -1,51 +1,60 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Feedback } from '../models/feedback.model'; // Adjust the path as necessary
+import { Feedback } from '../models/feedback.model'; // Điều chỉnh đường dẫn nếu cần
 
 @Injectable({
   providedIn: 'root',
 })
 export class FeedbackService {
-  private apiUrl = 'http://localhost:3000/api/feedbacks'; // Adjust based on your API
+  private apiUrl = 'http://localhost:3000/api/feedbacks'; // Cập nhật dựa trên API của bạn
 
   constructor(private http: HttpClient) {}
 
-  // Load all feedback
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token'); // Lấy token từ local storage
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`, // Gửi token trong header
+    });
+  }
+
+  // Tải tất cả phản hồi
   getFeedbacks(): Observable<Feedback[]> {
-    return this.http.get<Feedback[]>(this.apiUrl).pipe(
+    return this.http.get<Feedback[]>(this.apiUrl, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error loading feedback', error);
-        return of([]); // Return an empty array on error
+        return of([]); // Trả về mảng rỗng khi có lỗi
       })
     );
   }
 
+  // Thêm phản hồi
   addFeedback(feedback: Feedback): Observable<Feedback | null> {
-    return this.http.post<Feedback>(this.apiUrl, feedback).pipe(
+    return this.http.post<Feedback>(this.apiUrl, feedback, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error adding feedback', error);
-        return of(null); // Return null on error
+        return of(null); // Trả về null khi có lỗi
       })
     );
   }
   
+  // Chỉnh sửa phản hồi
   editFeedback(feedback: Feedback): Observable<Feedback | null> {
-    return this.http.patch<Feedback>(`${this.apiUrl}/${feedback._id}`, feedback).pipe(
+    return this.http.patch<Feedback>(`${this.apiUrl}/${feedback._id}`, feedback, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error editing feedback', error);
-        return of(null); // Return null on error
+        return of(null); // Trả về null khi có lỗi
       })
     );
   }
 
-  // Delete feedback
+  // Xóa phản hồi
   deleteFeedback(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error deleting feedback', error);
-        return of(); // Handle error but return void
+        return of(); // Xử lý lỗi nhưng trả về void
       })
     );
   }

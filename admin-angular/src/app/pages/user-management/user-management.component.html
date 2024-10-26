@@ -18,9 +18,9 @@
         </div>  
         <div class="table-responsive m-t-16">
           <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-            <ng-container matColumnDef="username">
+            <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> Tên Tài Khoản </th>
-              <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+              <td mat-cell *matCellDef="let user">{{ user.name }}</td>
             </ng-container>
 
             <ng-container matColumnDef="email">
@@ -52,7 +52,7 @@
               <td mat-cell *matCellDef="let user">
                 <span
                   [ngClass]="{
-                    'bg-light-success text-success': user.role === 'tenant',
+                    'bg-light-success text-success': user.role === 'user',
                     'bg-light-error text-error': user.role === 'admin',
                     'bg-light-primary text-primary': user.role === 'landlord'
                   }"

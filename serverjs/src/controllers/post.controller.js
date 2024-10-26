@@ -10,6 +10,7 @@ exports.createPost = async (req, res) => {
       location: req.body.location,
       area: req.body.area,
       categoryId: req.body.categoryId,
+      images: req.body.images, // Thêm mảng ảnh vào bài viết
     });
     await post.save();
     res.status(201).send(post);
@@ -35,7 +36,7 @@ exports.getPostById = async (req, res) => {
       .populate("userId", "name")
       .populate("categoryId", "name");
     if (!post) {
-      return res.status(404).send({ message: "post not found" });
+      return res.status(404).send({ message: "Post not found" });
     }
     res.send(post);
   } catch (error) {
@@ -50,7 +51,7 @@ exports.updatePost = async (req, res) => {
       runValidators: true,
     });
     if (!post) {
-      return res.status(404).send({ message: "post not found" });
+      return res.status(404).send({ message: "Post not found" });
     }
     res.send(post);
   } catch (error) {
@@ -62,9 +63,9 @@ exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findByIdAndDelete(req.params.id);
     if (!post) {
-      return res.status(404).send({ message: "post not found" });
+      return res.status(404).send({ message: "Post not found" });
     }
-    res.send({ message: "post deleted successfully" });
+    res.send({ message: "Post deleted successfully" });
   } catch (error) {
     res.status(500).send({ message: "Error deleting post", error });
   }

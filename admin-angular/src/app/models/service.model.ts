@@ -4,6 +4,7 @@ export interface Service {
   price_per_day: number;
   price_per_week: number;
   price_per_month: number;
+  pushPrice: number;
   advantages: boolean;
   title_color: string;
   auto_approval?: boolean;

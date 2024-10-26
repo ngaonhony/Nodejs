@@ -59,3 +59,10 @@
       background-color: #45a049; /* Màu khi hover */
     }
   }
+  .fixed-size {
+    width: 200px; /* Đặt chiều rộng cố định */
+    height: 50px; /* Đặt chiều cao cố định */
+    overflow: hidden; /* Ẩn nội dung thừa */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm (...) cho nội dung quá dài */
+    white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
+  }

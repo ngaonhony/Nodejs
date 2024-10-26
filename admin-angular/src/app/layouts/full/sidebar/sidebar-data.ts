@@ -14,33 +14,32 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'User List',
-    iconName: 'users', // Ví dụ: 'fa-users' từ Font Awesome
+    iconName: 'users',
     route: '/user-management/list',
   },
   {
     displayName: 'Category List',
-    iconName: 'category', // Ví dụ: 'fa-list' từ Font Awesome hoặc 'category' từ Material Icons
+    iconName: 'category',
     route: '/category-management/list',
   },
   {
     displayName: 'Post List',
-    iconName: 'file-text', // Ví dụ: 'fa-file-alt' từ Font Awesome
+    iconName: 'file-text',
     route: '/post-management/list',
   },
   {
     displayName: 'Service List',
-    iconName: 'layout-navbar-expand', // Ví dụ: 'fa-cogs' từ Font Awesome
+    iconName: 'layout-navbar-expand',
     route: '/service-management/list',
   },
   {
     displayName: 'Feedback List',
-    iconName: 'messages', // Ví dụ: 'fa-comments' từ Font Awesome
+    iconName: 'messages',
     route: '/feedback-management/list',
   },
   {
     displayName: 'Payment List',
-    iconName: 'credit-card', // Ví dụ: 'fa-credit-card' từ Font Awesome
+    iconName: 'credit-card',
     route: '/payment-management/list',
   },
-
 ];

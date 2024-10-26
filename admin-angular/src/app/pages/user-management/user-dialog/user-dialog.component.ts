@@ -19,8 +19,7 @@ export class UserDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.userForm = this.fb.group({
-      username: ['', Validators.required],
-      password: [''],
+      name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
       address: ['', Validators.required],
@@ -37,38 +36,32 @@ export class UserDialogComponent {
 
   saveUser() {
     if (this.userForm.valid) {
-        const userData = this.userForm.value;
+      const userData = this.userForm.value;
 
-        // In ra dữ liệu người dùng trước khi gửi
-        console.log('Dữ liệu người dùng:', userData);
+      // In ra dữ liệu người dùng trước khi gửi
+      console.log('Dữ liệu người dùng:', userData);
 
-        if (this.isEditMode) {
-            // Lấy ID từ data.user
-            const userId = this.data.user._id; // Đảm bảo rằng bạn sử dụng _id từ MongoDB
-            console.log('ID người dùng:', userId);
-            if (!userId) {
-                console.error('ID người dùng không hợp lệ.');
-                return;
-            }
-            // Gọi service cập nhật người dùng
-            this.userService.updateUser({ ...userData, _id: userId }).subscribe(
-              () => {
-                  this.dialogRef.close(true);
-              },
-              error => {
-                  console.error('Lỗi cập nhật người dùng', error); // In ra thông báo lỗi
-              }
-          );
-        } else {
-            // Gọi service thêm người dùng
-            this.userService.addUser(userData).subscribe(() => {
-                this.dialogRef.close(true);
-            }, error => {
-                console.error('Lỗi thêm người dùng', error);
-            });
+      if (this.isEditMode) {
+        // Lấy ID từ data.user
+        const userId = this.data.user._id; // Đảm bảo rằng bạn sử dụng _id từ MongoDB
+        console.log('ID người dùng:', userId);
+        if (!userId) {
+          console.error('ID người dùng không hợp lệ.');
+          return;
         }
+
+        // Gọi service cập nhật người dùng
+        this.userService.updateUser({ ...userData, _id: userId }).subscribe(
+          () => {
+            this.dialogRef.close(true);
+          },
+          error => {
+            console.error('Lỗi cập nhật người dùng', error); // In ra thông báo lỗi
+          }
+        );
+      }
     }
-}
+  }
 
   close() {
     this.dialogRef.close();

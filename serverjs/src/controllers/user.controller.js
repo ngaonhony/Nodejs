@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().sort({ createdAt: -1 });
     res.status(200).json({
       status: "success",
       data: {
@@ -32,33 +32,6 @@ exports.getUserById = async (req, res) => {
       status: "success",
       data: {
         user,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "fail",
-      message: error.message,
-    });
-  }
-};
-
-exports.createUser = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Email đã tồn tại",
-      });
-    }
-
-    const newUser = await User.create(req.body);
-    res.status(201).json({
-      status: "success",
-      data: {
-        user: newUser,
       },
     });
   } catch (error) {

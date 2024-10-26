@@ -1,16 +1,12 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Sửa Người Dùng' : 'Thêm Người Dùng' }}</h2>
+<h2 mat-dialog-title>Sửa Người Dùng</h2>
 <mat-dialog-content>
   <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="grid-form">
+    
     <div class="form-row">
       <mat-form-field class="full-width">
         <mat-label>Tên Tài Khoản</mat-label>
-        <input matInput formControlName="username" required>
-        <mat-error *ngIf="userForm.get('username')?.hasError('required')">Tên tài khoản là bắt buộc!</mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="full-width" *ngIf="!isEditMode">
-        <mat-label>Mật Khẩu</mat-label>
-        <input matInput type="password" formControlName="password" required>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="userForm.get('name')?.hasError('required')">Tên tài khoản là bắt buộc!</mat-error>
       </mat-form-field>
     </div>
 
@@ -47,8 +43,7 @@
       <mat-form-field class="full-width">
         <mat-label>Vai Trò</mat-label>
         <mat-select formControlName="role" required>
-          <mat-option value="tenant">Người Thuê</mat-option>
-          <mat-option value="landlord">Chủ Nhà</mat-option>
+          <mat-option value="user">Người Dùng</mat-option>
           <mat-option value="admin">Quản Trị Viên</mat-option>
         </mat-select>
       </mat-form-field>
@@ -56,7 +51,7 @@
 
     <div mat-dialog-actions>
       <button mat-button (click)="close()">Hủy</button>
-      <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Cập Nhật' : 'Thêm Người Dùng' }}</button>
+      <button mat-raised-button color="primary" type="submit">Cập Nhật</button>
     </div>
   </form>
 </mat-dialog-content>

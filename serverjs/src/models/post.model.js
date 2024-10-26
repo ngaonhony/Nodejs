@@ -17,10 +17,15 @@ const postSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    servicesId: { 
+    servicesBookingId: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Service',
-      required: true, },
+      ref: 'ServiceBooking',
+      required: true,
+    },
+    images: { 
+      type: [String], 
+      required: true,
+    },
     created_at: { type: Date, default: Date.now },
   },
   { timestamps: true }

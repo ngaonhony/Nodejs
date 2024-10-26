@@ -105,6 +105,50 @@ exports.login = asyncHandler(async (req, res) => {
   winston.info(`Người dùng ${user.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
+exports.adminLogin = asyncHandler(async (req, res) => {
+  const { email, phone, password } = req.body;
+  
+  // Tìm kiếm người dùng với quyền admin
+  const admin = await User.findOne({
+    $or: [{ email }, { phone }],
+    role: 'admin'  // Kiểm tra xem người dùng có phải là admin không
+  }).select("+password");
+
+  if (!admin) {
+    return res.status(401).json({
+      message: "Email, số điện thoại hoặc mật khẩu không chính xác",
+    });
+  }
+
+  if (!admin.verified) {
+    return res.status(403).json({ message: "Tài khoản chưa được xác thực" });
+  }
+
+  const isMatch = await admin.matchPassword(password);
+  if (!isMatch) {
+    return res.status(401).json({
+      message: "Email, số điện thoại hoặc mật khẩu không chính xác",
+    });
+  }
+
+  const token = generateToken(admin);
+
+  res.status(200).json({
+    message: "Đăng nhập admin thành công",
+    token,
+    user: {
+      _id: admin._id,
+      name: admin.name,
+      email: admin.email,
+      balance: admin.balance,
+      phone: admin.phone,
+      address: admin.address,
+    },
+  });
+
+  winston.info(`Admin ${admin.email} đã đăng nhập từ IP: ${req.ip}`);
+});
+
 // Đăng xuất người dùng
 exports.logout = asyncHandler((req, res) => {
   res.clearCookie("refreshToken");

@@ -38,9 +38,9 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.authorize = (...roles) => {
+exports.authorize = (...role) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!role.includes(req.user.role)) {
       return res.status(403).json({ message: "Không có quyền truy cập" });
     }
     next();

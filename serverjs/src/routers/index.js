@@ -1,17 +1,19 @@
 const userRouter = require("./userRouters");
-const imageRouter = require("./imageRouters");
 const categoryRouter = require("./categoryRouters");
 const feedbackRouter = require("./feedbackRouters");
 const postRouter = require("./postRouters");
 const authRouter = require("./authRouter");
+const serviceRouter = require("./serviceRouters");
+const serviceBookingRouter = require("./serviceBookingRouters");
 
 const initRoutes = (app) => {
   app.use("/api/users", userRouter);
-  app.use("/api/images", imageRouter);
   app.use("/api/categories", categoryRouter);
   app.use("/api/feedbacks", feedbackRouter);
   app.use("/api/posts", postRouter);
   app.use("/api/auth", authRouter);
+  app.use("/api/services", serviceRouter);
+  app.use("/api/service-bookings", serviceBookingRouter);
   app.get("/", (req, res) => {
     res.send("Server đã khởi động ......");
   });

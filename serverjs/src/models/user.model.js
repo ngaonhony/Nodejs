@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    password: { type: String, required: true, minlength: 6, select: false }, // Ẩn password khi truy vấn
+    password: { type: String, required: true, minlength: 6, select: false }, 
     email: {
       type: String,
       required: true,
@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["tenant", "landlord", "admin"],
-      required: true,
+      enum: ["user", "admin"],
+      default: "user",
     },
     verified: {
       type: Boolean,
