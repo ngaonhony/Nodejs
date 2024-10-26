@@ -1,3 +1,5 @@
+import { NewPost } from "../pages";
+
 export const path = {
     Home: '/*',
     Login: '/login',
@@ -5,7 +7,8 @@ export const path = {
     ForgetPassword:'/forget-password',
     DetailPage: '/detail-page',
     ServicePage: '/service-page',
-    FeedbackPage:'/feedback-page'
+    FeedbackPage:'/feedback-page',
+    NewPost:'/new-post'
 }
 
 export const text = {
