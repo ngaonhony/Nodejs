@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { NewPost } from "../pages";
+>>>>>>> 37e95e4197e0625927b991571ca292b2cdd97a3a
 
 export const path = {
     Home: '/*',
@@ -7,7 +11,11 @@ export const path = {
     DetailPage: '/detail-page',
     ServicePage: '/service-page',
     FeedbackPage:'/feedback-page',
+<<<<<<< HEAD
     NewPost:'/mangement/new-post'
+=======
+    NewPost:'/new-post'
+>>>>>>> 37e95e4197e0625927b991571ca292b2cdd97a3a
 }
 
 export const text = {
