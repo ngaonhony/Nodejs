@@ -8,13 +8,9 @@ export { default as DetailPage } from './DetailPage'
 export { default as ServicePage } from './ServicePage'
 export { default as FeedbackPage } from './FeedbackPage'
 export { default as SlideShow } from './SlideShow'
-<<<<<<< HEAD
 export { default as NewPost } from './NewPost'
 export { default as ManagePostPage } from './ManagePostPage'
 export { default as UpdateProfilePage } from './UpdateProfilePage'
 export { default as RechargePage } from './RechargePage'
 export { default as RechargeHistoryPage } from './RechargeHistoryPage'
 export { default as PaymentHistoryPage } from './PaymentHistoryPage'
-=======
-export { default as NewPost } from './NewPost'
->>>>>>> 37e95e4197e0625927b991571ca292b2cdd97a3a
