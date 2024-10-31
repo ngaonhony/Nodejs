@@ -34,7 +34,7 @@ const Header = () => {
                     textColor='text-white' 
                     bgColor='bg-[#3961fb]' 
                     IcAfter={AiOutlinePlusCircle} 
-                    path="/new-post" 
+                    path="/management/new-post" 
                 />
             </div>
         </div>

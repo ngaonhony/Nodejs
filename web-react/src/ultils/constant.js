@@ -1,4 +1,3 @@
-import { NewPost } from "../pages";
 
 export const path = {
     Home: '/*',
@@ -8,7 +7,7 @@ export const path = {
     DetailPage: '/detail-page',
     ServicePage: '/service-page',
     FeedbackPage:'/feedback-page',
-    NewPost:'/new-post'
+    NewPost:'/mangement/new-post'
 }
 
 export const text = {
