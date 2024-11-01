@@ -51,3 +51,16 @@ export const verifyCode = async (email, verificationCode) => {
     throw new Error(errorMessage); // Throw error with specific message
   }
 };
+
+export const resendVerificationCode = async (email) => {
+  try {
+    const response = await axios.post(`${API_URL}/resend`, {
+      email, // Send the email to resend the code
+    });
+    return response.data; // Return the response from the server
+  } catch (error) {
+    console.error('Resend code error:', error.response?.data); // Log the error
+    const errorMessage = error.response?.data?.message || 'Gửi mã xác thực thất bại';
+    throw new Error(errorMessage); // Throw an error with a specific message
+  }
+};

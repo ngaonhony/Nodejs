@@ -3,7 +3,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Navigator from "../components/Navigator";
 import Footer from "../components/Footer";
-import { verifyCode } from '../services/authService';
+import { verifyCode, resendVerificationCode } from '../services/authService';
 
 function Verification() {
   const location = useLocation();
@@ -14,6 +14,14 @@ function Verification() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const handleResend = async () => {
+    try {
+      const response = await resendVerificationCode(email); // Call the resend function
+      setSuccessMessage(response.message); // Show success message
+    } catch (err) {
+      setError(err.message); // Show error message
+    }
+  };
   const handleVerify = async (e) => {
     e.preventDefault();
     setError('');
@@ -64,7 +72,9 @@ function Verification() {
             </button>
           </form>
           <p className="mt-6 text-center text-gray-700">
-            Nếu bạn không nhận được email, hãy kiểm tra thư mục spam hoặc <Link to="/resend" className="text-blue-500 hover:underline">nhấn vào đây để gửi lại</Link>.
+            Nếu bạn không nhận được email, hãy kiểm tra thư mục spam hoặc <button onClick={handleResend} className="text-blue-600 hover:underline">
+      Gửi lại mã xác thực
+    </button>
           </p>
           <Link to="/login" className="text-blue-600 hover:underline mt-4 block text-center">
             Quay lại trang đăng nhập

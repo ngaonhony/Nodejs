@@ -223,6 +223,27 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Xác thực thành công" });
 });
 
+exports.resendVerificationCode = async (req, res) => {
+  const { email } = req.body;
+
+  // Find the user by email
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: "Người dùng không tồn tại." });
+  }
+
+  // Generate a new verification code
+  const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  user.verificationCode = newVerificationCode;
+  await user.save();
+
+  // Send the new verification email
+  await sendVerificationEmail(email, newVerificationCode);
+
+  res.status(200).json({ message: "Mã xác thực mới đã được gửi đến email của bạn." });
+};
+
 // Quên mật khẩu
 exports.forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
