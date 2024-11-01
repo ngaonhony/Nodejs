@@ -1,30 +1,31 @@
+// Import các thư viện cần thiết
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
-
 const {
   sendVerificationEmail,
   sendResetPasswordEmail,
 } = require("../utils/email");
 const winston = require("winston");
 
-const generateToken = (user) => {
+// Tạo Access Token
+const generateAccessToken = (user) => {
   return jwt.sign(
-    {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-      balance: user.balance,
-      phone: user.phone,
-      address: user.address,
-      name: user.name,
-    },
+    { id: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "30m" }
   );
 };
 
+// Tạo Refresh Token
+const generateRefreshToken = (user) => {
+  return jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
+};
+
+// Đăng ký người dùng mới
 exports.register = async (req, res) => {
   const { email, password, name, phone, role } = req.body;
   try {
@@ -63,16 +64,17 @@ exports.register = async (req, res) => {
   }
 };
 
+// Đăng nhập
 exports.login = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
-  const user = await User.findOne({
-    $or: [{ email }, { phone }],
-  }).select("+password");
+  const user = await User.findOne({ $or: [{ email }, { phone }] }).select(
+    "+password"
+  );
 
   if (!user) {
-    return res.status(401).json({
-      message: "Email, số điện thoại hoặc mật khẩu không chính xác",
-    });
+    return res
+      .status(401)
+      .json({ message: "Email, số điện thoại hoặc mật khẩu không chính xác" });
   }
 
   if (!user.verified) {
@@ -81,23 +83,30 @@ exports.login = asyncHandler(async (req, res) => {
 
   const isMatch = await user.matchPassword(password);
   if (!isMatch) {
-    return res.status(401).json({
-      message: "Email, số điện thoại hoặc mật khẩu không chính xác",
-    });
+    return res
+      .status(401)
+      .json({ message: "Email, số điện thoại hoặc mật khẩu không chính xác" });
   }
 
-  const token = generateToken(user);
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  // Lưu Refresh Token vào cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+  });
 
   res.status(200).json({
     message: "Đăng nhập thành công",
-    token,
+    accessToken,
     user: {
       _id: user._id,
       name: user.name,
       email: user.email,
       balance: user.balance,
       phone: user.phone,
-      password: user.password,
       address: user.address,
     },
   });
@@ -130,12 +139,20 @@ exports.adminLogin = asyncHandler(async (req, res) => {
       message: "Email, số điện thoại hoặc mật khẩu không chính xác",
     });
   }
+  const accessToken = generateAccessToken(admin);
+  const refreshToken = generateRefreshToken(admin);
 
-  const token = generateToken(admin);
+  // Lưu Refresh Token vào cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+  });
+
 
   res.status(200).json({
     message: "Đăng nhập admin thành công",
-    token,
+    accessToken,
     user: {
       _id: admin._id,
       name: admin.name,
@@ -149,7 +166,37 @@ exports.adminLogin = asyncHandler(async (req, res) => {
   winston.info(`Admin ${admin.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
-// Đăng xuất người dùng
+// API cấp lại Access Token mới từ Refresh Token
+exports.refreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Chưa đăng nhập" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ message: "Người dùng không tồn tại" });
+    }
+
+    const newAccessToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30m" }
+    );
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    return res
+      .status(403)
+      .json({ message: "Refresh Token không hợp lệ hoặc đã hết hạn" });
+  }
+};
+
+// Đăng xuất
 exports.logout = asyncHandler((req, res) => {
   res.clearCookie("refreshToken");
   res.status(200).json({ message: "Đăng xuất thành công" });
@@ -204,14 +251,14 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
 exports.resetPassword = asyncHandler(async (req, res) => {
   const { verificationCode, password } = req.body;
   const user = await User.findOne({
-    verificationCode: verificationCode,
+    verificationCode,
     resetPasswordExpires: { $gt: Date.now() },
   });
 
   if (!user) {
-    return res.status(400).json({
-      message: "Mã khôi phục mật khẩu không hợp lệ hoặc đã hết hạn",
-    });
+    return res
+      .status(400)
+      .json({ message: "Mã khôi phục mật khẩu không hợp lệ hoặc đã hết hạn" });
   }
 
   const saltRounds = 10;

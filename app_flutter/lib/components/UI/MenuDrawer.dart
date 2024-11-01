@@ -1,8 +1,10 @@
 import 'package:app_flutter/pages/Profile.dart';
 import 'package:app_flutter/pages/home.dart';
+import 'package:app_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/user_service.dart';
+import '../../services/feedback.dart';
 import '../../pages/login.dart';
 import '../../pages/register.dart';
 
@@ -15,7 +17,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
   String? username;
   String? phoneNumber;
   bool isLoggedIn = false;
-  final UserService _userService = UserService(); // Initialize UserService
+  final UserService _userService = UserService();
+  final AuthService auth = AuthService(); // Initialize UserService
 
   @override
   void initState() {
@@ -25,7 +28,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token'); // Retrieve token
+    final String? token = prefs.getString('accessToken'); // Retrieve token
 
     if (token != null) {
       // If there's a token, fetch user info from API
@@ -165,13 +168,15 @@ class _MenuDrawerState extends State<MenuDrawer> {
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton.icon(
         onPressed: () async {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('token');
+          await auth.logout(); // Gọi hàm logout từ AuthService
+
           setState(() {
             isLoggedIn = false;
           });
+
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(
+                builder: (context) => LoginPage()), // Chuyển về trang đăng nhập
             (route) => false,
           );
         },

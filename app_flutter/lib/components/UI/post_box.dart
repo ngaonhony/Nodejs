@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
 import 'Post_Details.dart';
 
-class ProductForm extends StatelessWidget {
+class PostBox extends StatelessWidget {
+  final String postId;
+  final String title;
+  final String price; // Changed to String
+  final String area; // Changed to String
+  final String location;
+  final String imageUrl;
+
+  PostBox({
+    required this.postId,
+    required this.title,
+    required this.price,
+    required this.area,
+    required this.location,
+    required this.imageUrl,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -10,7 +26,9 @@ class ProductForm extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ChiTietPhongTroPage()),
+            MaterialPageRoute(
+              builder: (context) => PostDetails(postId: postId),
+            ),
           );
         },
         child: Card(
@@ -32,7 +50,9 @@ class ProductForm extends StatelessWidget {
                         top: Radius.circular(10),
                       ),
                       image: DecorationImage(
-                        image: AssetImage('assets/images/hcm.jpg'),
+                        image: NetworkImage(imageUrl.isNotEmpty
+                            ? imageUrl
+                            : 'https://via.placeholder.com/200'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -76,7 +96,7 @@ class ProductForm extends StatelessWidget {
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'PHÒNG 2,5TR FULL ĐỒ CÁCH ĐẠI HỌC MỞ 500M',
+                            title,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -88,7 +108,7 @@ class ProductForm extends StatelessWidget {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      '2.5 triệu/tháng',
+                      price,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -96,11 +116,11 @@ class ProductForm extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '20 m²',
+                      area,
                       style: TextStyle(fontSize: 14),
                     ),
                     Text(
-                      'Quận Bắc Từ Liêm, Hà Nội',
+                      location,
                       style: TextStyle(fontSize: 14),
                     ),
                   ],
@@ -115,21 +135,23 @@ class ProductForm extends StatelessWidget {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Handle call action
+                        // Xử lý hành động gọi
                       },
                       icon: Icon(Icons.call),
-                      label: Text('Gọi 0988584566'),
+                      label: Text('Gọi liên hệ'),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
+                        backgroundColor: Colors.blue,
+                      ),
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Handle Zalo action
+                        // Xử lý hành động nhắn tin qua Zalo
                       },
                       icon: Icon(Icons.message),
                       label: Text('Nhắn Zalo'),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlue),
+                        backgroundColor: Colors.lightBlue,
+                      ),
                     ),
                   ],
                 ),
@@ -137,7 +159,7 @@ class ProductForm extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Cập nhật: 8 giờ trước',
+                  'Cập nhật: Vài giờ trước', // Có thể thay đổi thành dynamic nếu server cung cấp dữ liệu này
                   style: TextStyle(color: Colors.grey),
                 ),
               ),

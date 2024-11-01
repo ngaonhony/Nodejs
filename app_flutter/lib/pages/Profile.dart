@@ -3,6 +3,7 @@ import 'package:app_flutter/pages/login.dart';
 
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
+import '../../services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -14,6 +15,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final UserService _userService = UserService();
+  final AuthService auth = AuthService();
   late Future<Map<String, dynamic>> _userData;
   bool isLoggedIn = true;
   @override
@@ -158,13 +160,15 @@ class _ProfileState extends State<Profile> {
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton.icon(
         onPressed: () async {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('token');
+          await auth.logout(); // Gọi hàm logout từ AuthService
+
           setState(() {
             isLoggedIn = false;
           });
+
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(
+                builder: (context) => LoginPage()), // Chuyển về trang đăng nhập
             (route) => false,
           );
         },

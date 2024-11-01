@@ -14,7 +14,7 @@ class UserService {
   Future<Map<String, dynamic>> getCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
-    final token = prefs.getString('token');
+    final token = prefs.getString('accessToken');
 
     if (userId == null || token == null) {
       throw Exception('Không tìm thấy thông tin người dùng hoặc token');

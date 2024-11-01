@@ -109,10 +109,10 @@ class AuthService {
         if (responseData['user'] != null &&
             responseData['user']['_id'] != null) {
           final String userId = responseData['user']['_id'];
-          final String token = responseData['token'];
+          final String token = responseData['accessToken'];
 
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
+          await prefs.setString('accessToken', token);
           await prefs.setString('userId', userId);
 
           await _saveToken(token);
@@ -217,8 +217,35 @@ class AuthService {
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+    await prefs.remove('accessToken');
     await prefs.remove('userId');
+  }
+
+  Future<void> refreshToken() async {
+    final url = Uri.parse('$baseUrl/refresh-token');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final String newToken = responseData['accessToken'];
+
+        await _saveToken(newToken);
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Làm mới token thất bại: $e');
+    }
   }
 
   Future<void> checkTokenExpiration() async {
@@ -230,8 +257,12 @@ class AuthService {
     bool isExpired = Jwt.isExpired(token);
 
     if (isExpired) {
-      await logout();
-      throw Exception('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+      try {
+        await refreshToken();
+      } catch (e) {
+        await logout();
+        throw Exception('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+      }
     }
   }
 
