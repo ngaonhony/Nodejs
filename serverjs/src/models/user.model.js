@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       match: [/^\d+$/, "Số điện thoại chỉ chứa số"],
       trim: true,
     },
-    address: { type: String, required: true, trim: true },
+    address: { type: String, trim: true },
     balance: {
       type: Number,
       default: 0.0,
