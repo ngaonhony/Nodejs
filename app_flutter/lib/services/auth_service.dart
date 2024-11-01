@@ -9,8 +9,8 @@ class AuthService {
   final String baseUrl = 'http://localhost:3000/api/auth';
   final storage = FlutterSecureStorage();
 
-  Future<void> register(String name, String email, String password,
-      String phone, String role) async {
+  Future<void> register(
+      String name, String email, String password, String phone) async {
     final url = Uri.parse('$baseUrl/register');
     final connectivityResult = await Connectivity().checkConnectivity();
 
@@ -27,7 +27,6 @@ class AuthService {
           'email': email,
           'password': password,
           'phone': phone,
-          'role': 'tenant',
         }),
       );
 
@@ -72,6 +71,36 @@ class AuthService {
       }
     } catch (e) {
       throw Exception('Xác thực thất bại: $e');
+    }
+  }
+
+  Future<void> resendVerificationCode() async {
+    final email = await _getUserEmail();
+    if (email == null) {
+      throw Exception("Không có email để gửi lại mã xác thực");
+    }
+
+    final url = Uri.parse('$baseUrl/resend');
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('Không có kết nối mạng');
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        // Có thể thêm logic tại đây nếu cần sau khi gửi lại mã thành công
+      } else {
+        _handleError(response);
+      }
+    } catch (e) {
+      throw Exception('Gửi lại mã xác thực thất bại: $e');
     }
   }
 

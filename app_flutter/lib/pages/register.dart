@@ -25,13 +25,11 @@ class _RegisterState extends State<Register> {
       setState(() => _isLoading = true);
 
       try {
-        // Thực hiện đăng ký
         await _authService.register(
           name.text.trim(),
           email.text.trim(),
           password.text.trim(),
           phone.text.trim(),
-          "tenant",
         );
 
         _showMessage(

@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    password: { type: String, required: true, minlength: 6, select: false }, 
+    password: { type: String, required: true, minlength: 6, select: false },
     email: {
       type: String,
       required: true,
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       match: [/^\d+$/, "Số điện thoại chỉ chứa số"],
       trim: true,
     },
-    address: { type: String, trim: true },
+    address: { type: String, required: false, trim: true },
     balance: {
       type: Number,
       default: 0.0,
