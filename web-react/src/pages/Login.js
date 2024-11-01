@@ -1,28 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import Navigator from '../components/Navigator';
-import Footer from "../components/Footer";
-import {Link} from "react-router-dom";
+import Footer from '../components/Footer';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../services/authService';
+
 function Login() {
+  const [account, setAccount] = useState(''); // Thay đổi từ email thành account
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await login(account, password);
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+      const errorMessage = err.response?.data?.message || 'Đăng nhập thất bại'; // Chỉ lấy thông báo lỗi dạng chuỗi
+      setError(errorMessage); 
+    }
+  };
   return (
-    <div className=''>
+    <div>
       <div className="w-full flex flex-col items-center h-full border">
         <Header />
       </div>
       <Navigator />
       <div className="flex-grow flex items-center justify-center">
-        <div className="w-full fixed-w-1200 flex justify-center"> {/* Outer container with width 1200px */}
-          <div className="bg-white shadow-2xl rounded-lg bg-gray-100 p-10 mt-4 mb-4 max-w-[600px] w-full"> {/* Inner login form with max width 600px */}
+        <div className="w-full fixed-w-1200 flex justify-center"> 
+          <div className="bg-white shadow-2xl rounded-lg bg-gray-100 p-10 mt-4 mb-4 max-w-[600px] w-full">
             <h1 className="text-4xl font-bold mb-8 text-center">Đăng Nhập Tài Khoản</h1>
-            <form>
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+            <form onSubmit={handleSubmit}>
               <div className="mb-6">
-                <label htmlFor="email" className="block text-gray-700 mb-2 text-lg">Email</label>
+                <label htmlFor="account" className="block text-gray-700 mb-2 text-lg">Email hoặc Số Điện Thoại</label>
                 <input 
-                  type="email" 
-                  id="email" 
+                  type="text" 
+                  id="account" 
                   className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="Nhập email của bạn" 
-                  required 
+                  placeholder="Nhập email hoặc số điện thoại của bạn" 
+                  value={account}
+                  onChange={(e) => setAccount(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-6">
@@ -32,7 +58,9 @@ function Login() {
                   id="password" 
                   className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                   placeholder="Nhập mật khẩu của bạn" 
-                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required  
                 />
               </div>
               <div className="flex items-center justify-between mb-6">
