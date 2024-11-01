@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home, Login,Register,ForgetPassword,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage} from './pages'
+  import { Home, Login,Register,VerificationPage,ForgetPassword,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage} from './pages'
 
   function App() {
     return (
@@ -8,6 +8,7 @@
           <Route path='/*' element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/verify' element={<VerificationPage />} />
           <Route path='/forget-password' element={<ForgetPassword />} />
           <Route path= '/detail-page' element={<DetailPage />} />
           <Route path='/service-page' element={<ServicePage />} />

@@ -6,8 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService"; // Giả sử bạn có một hàm register trong authService
 
 function Register() {
-  const [username, setUsername] = useState('');
+  const [name, setname] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,10 +25,9 @@ function Register() {
     }
 
     try {
-      const response = await register({ username, email, password });
-      // Giả sử API trả về người dùng đã đăng ký thành công
-      if (response.user) {
-        navigate('/login'); // Chuyển hướng đến trang đăng nhập
+      const response = await register({ name, email, phone, password });
+      if (response) {
+        navigate('/verify', { state: { email } });
       }
     } catch (err) {
       console.error('Registration failed:', err);
@@ -42,22 +42,22 @@ function Register() {
         <Header />
       </div>
       <Navigator />
-      <div className="flex flex-col h-screen items-center bg-gray-100 font-sans leading-normal tracking-normal">
+      <div className="flex flex-col items-center bg-gray-100 font-sans leading-normal tracking-normal">
         <div className="bg-white shadow-2xl rounded-lg p-10 mt-4 mb-4 max-w-[600px] w-full">
           <h1 className="text-4xl font-bold mb-8 text-center">Đăng Ký Tài Khoản</h1>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label htmlFor="username" className="block text-gray-700 mb-2">
-                Tên Đăng Nhập
+              <label htmlFor="name" className="block text-gray-700 mb-2">
+                Họ và Tên
               </label>
               <input
                 type="text"
-                id="username"
+                id="name"
                 className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nhập tên đăng nhập"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Nhập tên của bạn"
+                value={name}
+                onChange={(e) => setname(e.target.value)}
                 required
               />
             </div>
@@ -72,6 +72,20 @@ function Register() {
                 placeholder="Nhập email của bạn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label htmlFor="email" className="block text-gray-700 mb-2">
+                Số điện thoại
+              </label>
+              <input
+                type="text"
+                id="phone"
+                className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nhập số điện thoại của bạn"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 required
               />
             </div>

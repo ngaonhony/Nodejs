@@ -205,19 +205,22 @@ exports.logout = asyncHandler((req, res) => {
 
 // Xác thực email
 exports.verifyEmail = asyncHandler(async (req, res) => {
-  const { verificationCode } = req.body;
-  const user = await User.findOne({ verificationCode });
+  const { verificationCode, email } = req.body; // Get email and verification code from request body
+
+  // Find the user by email and verification code
+  const user = await User.findOne({ email, verificationCode });
 
   if (!user) {
-    return res.status(404).json({ message: "Mã xác thực không hợp lệ" });
+    return res.status(404).json({ message: "Mã xác thực hoặc email không hợp lệ." });
   }
 
+  // Update user verification status
   user.verified = true;
-  user.verificationCode = undefined;
+  user.verificationCode = undefined; // Clear the verification code
   await user.save();
 
   winston.info(`Xác thực email thành công cho người dùng: ${user.email}`);
-  res.status(200).json({ message: "Xác thực email thành công" });
+  res.status(200).json({ message: "Xác thực thành công" });
 });
 
 // Quên mật khẩu
