@@ -23,7 +23,7 @@ class _FooterState extends State<Footer> {
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      isLoggedIn = prefs.containsKey('token');
+      isLoggedIn = prefs.containsKey('accessToken');
     });
   }
 

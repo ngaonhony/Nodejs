@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../components/footer.dart';
-import '../components/header.dart';
 import '../components/UI/MenuDrawer.dart';
 import '../screens/search_box.dart';
 import '../components/UI/post_box.dart';
 import '../components/UI/directory.dart';
 import '../components/UI/info_box.dart';
+import '../services/post_service.dart';
+import '../components/footer.dart';
+import '../components/header.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,15 +16,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String? userId;
+  Future<List<dynamic>>? _postsFuture;
+
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    _postsFuture = _fetchPosts(); // Gọi API lấy dữ liệu bài đăng
   }
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token');
+    final String? token = prefs.getString('accessToken');
     final String? id = prefs.getString('userId');
 
     if (token != null && id != null) {
@@ -31,6 +35,12 @@ class _HomeState extends State<Home> {
         userId = id;
       });
     }
+  }
+
+  Future<List<dynamic>> _fetchPosts() async {
+    // Gọi hàm từ PostApiService để lấy danh sách bài đăng
+    final posts = await PostApiService().getAllPosts();
+    return posts;
   }
 
   @override
@@ -59,11 +69,11 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 8),
             _buildFeaturedAreas(),
             const SizedBox(height: 16),
-            ...List.generate(3, (index) => ProductForm()),
+            _buildPostList(), // Thêm danh sách bài đăng
           ],
         ),
       ),
-      bottomNavigationBar: Footer(), // Footer includes the button now
+      bottomNavigationBar: Footer(),
     );
   }
 
@@ -107,7 +117,12 @@ class _HomeState extends State<Home> {
         children: featuredAreas.map((area) {
           return Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: _buildFeaturedArea(area['title']!, area['imagePath']!),
+            child: GestureDetector(
+              onTap: () {
+                // Hành động khi nhấn vào từng khu vực nổi bật
+              },
+              child: _buildFeaturedArea(area['title']!, area['imagePath']!),
+            ),
           );
         }).toList(),
       ),
@@ -148,6 +163,44 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  // Thêm hàm này để hiển thị danh sách bài đăng từ API
+  Widget _buildPostList() {
+    return FutureBuilder<List<dynamic>>(
+      future: _postsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Lỗi khi tải dữ liệu'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('Không có bài đăng nào'));
+        }
+
+        final posts = snapshot.data!;
+        return ListView.builder(
+          shrinkWrap:
+              true, // Cho phép danh sách bên trong SingleChildScrollView
+          physics: NeverScrollableScrollPhysics(), // Vô hiệu hóa cuộn riêng
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts[index];
+            return PostBox(
+              postId: post['_id'] ?? '',
+              title: post['title'] ?? 'Không có tiêu đề',
+              price: '${(post['price'] ?? 0).toString()} triệu/tháng',
+              area: '${(post['area'] ?? 0).toString()} m²',
+              location:
+                  '${post['address']?['district'] ?? ""}, ${post['address']?['province'] ?? ""}',
+              imageUrl: post['imageUrl'] != null && post['imageUrl'].isNotEmpty
+                  ? post['imageUrl'][0]
+                  : 'https://via.placeholder.com/200', // URL dự phòng nếu không có hình ảnh
+            );
+          },
+        );
+      },
     );
   }
 }

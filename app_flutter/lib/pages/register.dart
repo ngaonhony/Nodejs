@@ -1,3 +1,4 @@
+import 'package:app_flutter/pages/home.dart';
 import 'package:app_flutter/pages/login.dart';
 import 'package:flutter/material.dart';
 import '../screens/verify_email.dart'; // Màn hình xác thực email
@@ -117,6 +118,17 @@ class _RegisterState extends State<Register> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 1,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.home, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Home()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
