@@ -7,7 +7,8 @@ export const path = {
     DetailPage: '/detail-page',
     ServicePage: '/service-page',
     FeedbackPage:'/feedback-page',
-    NewPost:'/mangement/new-post'
+    NewPost:'/mangement/new-post',
+    SearchPage:'./search-page'
 }
 
 export const text = {
