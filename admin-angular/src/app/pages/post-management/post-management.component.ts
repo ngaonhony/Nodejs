@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PostService } from '../../services/post.service'; // Dịch vụ quản lý bài viết
-import { Post } from '../../models/post.model'; // Mô hình bài viết
+import { PostService } from '../../services/post.service';
+import { Post } from '../../models/post.model';
 import { MatDialog } from '@angular/material/dialog';
-import { PostDialogComponent } from './post-dialog/post-dialog.component'; // Component dialog cho bài viết
+import { PostDialogComponent } from './post-dialog/post-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { UserService } from '../../services/user.service';
+import { CategoryService } from '../../services/category.service';
+import { ServiceBookingService } from '../../services/service-booking.service';
 
 @Component({
   selector: 'app-post-management',
@@ -12,105 +15,111 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrls: ['./post-management.component.scss'],
 })
 export class PostManagementComponent implements OnInit {
-  posts: Post[] = []; // Danh sách bài viết
+  posts: Post[] = [];
   dataSource = new MatTableDataSource<Post>();
-  displayedColumns: string[] = ['title', 'description', 'price', 'location', 'actions']; // Các cột hiển thị
+
+  displayedColumns: string[] = [
+    'title',
+    'description',
+    'price',
+    'location',
+    'area',
+    'user', // Cột người dùng
+    'category', // Cột danh mục
+    'serviceBooking', // Cột dịch vụ đặt chỗ
+    'actions',
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private postService: PostService, private dialog: MatDialog) {}
+  constructor(
+    private postService: PostService,
+    private dialog: MatDialog,
+    private userService: UserService,
+    private categoryService: CategoryService,
+    private serviceBookingService: ServiceBookingService
+  ) {}
 
   ngOnInit(): void {
-    this.loadPosts(); // Tải bài viết khi khởi tạo
+    this.loadPosts();
   }
 
   loadPosts(): void {
     this.postService.getPosts().subscribe(
-      (data: any) => {
-        console.log('Dữ liệu trả về từ API:', data); // Log dữ liệu trả về
-  
+      (data: Post[]) => {
+        console.log('Dữ liệu trả về từ API:', data);
+
         if (Array.isArray(data)) {
-          this.posts = data; // Cập nhật danh sách bài viết
-          this.dataSource.data = this.posts; // Cập nhật dữ liệu cho MatTableDataSource
-          this.dataSource.paginator = this.paginator; // Gán paginator cho dataSource
+          this.posts = data;
+          this.dataSource.data = this.posts;
+          this.dataSource.paginator = this.paginator;
+
+          this.posts.forEach((post) => {
+            console.log('Bài viết:', post);
+          });
         } else {
           console.error('Dữ liệu không đúng cấu trúc, không phải mảng:', data);
-          this.posts = [];
-          this.dataSource.data = []; // Cập nhật dữ liệu nếu có lỗi
+          this.resetDataSource();
         }
       },
       (error: any) => {
-        console.error('Lỗi khi lấy bài viết', error); // Log lỗi
-        this.posts = [];
-        this.dataSource.data = []; // Cập nhật dữ liệu nếu có lỗi
+        console.error('Lỗi khi lấy bài viết', error);
+        this.resetDataSource();
       }
     );
   }
 
-  addPost() {
-    const dialogRef = this.dialog.open(PostDialogComponent, { data: { post: null } });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Đã thêm bài viết:', result); // Log kết quả thêm bài viết
-        this.postService.addPost(result).subscribe(
-          () => {
-            console.log('Bài viết đã được thêm thành công.'); // Log thông báo thành công
-            this.loadPosts(); // Reload posts after adding
-          },
-          error => {
-            console.error('Lỗi khi thêm bài viết:', error); // Log lỗi khi thêm
-          }
-        );
-      } else {
-        console.log('Thêm bài viết bị hủy hoặc không thành công.'); // Log nếu không có kết quả
-      }
-    });
+  resetDataSource(): void {
+    this.posts = [];
+    this.dataSource.data = [];
   }
 
-  editPost(post: Post) {
+  editPost(post: Post): void {
     if (!post) {
-      console.error('Bài viết không hợp lệ để chỉnh sửa.'); // Log nếu bài viết không hợp lệ
+      console.error('Bài viết không hợp lệ để chỉnh sửa.');
       return;
     }
 
     const dialogRef = this.dialog.open(PostDialogComponent, { data: { post } });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Đã chỉnh sửa bài viết:', result); // Log kết quả chỉnh sửa bài viết
+        console.log('Đã chỉnh sửa bài viết:', result);
         this.postService.updatePost(result).subscribe(
           () => {
-            console.log('Bài viết đã được chỉnh sửa thành công.'); // Log thông báo thành công
-            this.loadPosts(); // Reload posts after editing
+            console.log('Bài viết đã được chỉnh sửa thành công.');
+            this.loadPosts();
           },
-          error => {
-            console.error('Lỗi khi chỉnh sửa bài viết:', error); // Log lỗi khi chỉnh sửa
+          (error) => {
+            console.error('Lỗi khi chỉnh sửa bài viết:', error);
           }
         );
       } else {
-        console.log('Chỉnh sửa bài viết bị hủy hoặc không thành công.'); // Log nếu không có kết quả
+        console.log('Chỉnh sửa bài viết bị hủy hoặc không thành công.');
       }
     });
   }
 
-  deletePost(post: Post) {
+  deletePost(post: Post): void {
     if (post._id) {
-      if (confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
-        this.postService.deletePost(post._id).subscribe(() => {
-          console.log('Bài viết đã được xóa:', post); // Log bài viết đã xóa
-          this.loadPosts(); // Reload posts after deleting
-        }, error => {
-          console.error('Lỗi khi xóa bài viết:', error); // Log lỗi khi xóa
-        });
+      if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+        this.postService.deletePost(post._id).subscribe(
+          () => {
+            console.log('Bài viết đã được xóa:', post);
+            this.loadPosts();
+          },
+          (error) => {
+            console.error('Lỗi khi xóa bài viết:', error);
+          }
+        );
       }
     } else {
-      console.error('Không thể xóa bài viết vì ID không hợp lệ.'); // Log lỗi ID không hợp lệ
+      console.error('Không thể xóa bài viết vì ID không hợp lệ.');
     }
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase(); // Áp dụng bộ lọc
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }

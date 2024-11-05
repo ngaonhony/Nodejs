@@ -1,6 +1,6 @@
 const Category = require("../models/category.model");
 
-exports.createCategory = async (req, res) => {
+exports.createCategory = async (req, res, next) => {
   try {
     const { name, description, status } = req.body;
 
@@ -13,6 +13,7 @@ exports.createCategory = async (req, res) => {
     await category.save();
     res.status(201).send(category);
   } catch (error) {
+    next(error);
     console.error(error);
     res.status(500).send({ message: "Error creating category", error });
   }

@@ -24,6 +24,7 @@ export class ServiceDialogComponent {
       price_per_day: [0, [Validators.required, Validators.min(0)]],
       price_per_week: [0, [Validators.required, Validators.min(0)]],
       price_per_month: [0, [Validators.required, Validators.min(0)]],
+      pushPrice: [0, [Validators.required, Validators.min(0)]],
       advantages: [false],
       title_color: ['', Validators.required],
       auto_approval: [false],
@@ -40,35 +41,35 @@ export class ServiceDialogComponent {
   saveService() {
     if (this.serviceForm.valid) {
       const serviceData = this.serviceForm.value;
-
-      // Log dữ liệu dịch vụ trước khi gửi
+  
       console.log('Dữ liệu dịch vụ:', serviceData);
-
+  
       if (this.isEditMode) {
-        // Lấy ID từ data.service
-        const serviceId = this.data.service._id; // Đảm bảo bạn sử dụng _id từ MongoDB
+        const serviceId = this.data.service?._id; // Optional chaining to prevent errors
         console.log('ID dịch vụ:', serviceId);
         if (!serviceId) {
           console.error('ID dịch vụ không hợp lệ.');
           return;
         }
-        // Gọi service để cập nhật dịch vụ
         this.serviceService.updateService({ ...serviceData, _id: serviceId }).subscribe(
           () => {
             this.dialogRef.close(true);
           },
           error => {
-            console.error('Lỗi cập nhật dịch vụ', error); // Log thông báo lỗi
+            console.error('Lỗi cập nhật dịch vụ', error); // Log error
+            this.dialogRef.close(false); // Optionally close dialog with failure status
           }
         );
       } else {
-        // Gọi service để thêm dịch vụ mới
         this.serviceService.addService(serviceData).subscribe(() => {
           this.dialogRef.close(true);
         }, error => {
           console.error('Lỗi thêm dịch vụ', error);
+          this.dialogRef.close(false); // Optionally close dialog with failure status
         });
       }
+    } else {
+      console.error('Form không hợp lệ:', this.serviceForm.errors); // Log form errors
     }
   }
 

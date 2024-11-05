@@ -17,7 +17,7 @@ const postSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    servicesBookingId: { 
+    serviceBookingId: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'ServiceBooking',
       required: true,

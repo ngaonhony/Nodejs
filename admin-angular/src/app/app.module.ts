@@ -6,6 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 // icons
 import { TablerIconsModule } from 'angular-tabler-icons';
 import * as TablerIcons from 'angular-tabler-icons/icons';
@@ -75,6 +76,7 @@ import { LoginComponent } from './pages/login/login.component';
     MaterialModule,
     TablerIconsModule.pick(TablerIcons),
     RouterModule,
+    MatSnackBarModule,
   ],
   exports: [TablerIconsModule],
   bootstrap: [AppComponent],

@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  emailOrPhone: string = ''; // Biến để lưu email hoặc số điện thoại
+  emailOrPhone: string = ''; // Variable to hold email or phone number
   password: string = '';
   errorMessage: string = '';
 
@@ -29,7 +29,7 @@ export class LoginComponent {
   
     this.authService.login(this.emailOrPhone, this.password).subscribe(
       response => {
-        this.authService.setToken(response.token);
+        this.authService.setToken(response.accessToken); // Ensure the correct token property is used
         this.router.navigate(['/dashboard']);
       },
       error => {
@@ -37,9 +37,10 @@ export class LoginComponent {
         console.error('Login error:', error);
         if (error.error && error.error.message) {
           console.error('Error message from server:', error.error.message);
+        } else {
+          console.error('Unknown error:', error);
         }
       }
     );
   }
-
 }

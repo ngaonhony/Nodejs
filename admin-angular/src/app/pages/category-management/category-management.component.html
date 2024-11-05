@@ -18,7 +18,9 @@
             Thêm Danh Mục
           </button>
         </div>  
-        
+        <div class="notification-container" *ngIf="errorMessage" [ngClass]="{'error': isError, 'success': !isError}">
+          {{ errorMessage }}
+        </div>
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
           <!-- Cột Tên Danh Mục -->

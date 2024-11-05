@@ -26,14 +26,14 @@ export class HeaderComponent {
 
   onLogout(): void {
     this.authService.logout().subscribe(
-      response => {
+      (response: any) => { // Explicitly define response type
         console.log('Logout successful', response);
-        localStorage.removeItem('token'); // Xóa token
-        this.router.navigate(['/login']); // Điều hướng về trang đăng nhập
+        localStorage.removeItem('token'); // Clear token
+        this.router.navigate(['/login']); // Navigate to login page
       },
-      error => {
+      (error: any) => { // Explicitly define error type
         console.error('Logout failed', error);
-        // Xử lý lỗi nếu cần
+        // Handle error if necessary
       }
     );
   }

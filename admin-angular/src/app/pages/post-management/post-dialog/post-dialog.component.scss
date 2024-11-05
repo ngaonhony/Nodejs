@@ -1,0 +1,25 @@
+.grid-form {
+    display: flex;
+    flex-direction: column; /* Đảm bảo tất cả các trường nằm theo chiều dọc */
+    gap: 16px; /* Khoảng cách giữa các hàng trong form */
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between; /* Căn chỉnh các trường trong hàng */
+    gap: 16px; /* Khoảng cách giữa các trường trong cùng một hàng */
+}
+
+.half-width {
+    flex: 1; /* Mỗi ô chiếm một nửa chiều rộng */
+}
+
+.third-width {
+    flex: 1; /* Mỗi ô chiếm một phần ba chiều rộng */
+}
+
+/* Điều chỉnh chiều rộng của dialog */
+mat-dialog-content {
+    min-width: 600px; /* Chiều rộng tối thiểu của dialog */
+    padding: 16px; /* Padding cho nội dung của dialog */
+}

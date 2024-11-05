@@ -10,7 +10,8 @@ exports.createPost = async (req, res) => {
       location: req.body.location,
       area: req.body.area,
       categoryId: req.body.categoryId,
-      images: req.body.images, // Thêm mảng ảnh vào bài viết
+      serviceBookingId: req.body.serviceBookingId, // Thêm serviceBookingId
+      images: req.body.images,
     });
     await post.save();
     res.status(201).send(post);
@@ -23,7 +24,11 @@ exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("userId", "name")
-      .populate("categoryId", "name");
+      .populate("categoryId", "name")
+      .populate({
+        path: "serviceBookingId",
+        populate: { path: "serviceId", select: "name" } // Thêm populate cho serviceId
+      }); 
     res.send(posts);
   } catch (error) {
     res.status(500).send({ message: "Error fetching posts", error });
@@ -34,7 +39,8 @@ exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate("userId", "name")
-      .populate("categoryId", "name");
+      .populate("categoryId", "name")
+      .populate("serviceBookingId", "name"); // Thêm populate cho serviceBookingId
     if (!post) {
       return res.status(404).send({ message: "Post not found" });
     }

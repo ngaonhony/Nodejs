@@ -4,6 +4,7 @@ import { Post } from '../../../models/post.model';
 import { CategoryService } from '../../../services/category.service'; 
 import { UserService } from '../../../services/user.service'; 
 import { ServiceBookingService } from '../../../services/service-booking.service';
+
 @Component({
   selector: 'app-post-dialog',
   templateUrl: './post-dialog.component.html',
@@ -15,6 +16,7 @@ export class PostDialogComponent {
   serviceBookings: any[] = [];
   users: any[] = [];
 
+  serviceNameMap: { [key: string]: string } = {};
 
   constructor(
     public dialogRef: MatDialogRef<PostDialogComponent>,
@@ -55,13 +57,17 @@ export class PostDialogComponent {
   loadServiceBookings() {
     this.serviceBookingService.getServiceBookings().subscribe(
       (data) => {
-        console.log('Dữ liệu dịch vụ đặt chỗ:', data); // Kiểm tra dữ liệu
-        this.serviceBookings = Array.isArray(data) ? data : []; // Chỉ gán nếu là mảng
+        console.log('Dữ liệu dịch vụ đặt chỗ:', data);
+        this.serviceBookings = Array.isArray(data) ? data : [];
       },
       (error) => {
         console.error('Lỗi khi lấy dịch vụ đặt chỗ:', error);
       }
     );
+  }
+
+  getServiceName(serviceId: any): string {
+    return serviceId.name || 'Unknown Service'; // Access the name directly from serviceId
   }
   onCancel(): void {
     this.dialogRef.close(); // Đóng dialog

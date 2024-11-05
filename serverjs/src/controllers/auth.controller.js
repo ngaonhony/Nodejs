@@ -21,7 +21,7 @@ const generateAccessToken = (user) => {
 // Tạo Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "1d",
   });
 };
 
@@ -116,11 +116,11 @@ exports.login = asyncHandler(async (req, res) => {
 
 exports.adminLogin = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
-  
+
   // Tìm kiếm người dùng với quyền admin
   const admin = await User.findOne({
     $or: [{ email }, { phone }],
-    role: 'admin'  // Kiểm tra xem người dùng có phải là admin không
+    role: 'admin',  // Kiểm tra xem người dùng có phải là admin không
   }).select("+password");
 
   if (!admin) {
@@ -139,6 +139,8 @@ exports.adminLogin = asyncHandler(async (req, res) => {
       message: "Email, số điện thoại hoặc mật khẩu không chính xác",
     });
   }
+
+  // Generate tokens
   const accessToken = generateAccessToken(admin);
   const refreshToken = generateRefreshToken(admin);
 
@@ -149,7 +151,7 @@ exports.adminLogin = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
   });
 
-
+  // Return response with user info
   res.status(200).json({
     message: "Đăng nhập admin thành công",
     accessToken,
@@ -166,7 +168,7 @@ exports.adminLogin = asyncHandler(async (req, res) => {
   winston.info(`Admin ${admin.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
-// API cấp lại Access Token mới từ Refresh Token
+// API cấp lại Access Token mới từ Refres h Token
 exports.refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 

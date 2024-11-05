@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { ServiceBooking } from '../models/serviceBooking.model'; // Đảm bảo bạn có model ServiceBooking
 
 @Injectable({
@@ -12,9 +12,12 @@ export class ServiceBookingService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token'); // Lấy token từ local storage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found. User may not be authenticated.');
+    }
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`, // Gửi token trong header
+      'Authorization': `Bearer ${token}`,
     });
   }
 
@@ -23,14 +26,14 @@ export class ServiceBookingService {
     return this.http.get<ServiceBooking[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
-  // Thêm dịch vụ đặt chỗ
-  addServiceBooking(serviceBooking: ServiceBooking): Observable<ServiceBooking> {
-    return this.http.post<ServiceBooking>(this.apiUrl, serviceBooking, { headers: this.getHeaders() });
-  }
-
-  // Cập nhật dịch vụ đặt chỗ
   updateServiceBooking(serviceBooking: ServiceBooking): Observable<ServiceBooking> {
-    return this.http.put<ServiceBooking>(`${this.apiUrl}/${serviceBooking._id}`, serviceBooking, { headers: this.getHeaders() });
+    return this.http.put<ServiceBooking>(`${this.apiUrl}/${serviceBooking._id}`, serviceBooking, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error updating service booking:', error);
+          return throwError(error);
+        })
+      );
   }
 
   // Xóa dịch vụ đặt chỗ

@@ -25,7 +25,7 @@ exports.createService = async (req, res) => {
 // Lấy tất cả dịch vụ
 exports.getAllServices = async (req, res) => {
   try {
-    const services = await Service.find();
+    const services = await Service.find().sort({ createdAt: -1 });
     res.send(services);
   } catch (error) {
     res.status(500).send({ message: "Error fetching services", error });

@@ -13,9 +13,9 @@ router.get("/",protect, authorize("admin"), serviceBookingController.getAllBooki
 router.get("/:id",protect, serviceBookingController.getBookingById);
 
 // Cập nhật đặt chỗ theo ID
-router.put("/:id",protect, serviceBookingController.updateBooking);
+router.put("/:id",protect, authorize("admin"), serviceBookingController.updateBooking);
 
 // Xóa đặt chỗ theo ID
-router.delete("/:id",protect, serviceBookingController.deleteBooking);
+router.delete("/:id",protect, authorize("admin"), serviceBookingController.deleteBooking);
 
 module.exports = router;

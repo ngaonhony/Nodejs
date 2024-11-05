@@ -3,8 +3,9 @@ import { ServiceService } from '../../services/service.service';
 import { Service } from '../../models/service.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ServiceDialogComponent } from './service-dialog/service-dialog.component';
-import { MatTableDataSource  } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
 @Component({
   selector: 'app-service-management',
@@ -14,29 +15,39 @@ import { MatPaginator } from '@angular/material/paginator';
 export class ServiceManagementComponent implements OnInit {
   services: Service[] = [];
   dataSource = new MatTableDataSource<Service>();
-  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month', 'advantages', 'title_color', 'auto_approval', 'prominent_badge','list', 'actions'];
-
+  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month','pushPrice', 'advantages', 'title_color', 'auto_approval', 'prominent_badge', 'list', 'actions'];
+  isLoading = false; // Loading indicator
+  errorMessage: string | null = null; // Error message
+  isError: boolean = false; // Error state
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private serviceManagementService: ServiceService, private dialog: MatDialog) {}
+  constructor(
+    private serviceManagementService: ServiceService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar // Inject MatSnackBar
+  ) {}
 
   ngOnInit(): void {
-    this.loadServices();
+    this.loadServices(); // Load services on init
   }
 
   loadServices(): void {
-    this.serviceManagementService.getServices().subscribe((data) => {
-      console.log('Dữ liệu trả về từ API:', data);
-      if (Array.isArray(data)) {
+    this.isLoading = true; // Set loading to true
+    this.serviceManagementService.getServices().subscribe(
+      (data: Service[]) => {
+        console.log('Data returned from API:', data);
         this.services = data;
         this.dataSource.data = this.services;
         this.dataSource.paginator = this.paginator;
-      } else {
-        console.error('Dữ liệu không đúng cấu trúc, không phải mảng:', data);
-        this.services = [];
-        this.dataSource.data = [];
+        this.isLoading = false; // Set loading to false
+      },
+      (error: any) => {
+        console.error('Error loading services', error);
+        this.errorMessage = 'Error loading services'; // Set error message
+        this.isError = true; // Set error state
+        this.isLoading = false; // Set loading to false
       }
-    });
+    );
   }
 
   addService() {
@@ -44,37 +55,54 @@ export class ServiceManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.serviceManagementService.addService(result).subscribe(() => {
-          this.loadServices();
-        });
+        console.log('Added service:', result);
+        this.loadServices(); // Reload services after adding
+        this.showNotification('Thêm dịch vụ thành công!', 'success');
+      } else {
+        console.log('Adding service was canceled or not successful.');
       }
     });
   }
 
   editService(service: Service) {
     if (!service) {
-      console.error('Dịch vụ không hợp lệ để chỉnh sửa.'); // Log nếu dịch vụ không hợp lệ
+      console.error('Invalid service to edit.');
       return;
     }
-  
-    const dialogRef = this.dialog.open(ServiceDialogComponent, { data: { service, isEditMode: true } });
-  
+
+    const dialogRef = this.dialog.open(ServiceDialogComponent, { data: { service } });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Đã chỉnh sửa dịch vụ:', result); // Log kết quả chỉnh sửa dịch vụ
-        // Cập nhật dịch vụ trong danh sách
-        this.loadServices();
+        console.log('Edited service:', result);
+        this.loadServices(); // Reload services after editing
+        this.showNotification('Chỉnh sửa dịch vụ thành công!', 'success');
       } else {
-        console.log('Chỉnh sửa dịch vụ bị hủy hoặc không thành công.'); // Log nếu không có kết quả
+        console.log('Editing service was canceled or not successful.');
       }
     });
   }
 
   deleteService(service: Service) {
-    if (service._id && confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
-      this.serviceManagementService.deleteService(service._id).subscribe(() => {
-        this.loadServices();
-      });
+    if (!service._id) {
+      console.error('Cannot delete service because the ID is invalid.');
+      return;
+    }
+
+    if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
+      this.serviceManagementService.deleteService(service._id).subscribe(
+        () => {
+          console.log('Deleted service:', service);
+          this.loadServices(); // Reload services after deleting
+          this.showNotification('Xóa dịch vụ thành công!', 'success');
+        },
+        error => {
+          console.error('Error deleting service:', error);
+          this.errorMessage = 'Xóa dịch vụ thất bại!'; // Set error message
+          this.isError = true; // Set error state
+          this.showNotification(this.errorMessage, 'error');
+        }
+      );
     }
   }
 
@@ -82,11 +110,17 @@ export class ServiceManagementComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  viewBookedServices() {
-    // Logic để hiển thị dịch vụ đã đặt
-    // Bạn có thể mở một dialog hoặc chuyển hướng đến một component khác
-    console.log('Xem danh sách dịch vụ đã đặt');
-    // Ví dụ: mở dialog
-    // const dialogRef = this.dialog.open(BookedServicesDialogComponent);
+
+  showNotification(message: string, type: string) {
+    this.snackBar.open(message, 'Đóng', {
+      duration: 3000,
+      panelClass: type === 'success' ? 'success-snackbar' : 'error-snackbar',
+    });
+  }
+
+  viewBookedServices(service: Service) {
+    // Implement logic to view booked services for the selected service
+    console.log('Viewing booked services for:', service);
+    // You might open a dialog or navigate to another component
   }
 }

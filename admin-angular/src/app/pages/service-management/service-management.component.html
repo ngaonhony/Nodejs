@@ -16,6 +16,9 @@
       Thêm Dịch vụ
     </button>
   </div>  
+  <div class="notification-container" *ngIf="errorMessage" [ngClass]="{'error': isError, 'success': !isError}">
+    {{ errorMessage }}
+  </div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     
     <!-- Tên Dịch Vụ Column -->
@@ -40,6 +43,11 @@
     <ng-container matColumnDef="price_per_month">
       <th mat-header-cell *matHeaderCellDef> Giá Theo Tháng </th>
       <td mat-cell *matCellDef="let service">{{ service.price_per_month | currency: 'VND' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="pushPrice">
+      <th mat-header-cell *matHeaderCellDef> Giá Thêm </th>
+      <td mat-cell *matCellDef="let service">{{ service.pushPrice | currency: 'VND' }}</td>
     </ng-container>
 
     <!-- Có Ưu Điểm Column -->
@@ -67,7 +75,7 @@
     </ng-container>
     <ng-container matColumnDef="list">
       <th mat-header-cell *matHeaderCellDef> Danh sách </th>
-      <td mat-cell *matCellDef="let service"><button mat-raised-button color="accent" class="view-booked-services-button" (click)="viewBookedServices()">
+      <td mat-cell *matCellDef="let service"><button mat-raised-button color="accent" class="view-booked-services-button" (click)="viewBookedServices(service)">
         Xem Chi Tiết
       </button></td>
     </ng-container>

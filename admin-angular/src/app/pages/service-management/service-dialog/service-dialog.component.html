@@ -38,6 +38,15 @@
 
     <div class="form-row">
       <mat-form-field class="full-width">
+        <mat-label>Giá Đăng</mat-label> <!-- Added label for pushPrice -->
+        <input matInput type="number" formControlName="pushPrice" min="0" required>
+        <mat-error *ngIf="serviceForm.get('pushPrice')?.hasError('required')">Giá thêm là bắt buộc!</mat-error>
+        <mat-error *ngIf="serviceForm.get('pushPrice')?.hasError('min')">Giá phải lớn hơn hoặc bằng 0!</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field class="full-width">
         <mat-label>Màu Tiêu Đề</mat-label>
         <input matInput formControlName="title_color" required>
         <mat-error *ngIf="serviceForm.get('title_color')?.hasError('required')">Màu tiêu đề là bắt buộc!</mat-error>

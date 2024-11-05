@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CategoryService } from '../../services/category.service'; // Dịch vụ quản lý danh mục
-import { Category } from '../../models/category.model'; // Mô hình danh mục
+import { CategoryService } from '../../services/category.service';
+import { Category } from '../../models/category.model';
 import { MatDialog } from '@angular/material/dialog';
-import { CategoryDialogComponent } from './category-dialog/category-dialog.component'; // Component dialog cho danh mục
+import { CategoryDialogComponent } from './category-dialog/category-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-category-management',
@@ -12,90 +13,111 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrls: ['./category-management.component.scss'],
 })
 export class CategoryManagementComponent implements OnInit {
-  categories: Category[] = []; // Danh sách danh mục
+  categories: Category[] = []; // Category list
   dataSource = new MatTableDataSource<Category>();
-  displayedColumns: string[] = ['name', 'description', 'status', 'actions']; // Các cột hiển thị
+  displayedColumns: string[] = ['name', 'description', 'status', 'actions'];
+  isLoading = false; // Loading indicator
+  errorMessage: string | null = null; // Error message
+  isError: boolean = false; // Error state
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private categoryService: CategoryService, private dialog: MatDialog) {}
+  constructor(private snackBar: MatSnackBar, private categoryService: CategoryService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.loadCategories(); // Tải danh mục khi khởi tạo
+    this.loadCategories(); // Load categories on init
   }
 
   loadCategories(): void {
+    this.isLoading = true; // Set loading to true
     this.categoryService.getCategories().subscribe(
       (data: any) => {
-        console.log('Dữ liệu trả về từ API:', data); // Log dữ liệu trả về
-  
-        // Kiểm tra xem data có phải là một mảng không
+        console.log('Data returned from API:', data);
+
         if (Array.isArray(data)) {
-          this.categories = data; // Cập nhật danh sách danh mục
-          this.dataSource.data = this.categories; // Cập nhật dữ liệu cho MatTableDataSource
-          this.dataSource.paginator = this.paginator; // Gán paginator cho dataSource
+          this.categories = data;
+          this.dataSource.data = this.categories;
+          this.dataSource.paginator = this.paginator;
         } else {
-          console.error('Dữ liệu không đúng cấu trúc, không phải mảng:', data);
-          this.categories = [];
-          this.dataSource.data = []; // Cập nhật dữ liệu nếu có lỗi
+          console.error('Data is not in the expected format, not an array:', data);
+          this.showNotification('Unexpected data format received.', 'error');
         }
+        this.isLoading = false; // Set loading to false
       },
       (error: any) => {
-        console.error('Lỗi khi lấy danh mục', error); // Log lỗi
-        this.categories = [];
-        this.dataSource.data = []; // Cập nhật dữ liệu nếu có lỗi
+        console.error('Error loading categories', error);
+        this.errorMessage = 'Error loading categories'; // Set error message
+        this.isError = true; // Set error state
+        this.isLoading = false; // Set loading to false
       }
     );
   }
 
   addCategory() {
     const dialogRef = this.dialog.open(CategoryDialogComponent, { data: { category: null } });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Đã thêm danh mục:', result); // Log kết quả thêm danh mục
+        console.log('Added category:', result);
         this.loadCategories(); // Reload categories after adding
+        this.showNotification('Thêm danh mục thành công!', 'success');
       } else {
-        console.log('Thêm danh mục bị hủy hoặc không thành công.'); // Log nếu không có kết quả
+        console.log('Adding category was canceled or not successful.');
       }
     });
   }
   
   editCategory(category: Category) {
     if (!category) {
-      console.error('Danh mục không hợp lệ để chỉnh sửa.'); // Log nếu danh mục không hợp lệ
+      console.error('Invalid category to edit.');
       return;
     }
-  
+
     const dialogRef = this.dialog.open(CategoryDialogComponent, { data: { category } });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Đã chỉnh sửa danh mục:', result); // Log kết quả chỉnh sửa danh mục
-        // Update the category in the categories array
-        this.loadCategories();
+        console.log('Edited category:', result);
+        this.loadCategories(); // Reload categories after editing
+        this.showNotification('Chỉnh sửa danh mục thành công!', 'success');
       } else {
-        console.log('Chỉnh sửa danh mục bị hủy hoặc không thành công.'); // Log nếu không có kết quả
+        console.log('Editing category was canceled or not successful.');
       }
     });
   }
+
   deleteCategory(category: Category) {
-    if (category._id) {
-      if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
-        this.categoryService.deleteCategory(category._id).subscribe(() => {
-          console.log('Danh mục đã được xóa:', category); // Log danh mục đã xóa
+    if (!category._id) {
+      console.error('Cannot delete category because the ID is invalid.');
+      return;
+    }
+
+    if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+      this.categoryService.deleteCategory(category._id).subscribe(
+        () => {
+          console.log('Deleted category:', category);
           this.loadCategories(); // Reload categories after deleting
-        }, error => {
-          console.error('Lỗi khi xóa danh mục:', error); // Log lỗi khi xóa
-        });
-      }
-    } else {
-      console.error('Không thể xóa danh mục vì ID không hợp lệ.'); // Log lỗi ID không hợp lệ
+          this.showNotification('Xóa danh mục thành công!', 'success');
+        },
+        error => {
+          console.error('Error deleting category:', error);
+          this.errorMessage = 'Xóa danh mục thất bại!'; // Set error message
+          this.isError = true; // Set error state
+          this.showNotification(this.errorMessage, 'error');
+        }
+      );
     }
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase(); // Áp dụng bộ lọc
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  showNotification(message: string, type: string) {
+    this.snackBar.open(message, 'Đóng', {
+      duration: 3000,
+      panelClass: type === 'success' ? 'success-snackbar' : 'error-snackbar',
+    });
   }
 }

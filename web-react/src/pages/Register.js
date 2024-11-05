@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Navigator from "../components/Navigator";
 import Footer from "../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "../services/authService"; // Giả sử bạn có một hàm register trong authService
+import { register } from "../services"; // Giả sử bạn có một hàm register trong authService
 
 function Register() {
   const [name, setname] = useState('');

@@ -5,7 +5,6 @@ exports.createBooking = async (req, res) => {
     const booking = new ServiceBooking({
       userId: req.body.userId,
       serviceId: req.body.serviceId,
-      postId: req.body.postId,
       bookingDate: req.body.bookingDate,
       bookingTime: req.body.bookingTime,
     });
@@ -22,7 +21,6 @@ exports.getAllBookings = async (req, res) => {
     const bookings = await ServiceBooking.find()
       .populate("userId", "name")
       .populate("serviceId", "name")
-      .populate("postId", "title");
     res.send(bookings);
   } catch (error) {
     res.status(500).send({ message: "Error fetching bookings", error });
@@ -34,7 +32,6 @@ exports.getBookingById = async (req, res) => {
     const booking = await ServiceBooking.findById(req.params.id)
       .populate("userId", "name")
       .populate("serviceId", "name")
-      .populate("postId", "title");
 
     if (!booking) {
       return res.status(404).send({ message: "Booking not found" });
