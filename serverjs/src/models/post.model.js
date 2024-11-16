@@ -17,9 +17,9 @@ const postSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    serviceBookingId: { 
+    serviceId: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'ServiceBooking',
+      ref: 'Service',
       required: true,
     },
     images: { 

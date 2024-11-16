@@ -1,32 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../slices/authSlice'; // Cập nhật import để sử dụng authSlice
 import Header from '../components/Header';
 import Navigator from '../components/Navigator';
 import Footer from '../components/Footer';
-import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../services/authService';
 
 function Login() {
-  const [account, setAccount] = useState(''); // Thay đổi từ email thành account
+  const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+  // Lấy trạng thái từ Redux
+  const { loading, error, user } = useSelector((state) => state.auth);
 
-    try {
-      const response = await login(account, password);
-      if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-        navigate('/');
-      }
-    } catch (err) {
-      console.error('Login failed:', err);
-      const errorMessage = err.response?.data?.message || 'Đăng nhập thất bại'; // Chỉ lấy thông báo lỗi dạng chuỗi
-      setError(errorMessage); 
+  useEffect(() => {
+    if (user) {
+      navigate('/'); // Điều hướng về trang chính nếu đã đăng nhập
     }
+  }, [user, navigate]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(loginUser({ account, password })); // Gọi action loginUser
   };
+
   return (
     <div>
       <div className="w-full flex flex-col items-center h-full border">
@@ -73,8 +72,9 @@ function Login() {
               <button 
                 type="submit" 
                 className="w-full bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-500 transition-all duration-300 text-lg"
+                disabled={loading} // Vô hiệu hóa nút khi đang tải
               >
-                Đăng Nhập
+                {loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
               </button>
             </form>
             <p className="mt-6 text-center text-gray-700 text-lg">

@@ -49,17 +49,17 @@
       <th mat-header-cell *matHeaderCellDef> Giá Thêm </th>
       <td mat-cell *matCellDef="let service">{{ service.pushPrice | currency: 'VND' }}</td>
     </ng-container>
+    
+    <!-- Màu Tiêu Đề Column -->
+    <ng-container matColumnDef="title_color">
+      <th mat-header-cell *matHeaderCellDef> Màu Tiêu Đề </th>
+      <td mat-cell *matCellDef="let service" [style.color]="service.title_color">{{ service.title_color }}</td>
+    </ng-container>
 
     <!-- Có Ưu Điểm Column -->
     <ng-container matColumnDef="advantages">
       <th mat-header-cell *matHeaderCellDef> Có Ưu Điểm </th>
       <td mat-cell *matCellDef="let service">{{ service.advantages ? 'Có' : 'Không' }}</td>
-    </ng-container>
-
-    <!-- Màu Tiêu Đề Column -->
-    <ng-container matColumnDef="title_color">
-      <th mat-header-cell *matHeaderCellDef> Màu Tiêu Đề </th>
-      <td mat-cell *matCellDef="let service" [style.color]="service.title_color">{{ service.title_color }}</td>
     </ng-container>
 
     <!-- Tự Động Phê Duyệt Column -->
@@ -72,12 +72,6 @@
     <ng-container matColumnDef="prominent_badge">
       <th mat-header-cell *matHeaderCellDef> Biểu Tượng Nổi Bật </th>
       <td mat-cell *matCellDef="let service">{{ service.prominent_badge ? 'Có' : 'Không' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="list">
-      <th mat-header-cell *matHeaderCellDef> Danh sách </th>
-      <td mat-cell *matCellDef="let service"><button mat-raised-button color="accent" class="view-booked-services-button" (click)="viewBookedServices(service)">
-        Xem Chi Tiết
-      </button></td>
     </ng-container>
 
     <!-- Hành Động Column -->

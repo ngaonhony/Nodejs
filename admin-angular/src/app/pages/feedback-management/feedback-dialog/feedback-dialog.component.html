@@ -1,14 +1,18 @@
-<h1 mat-dialog-title>{{ feedback._id ? 'Chỉnh Sửa Phản Hồi' : 'Thêm Phản Hồi' }}</h1>
+<h1 mat-dialog-title>Chỉnh Sửa Phản Hồi</h1>
 
 <div mat-dialog-content>
   <mat-form-field appearance="fill">
     <mat-label>ID Bài Viết</mat-label>
-    <input matInput [(ngModel)]="feedback.postId" required>
+    <mat-select [(ngModel)]="feedback.postId" required>
+      <mat-option *ngFor="let post of posts" [value]="post._id">{{ post.title }}</mat-option>
+    </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>ID Người Dùng</mat-label>
-    <input matInput [(ngModel)]="feedback.userId" required>
+    <mat-select [(ngModel)]="feedback.userId" required>
+      <mat-option *ngFor="let user of users" [value]="user._id">{{ user.name }}</mat-option>
+    </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill">

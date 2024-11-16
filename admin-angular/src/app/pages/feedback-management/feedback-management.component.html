@@ -9,13 +9,13 @@
       <!-- Post ID Column -->
       <ng-container matColumnDef="postId">
         <th mat-header-cell *matHeaderCellDef> ID Bài Viết </th>
-        <td mat-cell *matCellDef="let feedback">{{ feedback.postId }}</td>
+        <td mat-cell *matCellDef="let feedback">{{ feedback.postId.title }}</td>
       </ng-container>
   
       <!-- User ID Column -->
       <ng-container matColumnDef="userId">
         <th mat-header-cell *matHeaderCellDef> ID Người Dùng </th>
-        <td mat-cell *matCellDef="let feedback">{{ feedback.userId }}</td>
+        <td mat-cell *matCellDef="let feedback">{{ feedback.userId.name }}</td>
       </ng-container>
   
       <!-- Name Column -->
@@ -46,10 +46,10 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Hành Động </th>
         <td mat-cell *matCellDef="let feedback">
-          <button mat-icon-button (click)="editFeedback(feedback)">
+          <button mat-icon-button color="accent" (click)="editFeedback(feedback)">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button (click)="deleteFeedback(feedback)">
+          <button mat-icon-button color="warn" (click)="deleteFeedback(feedback)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

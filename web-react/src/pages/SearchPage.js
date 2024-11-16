@@ -4,9 +4,7 @@ import Footer from '../components/Footer';
 import { Outlet } from 'react-router-dom';
 import Navigator from '../components/Navigator';
 import Search from './Search';
-import { text } from '../ultils/constant';  
-import { ProvinceBtn, ItemSidebar } from '../components/'; 
-import { location } from '../ultils/constant';
+import {  ItemSidebar } from '../components/'; 
 import { List } from './index'; 
 
 const SearchPage = () => {
@@ -26,19 +24,6 @@ const SearchPage = () => {
                         <p className='text-center text-gray-500'>Không tìm thấy kết quả</p>
                     )}
                 </div>
-                <div>
-                    <h1 className='text-[28px] font-bold'>{text.HOME_TITLE}</h1>
-                    <p className='text-sm text-gray-700'>{text.HOME_DECSCRIPTION}</p> 
-                </div>
-                <div className='max-w-1100 flex items-center gap-5 justify-center py-5 shadow-md'>
-                    {location.map(item => (
-                        <ProvinceBtn 
-                            key={item.id}
-                            image={item.image}
-                            name={item.name}
-                        />
-                    ))}
-                </div>       
                 <div className='w-[1100px] flex justify-center items-center '>
                     <div className='flex w-full w-[70%]'>
                         <List />

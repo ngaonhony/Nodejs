@@ -15,7 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 export class ServiceManagementComponent implements OnInit {
   services: Service[] = [];
   dataSource = new MatTableDataSource<Service>();
-  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month','pushPrice', 'advantages', 'title_color', 'auto_approval', 'prominent_badge', 'list', 'actions'];
+  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month','pushPrice', 'title_color', 'advantages', 'auto_approval', 'prominent_badge', 'actions'];
   isLoading = false; // Loading indicator
   errorMessage: string | null = null; // Error message
   isError: boolean = false; // Error state
@@ -116,11 +116,5 @@ export class ServiceManagementComponent implements OnInit {
       duration: 3000,
       panelClass: type === 'success' ? 'success-snackbar' : 'error-snackbar',
     });
-  }
-
-  viewBookedServices(service: Service) {
-    // Implement logic to view booked services for the selected service
-    console.log('Viewing booked services for:', service);
-    // You might open a dialog or navigate to another component
   }
 }

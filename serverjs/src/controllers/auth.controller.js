@@ -111,6 +111,7 @@ exports.login = asyncHandler(async (req, res) => {
     },
   });
 
+console.log(accessToken)
   winston.info(`Người dùng ${user.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 

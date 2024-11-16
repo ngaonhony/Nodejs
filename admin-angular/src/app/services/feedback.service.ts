@@ -29,19 +29,10 @@ export class FeedbackService {
     );
   }
 
-  // Thêm phản hồi
-  addFeedback(feedback: Feedback): Observable<Feedback | null> {
-    return this.http.post<Feedback>(this.apiUrl, feedback, { headers: this.getHeaders() }).pipe(
-      catchError((error) => {
-        console.error('Error adding feedback', error);
-        return of(null); // Trả về null khi có lỗi
-      })
-    );
-  }
   
   // Chỉnh sửa phản hồi
   editFeedback(feedback: Feedback): Observable<Feedback | null> {
-    return this.http.patch<Feedback>(`${this.apiUrl}/${feedback._id}`, feedback, { headers: this.getHeaders() }).pipe(
+    return this.http.put<Feedback>(`${this.apiUrl}/${feedback._id}`, feedback, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error editing feedback', error);
         return of(null); // Trả về null khi có lỗi

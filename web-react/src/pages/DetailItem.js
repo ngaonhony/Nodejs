@@ -2,8 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 const RoomListing = () => {
   return (
-    <div className="font-sans max-w-2xl mx-auto p-5 border border-gray-300 bg-white">
-      {/* Title and Price */}
+    <div className="font-sans max-w-2xl mx-auto p-5 border-gray-300 bg-white">
       <div className="border-b border-gray-300 pb-2 mb-5">
         <h2 className="text-orange-500 text-xl">
           ⭐ Phòng trọ dạng căn hộ mini cao cấp tại 796 Lê Đức Thọ, P.15, Quận

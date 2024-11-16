@@ -12,13 +12,13 @@ const { BsChevronRight, HiOutlineLocationMarker, TbReportMoney, RiCrop2Line, MdO
 
 const Search = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false); // Modal cho chọn giá
-    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false); // Modal cho chọn địa điểm
-    const [isRentalModalOpen, setIsRentalModalOpen] = useState(false); // Modal cho chọn loại nhà thuê
-    const [selectedAreaRange, setSelectedAreaRange] = useState([30, 50]);
-    const [selectedPriceRange, setSelectedPriceRange] = useState([0, 10]); // Thêm trạng thái cho giá
-    const [selectedLocation, setSelectedLocation] = useState('Tất cả'); // Trạng thái cho địa điểm
-    const [selectedRental, setSelectedRental] = useState('Phòng trọ');
+    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false); 
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false); 
+    const [isRentalModalOpen, setIsRentalModalOpen] = useState(false); 
+    const [ setSelectedAreaRange] = useState([30, 50]);
+    const [ setSelectedPriceRange] = useState([0, 10]);
+    const [ setSelectedLocation] = useState('Tất cả'); 
+    const [ setSelectedRental] = useState('Phòng trọ');
 
     const handleApplyArea = (range) => {
         setSelectedAreaRange(range);
@@ -40,14 +40,14 @@ const Search = () => {
         setIsRentalModalOpen(false); // Đóng modal loại nhà thuê
     };
 
-    const areaText = `Diện tích: ${selectedAreaRange[0]} - ${selectedAreaRange[1]} m²`;
-    const priceText = `Giá: ${selectedPriceRange[0]} - ${selectedPriceRange[1]} triệu đồng`;
-    const locationText = selectedLocation; // Địa điểm hiện tại
-    const rentalText = selectedRental; // Loại nhà thuê hiện tại
+    const areaText = `Diện tích`;
+    const priceText = `Giá`;
+    const locationText = 'Địa điểm'; // Địa điểm hiện tại
+    const rentalText = 'Vị trí'; // Loại nhà thuê hiện tại
 
     return (
         <div className='flex justify-center'>
-            <div className='h-[55px] w-[1100px] p-[10px] bg-[#febb02] rounded-lg flex items-center justify-around gap-2'>
+            <div className='h-[55px] p-[10px] bg-[#febb02] rounded-lg flex items-center justify-around gap-2'>
                 <div onClick={() => setIsRentalModalOpen(true)}> 
                     <SearchItem 
                         IconBefore={<MdOutlineHouseSiding />} 
@@ -56,21 +56,21 @@ const Search = () => {
                         buttonText={rentalText}
                     />
                 </div>
-                <div onClick={() => setIsLocationModalOpen(true)}> {/* Mở Modal địa điểm */} 
+                <div onClick={() => setIsLocationModalOpen(true)}> 
                     <SearchItem 
                         IconBefore={<HiOutlineLocationMarker />} 
                         buttonText={locationText} // Hiển thị địa điểm đã chọn
                         IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
                     />
                 </div>
-                <div onClick={() => setIsPriceModalOpen(true)}> {/* Mở Modal giá */} 
+                <div onClick={() => setIsPriceModalOpen(true)}> 
                     <SearchItem 
                         IconBefore={<TbReportMoney />} 
                         buttonText={priceText} // Hiển thị giá đã chọn
                         IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
                     />
                 </div>
-                <div onClick={() => setIsModalOpen(true)}> {/* Mở Modal diện tích */} 
+                <div onClick={() => setIsModalOpen(true)}>  
                     <SearchItem 
                         IconBefore={<RiCrop2Line />} 
                         buttonText={areaText} // Hiển thị diện tích đã chọn
@@ -79,7 +79,7 @@ const Search = () => {
                 </div>
                 <button
     type='button'
-    className='outline-none py-2 px-4 w-[240px] bg-[#1266dd] text-sm flex items-center justify-center gap-2 text-white font-medium rounded-lg'
+    className='outline-none py-2 px-4 bg-[#1266dd] text-sm flex items-center justify-center gap-2 text-white font-medium rounded-lg'
 >
     <Link to="/search-page" className="flex items-center w-full h-full"> {/* Link bao bọc nút */}
         <FiSearch />

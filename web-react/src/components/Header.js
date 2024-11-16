@@ -1,92 +1,199 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; 
-import logo from '../assets/images/logo.png';
-import Button from './Button';
-import icons from '../ultils/icons';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import logo from "../assets/images/logo.png";
+import Button from "./Button";
+import { logout } from "../slices/authSlice";
+import icons from "../ultils/icons";
+import User from "./User";
 
 const { AiOutlinePlusCircle } = icons;
 
 const Header = () => {
-    const [user, setUser] = useState(null); // State to manage user info
-    const [token, setToken] = useState(localStorage.getItem('token')); // Get token from local storage
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.accessToken);
 
-    useEffect(() => {
-        if (token) {
-            // Assuming you have a function to decode the token and get user info
-            const userData = decodeToken(token); // Replace with your decoding logic
-            setUser(userData);
-        }
-    }, [token]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
-    const handleLogout = () => {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem('token'); // Remove token from local storage
-    };
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Bạn có chắc muốn đăng xuất?");
+    if (confirmLogout) {
+      dispatch(logout());
+      navigate("/");
+    }
+  };
 
-    return (
-        <div className='fixed-header w-1100 flex items-center justify-between'>
-            <Link to="/" className='flex items-center'>
-                <img
-                    src={logo}
-                    alt="logo"
-                    className='w-[240px] h-[70px] object-contain'
-                />
-            </Link>
-            <div className='flex items-center gap-1'>
-                {user ? (
-                    <>
-                        <span className="text-white mr-4">Xin chào, {user.name}</span>
-                        <Button 
-                            text={'Quản lý tài khoản'} 
-                            textColor='text-white' 
-                            bgColor='bg-[#3961fb]' 
-                            path="/account-management" 
-                        />
-                        <Button 
-                            text={'Đăng xuất'} 
-                            textColor='text-white' 
-                            bgColor='bg-red-600' 
-                            onClick={handleLogout} 
-                        />
-                    </>
-                ) : (
-                    <>
-                        <Button 
-                            text={'Đăng nhập'} 
-                            textColor='text-white' 
-                            bgColor='bg-[#3961fb]' 
-                            path="/login"  
-                        />
-                        <Button 
-                            text={'Đăng ký'} 
-                            textColor='text-white' 
-                            bgColor='bg-[#3961fb]' 
-                            path="/register" 
-                        />
-                    </>
-                )}
-                <Button 
-                    text={'Đăng tin mới'} 
-                    textColor='text-white' 
-                    bgColor='bg-[#3961fb]' 
-                    IcAfter={AiOutlinePlusCircle} 
-                    path="/management/new-post" 
-                />
+  const handleNewPostClick = () => {
+    if (token) {
+      navigate("/management/new-post");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen((prev) => !prev);
+  };
+
+  return (
+    <div className="fixed-header w-1100 flex items-center justify-between bg-white shadow-md">
+      <Link to="/" className="flex items-center">
+        <img
+          src={logo}
+          alt="logo"
+          className="w-[240px] h-[70px] object-contain"
+        />
+      </Link>
+
+      <div className="flex items-center gap-4 relative">
+        {token ? (
+          <>
+            <div className="relative inline-block text-left">
+              <button
+                className="text-white bg-[#3961fb] px-4 py-2 rounded-md hover:bg-[#2951d8] transition"
+                onClick={toggleDropdown}>
+                Quản lý tài khoản
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 z-10 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 p-4">
+                  <div className="py-1">
+                    <Link
+                      to="/management/manage-post-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Quản lý tin đăng
+                    </Link>
+                    <Link
+                      to="/management/update-profile-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Sửa thông tin cá nhân
+                    </Link>
+                    <Link
+                      to="/management/recharge-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Nạp tiền vào tài khoản
+                    </Link>
+                    <Link
+                      to="/management/recharge-history-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Lịch sử nạp tiền
+                    </Link>
+                    <Link
+                      to="/management/payment-history-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Lịch sử thanh toán
+                    </Link>
+                    <Link
+                      to="/service-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Bảng giá dịch vụ
+                    </Link>
+                    <Link
+                      to="/feedback-page"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Liên hệ
+                    </Link>
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={handleLogout}>
+                      Thoát
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="relative inline-block text-left">
+    <button
+        onClick={toggleProfileDropdown}
+        type="button"
+        className="flex items-center"
+    >
+        <div className="w-8 h-8 rounded-full bg-gray-300 mr-2">
+            <img
+                className="w-full h-full rounded-full"
+                src="/images/default_user.svg"
+                alt="User Avatar"
+            />
+        </div>
+        <span className="flex items-center">
+            {user ? user.name : "Tài khoản"}
+        </span>
+        {/* Mũi tên xuống */}
+        <span className="text-xl">
+            &#9662; {/* Ký tự Unicode cho mũi tên xuống */}
+        </span>
+    </button>
+
+    {isProfileDropdownOpen && (
+        <div className="absolute right-0 z-10 mt-2 w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div className="p-3">
+                <div className="flex items-center justify-between mb-2">
+                    <User user={user} /> {/* Sử dụng component User để hiển thị thông tin */}
+                </div>
+                <p className="mb-3 text-sm font-normal">
+                    <a href="#" className="hover:underline">
+                        @{user ? user.username : 'jeseleos'} {/* Hiển thị tên người dùng */}
+                    </a>
+                </p>
+                <p className="mb-4 text-sm">
+                    Open-source contributor. Building{" "}
+                    <a href="#" className="text-blue-600 hover:underline">
+                        flowbite.com
+                    </a>
+                    .
+                </p>
+                <ul className="flex text-sm">
+                    <li className="mr-2">
+                        <a href="#" className="hover:underline">
+                            <span className="font-semibold">{user ? user.followingCount : '0'}</span>
+                            <span> Following</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="hover:underline">
+                            <span className="font-semibold">{user ? user.followersCount : '0'}</span>
+                            <span> Followers</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-    );
-};
+    )}
+</div>
 
-// Helper function to decode token (assuming JWT)
-const decodeToken = (token) => {
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1])); // Decode the payload
-        return { name: payload.name }; // Return user info (adjust as needed)
-    } catch (error) {
-        console.error('Failed to decode token', error);
-        return null;
-    }
+            <button
+              className="text-white bg-red-600 px-4 py-2 rounded-md hover:bg-red-700 transition"
+              onClick={handleNewPostClick}>
+              <AiOutlinePlusCircle className="inline-block mr-2" />
+              Đăng tin mới
+            </button>
+          </>
+        ) : (
+          <>
+            <Button
+              text={"Đăng nhập"}
+              textColor="text-white"
+              bgColor="bg-[#3961fb]"
+              path="/login"
+            />
+            <Button
+              text={"Đăng ký"}
+              textColor="text-white"
+              bgColor="bg-[#3961fb]"
+              path="/register"
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Header;

@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FeedbackService } from '../../services/feedback.service';
+import { UserService } from '../../services/user.service'; // Nhập UserService
+import { PostService } from '../../services/post.service'; // Nhập PostService
 import { Feedback } from '../../models/feedback.model';
+import { User } from '../../models/user.model'; // Đảm bảo đường dẫn đúng
+import { Post } from '../../models/post.model'; // Đảm bảo đường dẫn đúng
 import { MatDialog } from '@angular/material/dialog';
 import { FeedbackDialogComponent } from './feedback-dialog/feedback-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,40 +17,50 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class FeedbackManagementComponent implements OnInit {
   feedbacks: Feedback[] = [];
+  users: User[] = []; // Mảng người dùng
+  posts: Post[] = []; // Mảng bài viết
   dataSource = new MatTableDataSource<Feedback>();
   displayedColumns: string[] = ['postId', 'userId', 'name', 'phone', 'rating', 'comment', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private feedbackService: FeedbackService, private dialog: MatDialog) {}
+  constructor(
+    private feedbackService: FeedbackService,
+    private userService: UserService, // Khởi tạo UserService
+    private postService: PostService, // Khởi tạo PostService
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.loadFeedbacks();
+    this.loadUsers(); // Tải người dùng
+    this.loadPosts(); // Tải bài viết
   }
 
   loadFeedbacks(): void {
     this.feedbackService.getFeedbacks().subscribe((data) => {
-      console.log('Dữ liệu trả về từ API:', data);
       this.feedbacks = data;
       this.dataSource.data = this.feedbacks;
       this.dataSource.paginator = this.paginator;
     });
   }
 
-  addFeedback() {
-    const dialogRef = this.dialog.open(FeedbackDialogComponent, { data: { feedback: null } });
+  loadUsers(): void {
+    this.userService.getUsers().subscribe((data) => {
+      this.users = data;
+    });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.feedbackService.addFeedback(result).subscribe(() => {
-          this.loadFeedbacks();
-        });
-      }
+  loadPosts(): void {
+    this.postService.getPosts().subscribe((data) => {
+      this.posts = data;
     });
   }
 
   editFeedback(feedback: Feedback) {
-    const dialogRef = this.dialog.open(FeedbackDialogComponent, { data: { feedback } });
+    const dialogRef = this.dialog.open(FeedbackDialogComponent, { 
+      data: { feedback, users: this.users, posts: this.posts } 
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

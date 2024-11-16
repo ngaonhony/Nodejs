@@ -5,9 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PostDialogComponent } from './post-dialog/post-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { UserService } from '../../services/user.service';
-import { CategoryService } from '../../services/category.service';
-import { ServiceBookingService } from '../../services/service-booking.service';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Nhập MatSnackBar
 
 @Component({
   selector: 'app-post-management',
@@ -24,9 +22,9 @@ export class PostManagementComponent implements OnInit {
     'price',
     'location',
     'area',
-    'user', // Cột người dùng
-    'category', // Cột danh mục
-    'serviceBooking', // Cột dịch vụ đặt chỗ
+    'user',
+    'category',
+    'serviceBooking',
     'actions',
   ];
 
@@ -35,9 +33,7 @@ export class PostManagementComponent implements OnInit {
   constructor(
     private postService: PostService,
     private dialog: MatDialog,
-    private userService: UserService,
-    private categoryService: CategoryService,
-    private serviceBookingService: ServiceBookingService
+    private snackBar: MatSnackBar, // Thêm dòng này
   ) {}
 
   ngOnInit(): void {
@@ -47,16 +43,10 @@ export class PostManagementComponent implements OnInit {
   loadPosts(): void {
     this.postService.getPosts().subscribe(
       (data: Post[]) => {
-        console.log('Dữ liệu trả về từ API:', data);
-
         if (Array.isArray(data)) {
           this.posts = data;
           this.dataSource.data = this.posts;
           this.dataSource.paginator = this.paginator;
-
-          this.posts.forEach((post) => {
-            console.log('Bài viết:', post);
-          });
         } else {
           console.error('Dữ liệu không đúng cấu trúc, không phải mảng:', data);
           this.resetDataSource();
@@ -84,18 +74,20 @@ export class PostManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Đã chỉnh sửa bài viết:', result);
         this.postService.updatePost(result).subscribe(
           () => {
-            console.log('Bài viết đã được chỉnh sửa thành công.');
             this.loadPosts();
+            this.snackBar.open('Bài viết đã được chỉnh sửa thành công!', 'Đóng', {
+              duration: 3000,
+            });
           },
           (error) => {
             console.error('Lỗi khi chỉnh sửa bài viết:', error);
+            this.snackBar.open('Lỗi khi chỉnh sửa bài viết.', 'Đóng', {
+              duration: 3000,
+            });
           }
         );
-      } else {
-        console.log('Chỉnh sửa bài viết bị hủy hoặc không thành công.');
       }
     });
   }
@@ -105,16 +97,24 @@ export class PostManagementComponent implements OnInit {
       if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
         this.postService.deletePost(post._id).subscribe(
           () => {
-            console.log('Bài viết đã được xóa:', post);
             this.loadPosts();
+            this.snackBar.open('Bài viết đã được xóa thành công!', 'Đóng', {
+              duration: 3000,
+            });
           },
           (error) => {
             console.error('Lỗi khi xóa bài viết:', error);
+            this.snackBar.open('Lỗi khi xóa bài viết.', 'Đóng', {
+              duration: 3000,
+            });
           }
         );
       }
     } else {
       console.error('Không thể xóa bài viết vì ID không hợp lệ.');
+      this.snackBar.open('Không thể xóa bài viết vì ID không hợp lệ.', 'Đóng', {
+        duration: 3000,
+      });
     }
   }
 

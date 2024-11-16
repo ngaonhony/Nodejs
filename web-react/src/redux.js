@@ -1,16 +1,16 @@
-import rootReducer from "./store/reducers/rootReducer";
-import { persistStore } from "redux-persist";
-import { createStore, applyMiddleware } from "redux";
-import { thunk } from "redux-thunk"; // Use named import
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './slices/authSlice'; // Đảm bảo import đúng đường dẫn
+import categoryReducer from './slices/categorySlice';
+import servicesReducer from './slices/serviceSlice';
+import postReducer from './slices/postSlice';
 
-const reduxStore = () => {
-    const store = createStore(
-        rootReducer,
-        applyMiddleware(thunk) // Apply middleware here
-    );
-    const persistor = persistStore(store);
+const store = configureStore({
+    reducer: {
+        auth: authReducer,
+        categories: categoryReducer,
+        services: servicesReducer,
+        posts: postReducer,
+    },
+});
 
-    return { store, persistor };
-};
-
-export default reduxStore;
+export default store;
