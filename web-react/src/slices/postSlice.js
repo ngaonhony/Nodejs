@@ -35,17 +35,7 @@ const postsSlice = createSlice({
         loading: false,
         error: null,
     },
-    reducers: {
-        setUser(state, action) {
-          state.user = action.payload;
-          // Save user to local storage
-          localStorage.setItem('user', JSON.stringify(action.payload));
-        },
-        clearUser(state) {
-          state.user = null; // Reset user to null
-          localStorage.removeItem('user'); // Clear from local storage
-        },
-      },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(getPosts.pending, (state) => {

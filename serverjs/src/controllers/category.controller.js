@@ -1,18 +1,19 @@
 const Category = require("../models/category.model");
 
-exports.createCategory = async (req, res) => {
+exports.createCategory = async (req, res, next) => {
   try {
     const { name, description, status } = req.body;
 
     const category = new Category({
       name,
       description,
-      status: status || "active",
+      status: status || 'active', // Mặc định là 'active' nếu không có
     });
 
     await category.save();
     res.status(201).send(category);
   } catch (error) {
+    next(error);
     console.error(error);
     res.status(500).send({ message: "Error creating category", error });
   }
@@ -20,9 +21,7 @@ exports.createCategory = async (req, res) => {
 
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.find()
-      .select("name description status")
-      .sort({ createdAt: -1 });
+    const categories = await Category.find().select("name description status").sort({ createdAt: -1 });
     res.send(categories);
   } catch (error) {
     console.error(error);

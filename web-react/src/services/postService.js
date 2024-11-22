@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/posts';
-
+const getToken = () => {
+    return localStorage.getItem('token'); // Adjust this to your token storage method
+};
 // Hàm lấy tất cả bài viết
 export const getPosts = async () => {
     try {
@@ -24,33 +26,47 @@ export const getPostById = async (id) => {
     }
 };
 
-// Hàm tạo bài viết
 export const createPost = async (postData) => {
+    const token = getToken(); // Retrieve the token
     try {
-        const response = await axios.post(API_URL, postData);
-        return response.data; // Trả về bài viết mới được tạo
+        const response = await axios.post(API_URL, postData, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Set the Authorization header with the token
+            },
+        });
+        return response.data; // Return the newly created post
     } catch (error) {
         console.error('Error creating post:', error);
         throw new Error('Error creating post: ' + error.message);
     }
 };
 
-// Hàm cập nhật bài viết
+// Function to update a post with token authentication
 export const updatePost = async (id, postData) => {
+    const token = getToken(); // Retrieve the token
     try {
-        const response = await axios.put(`${API_URL}/${id}`, postData);
-        return response.data; // Trả về bài viết đã được cập nhật
+        const response = await axios.put(`${API_URL}/${id}`, postData, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Set the Authorization header with the token
+            },
+        });
+        return response.data; // Return the updated post
     } catch (error) {
         console.error('Error updating post:', error);
         throw new Error('Error updating post: ' + error.message);
     }
 };
 
-// Hàm xóa bài viết
+// Function to delete a post with token authentication
 export const deletePost = async (id) => {
+    const token = getToken(); // Retrieve the token
     try {
-        const response = await axios.delete(`${API_URL}/${id}`);
-        return response.data; // Trả về phản hồi sau khi xóa
+        await axios.delete(`${API_URL}/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Set the Authorization header with the token
+            },
+        });
+        return id; // Return the id of the deleted post
     } catch (error) {
         console.error('Error deleting post:', error);
         throw new Error('Error deleting post: ' + error.message);

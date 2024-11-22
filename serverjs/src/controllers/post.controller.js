@@ -24,7 +24,7 @@ exports.createPost = async (req, res) => {
       location: req.body.location,
       area: req.body.area,
       categoryId: req.body.categoryId,
-      servicesBookingId: req.body.servicesBookingId,
+      serviceId: req.body.serviceId,
       images: imageUrls,
     });
 
@@ -37,50 +37,29 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const filters = {};
-    if (req.query.title)
-      filters.title = { $regex: req.query.title, $options: "i" };
-    if (req.query.location)
-      filters.location = { $regex: req.query.location, $options: "i" };
-    if (req.query.categoryId) filters.categoryId = req.query.categoryId;
-
-    const posts = await Post.find(filters)
-      .skip(skip)
-      .limit(limit)
-      .populate("userId categoryId servicesBookingId");
-
-    const totalPosts = await Post.countDocuments(filters);
-    const totalPages = Math.ceil(totalPosts / limit);
-
-    res.status(200).json({
-      page,
-      totalPages,
-      totalPosts,
-      posts,
-    });
+    const posts = await Post.find()
+      .populate("userId", "name phone createdAt")
+      .populate("serviceId","name rating")
+    res.send(posts);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy danh sách bài đăng", error });
+    res.status(500).send({ message: "Error fetching posts", error });
   }
 };
 
 exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate("userId", "name")
+      .populate("userId", "name phone createdAt")
       .populate("categoryId", "name")
-      .populate("servicesBookingId", "serviceName");
-
-    if (!post) return res.status(404).json({ message: "Post not found" });
-    res.status(200).json(post);
+      .populate("serviceId", "name rating"); 
+    if (!post) {
+      return res.status(404).send({ message: "Post not found" });
+    }
+    res.send(post);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).send({ message: "Error fetching post by ID", error });
   }
 };
-
 exports.updatePost = async (req, res) => {
   try {
     const userId = req.userId;
@@ -111,7 +90,7 @@ exports.updatePost = async (req, res) => {
     post.location = req.body.location;
     post.area = req.body.area;
     post.categoryId = req.body.categoryId;
-    post.servicesBookingId = req.body.servicesBookingId;
+    post.servicesId = req.body.servicesId;
     post.images = imageUrls;
 
     const updatedPost = await post.save();

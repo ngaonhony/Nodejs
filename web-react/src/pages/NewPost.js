@@ -1,53 +1,34 @@
-  import Navigator from "../components/Navigator";
-  import React, { useEffect, useState } from "react";
-  import UserBar from "../components/UserBar";
+import Navigator from "../components/Navigator";
+import React, { useEffect, useState } from "react";
+import UserBar from "../components/UserBar";
 import { MdOutlineCloudUpload } from "react-icons/md";
+import provincesData from "../assets/data/vn_units.json";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../slices/categorySlice";
+import { createPost } from '../slices/postSlice';
 const NewPost = () => {
+  const dispatch = useDispatch();
+  const { categories = [] } = useSelector((state) => state.categories || {});
+  const user = useSelector((state) => state.auth.user);
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
   const [formData, setFormData] = useState({
-    address: "",
+    location: "",
     title: "",
     description: "",
     price: "",
     images: null,
-    video: null,
     province: "",
     district: "",
     ward: "",
   });
 
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-
   useEffect(() => {
-    // Dữ liệu tỉnh, quận từ file JSON
-    const fetchProvinces = async () => {
-      // Đây là dữ liệu mô phỏng từ file JSON của bạn
-      const data = [
-        {
-          Code: "01",
-          FullName: "Thành phố Hà Nội",
-          District: [
-            {
-              Code: "001",
-              FullName: "Quận Ba Đình",
-              Ward: [
-                { Code: "00001", FullName: "Phường Phúc Xá" },
-                { Code: "00004", FullName: "Phường Trúc Bạch" },
-                { Code: "00006", FullName: "Phường Vĩnh Phúc" },
-              ],
-            },
-            // Có thể thêm các quận khác ở đây
-          ],
-        },
-        // Có thể thêm các tỉnh khác ở đây
-      ];
+    setProvinces(provincesData);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
-      setProvinces(data);
-    };
-
-    fetchProvinces();
-  }, []);
   const getAddress = (data) => {
     const parts = [];
     if (data.detail) parts.push(data.detail);
@@ -65,92 +46,66 @@ const NewPost = () => {
       ward: "",
     });
 
-    // Tìm quận tương ứng với tỉnh đã chọn
     const selectedProvince = provinces.find(
       (province) => province.Code === provinceCode
     );
     setDistricts(selectedProvince ? selectedProvince.District : []);
     setWards([]);
   };
-  const categories = [
-    { id: "1", name: "Nhà ở" },
-    { id: "2", name: "Căn hộ" },
-    { id: "3", name: "Biệt thự" },
-    { id: "4", name: "Nhà đất" },
-    { id: "5", name: "Phòng trọ" },
-  ];
-
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      const data = [
-        {
-          Code: "01",
-          FullName: "Thành phố Hà Nội",
-          District: [
-            {
-              Code: "001",
-              FullName: "Quận Ba Đình",
-              Ward: [
-                { Code: "00001", FullName: "Phường Phúc Xá" },
-                { Code: "00004", FullName: "Phường Trúc Bạch" },
-                { Code: "00006", FullName: "Phường Vĩnh Phúc" },
-              ],
-            },
-          ],
-        },
-      ];
-
-      setProvinces(data);
-    };
-
-    fetchProvinces();
-  }, []);
-
-  const handleCategoryChange = (e) => {
-    const category = e.target.value;
-    setFormData({ ...formData, category });
-  };
   const handleDistrictChange = (e) => {
     const districtCode = e.target.value;
     setFormData({ ...formData, district: districtCode, ward: "" });
 
-    // Tìm phường tương ứng với quận đã chọn
     const selectedDistrict = districts.find(
       (district) => district.Code === districtCode
     );
     setWards(selectedDistrict ? selectedDistrict.Ward : []);
   };
-
   const handleWardChange = (e) => {
     const ward = e.target.value;
     setFormData({ ...formData, ward });
   };
 
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setFormData({ ...formData, category });
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFormData({ ...formData, [name]: files[0] });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData); // handle form submission
+    dispatch(createPost({ ...formData, userId: user.id }))
+      .then(() => {
+        console.log('Post created successfully:', formData);
+        setFormData({
+          location: "",
+          title: "",
+          description: "",
+          price: "",
+          images: null,
+          category: "",
+        });
+      })
+      .catch((error) => {
+        console.error('Error creating post:', error);
+      });
   };
-  const [user, setUser] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setFormData({
-      ...formData,
-      name: userData.username,
-      phone: "",
-    });
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result); // Set the image preview
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
   };
-
+  
   return (
     <div className="flex flex-col">
       <div className="w-full sticky top-0 bg-white z-10">
@@ -362,7 +317,7 @@ const NewPost = () => {
                     </label>
                     <input
                       type="text"
-                      name="address"
+                      name="location"
                       value={getAddress(formData)}
                       className="w-full bg-gray-200 p-2 border rounded mt-1"
                       placeholder="Nhập địa chỉ"
@@ -383,9 +338,9 @@ const NewPost = () => {
                     onChange={handleCategoryChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5">
                     <option value="">-- Chọn danh mục --</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
                       </option>
                     ))}
                   </select>
@@ -426,7 +381,7 @@ const NewPost = () => {
                     type="text"
                     id="name"
                     name="name"
-                    value={formData.name}
+                    value={user.name}
                     onChange={handleChange}
                     className="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     disabled
@@ -442,7 +397,7 @@ const NewPost = () => {
                     type="tel"
                     id="phone"
                     name="phone"
-                    value={formData.phone}
+                    value={user.phone}
                     onChange={handleChange}
                     className="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     disabled

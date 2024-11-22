@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState  } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Button } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { getPosts } from "../slices/postSlice"; // Import the getPosts action
@@ -6,24 +6,43 @@ import { Link, useLocation } from "react-router-dom";
 
 const List = ({ categoryId }) => {
   const dispatch = useDispatch();
-  const { posts } = useSelector((state) => state.posts);
+  const { posts, error } = useSelector((state) => state.posts);
   const location = useLocation();
   const [selectedPostId, setSelectedPostId] = useState(null);
+
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch]);
+
+  // Check if posts are defined
+  if (!posts) {
+    return <p className="text-gray-500">Loading posts...</p>;
+  }
+
   let filteredPosts = posts;
   const currentCategoryId = categoryId || new URLSearchParams(location.search).get('categoryId');
 
+  // Filter posts by category
   if (currentCategoryId) {
     filteredPosts = posts.filter((post) => post.categoryId === currentCategoryId);
-  } 
-  const sortedPosts = [...filteredPosts].sort(
-    (a, b) => (b.serviceId.rating || 0) - (a.serviceId.rating || 0) // Handle cases where rating might be undefined
-  );
+  }
+
+  // Sort posts by rating
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    const ratingA = (a.serviceId && a.serviceId.rating) ? a.serviceId.rating : 0;
+    const ratingB = (b.serviceId && b.serviceId.rating) ? b.serviceId.rating : 0;
+
+    return ratingB - ratingA; // Descending order
+  });
+
   const handlePostClick = (postId) => {
     setSelectedPostId(postId);
   };
+
+  if (error) {
+    return <p className="text-red-500">{error.message}</p>;
+  }
+
   return (
     <div className="w-full p-2 bg-white shadow-md rounded-md">
       <div className="flex items-center justify-between my-3">
@@ -53,7 +72,7 @@ const List = ({ categoryId }) => {
                   <div className="flex justify-between gap-4 w-full">
                     <div className="flex text-red-600 font-medium">
                       <span className="ml-2 text-yellow-500 text-2xl">
-                        {"★".repeat(post.serviceId.rating)}
+                      {"★".repeat(post.serviceId?.rating || 0)}
                       </span>
                       <Link
                         to={`/detail-page/${post._id}`}
@@ -81,12 +100,12 @@ const List = ({ categoryId }) => {
                       alt="avatar"
                       className="w-[30px] h-[30px] object-cover rounded-full"
                     />
-                    <p>{post.userName}</p>
+                    <p>{post.userId ? post.userId.name : "Unknown User"}</p>
                   </div>
                   {post.serviceId.rating === 5 && (
                     <div className="flex items-center gap-1">
                       <button type="button" className="bg-blue-700 text-white p-1 rounded-md">
-                        Gọi {post.userId.phone}
+                        Gọi {post.userId?.phone || "Unknown"}
                       </button>
                       <button type="button" className="text-blue-700 px-1 rounded-md border border-blue-700">
                         Nhắn Zalo
