@@ -21,7 +21,7 @@ exports.createFeedback = async (req, res) => {
 exports.getAllFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.find()
-      .populate("postId", "title") // Sửa thành postId
+      .populate("postId", "name") // Sửa thành postId
       .populate("userId", "name");
     res.send(feedbacks);
   } catch (error) {

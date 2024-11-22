@@ -3,7 +3,6 @@ const User = require("../models/user.model");
 
 exports.protect = async (req, res, next) => {
   let token;
-
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -13,12 +12,16 @@ exports.protect = async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = await User.findById(decoded.id).select("-password");
+      // Đảm bảo lấy `userId` từ token
+      req.userId = decoded.id; // Giả sử token chứa `id` của user
 
-      if (!req.user) {
+      // Kiểm tra xem user có tồn tại trong DB không (tuỳ chọn)
+      const user = await User.findById(req.userId).select("-password");
+      if (!user) {
         return res.status(401).json({ message: "Người dùng không tồn tại" });
       }
 
+      req.user = user; // Lưu user vào req nếu cần sử dụng trong các chức năng khác
       next();
     } catch (error) {
       if (error.name === "TokenExpiredError") {
@@ -38,11 +41,33 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.authorize = (...role) => {
+// Middleware phân quyền dựa trên role của người dùng
+exports.authorize = (...roles) => {
   return (req, res, next) => {
-    if (!role.includes(req.user.role)) {
+    if (!roles.includes(req.user.role)) {
       return res.status(403).json({ message: "Không có quyền truy cập" });
     }
     next();
   };
+};
+
+// Middleware kiểm tra token
+exports.authenticateToken = (req, res, next) => {
+  const token =
+    req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Không có token, vui lòng đăng nhập" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res
+        .status(403)
+        .json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+    }
+    req.user = user;
+    next();
+  });
 };

@@ -11,21 +11,18 @@ const postSchema = new mongoose.Schema(
     description: { type: String, required: true, maxlength: 1000 },
     price: { type: Number, required: true, min: 0 },
     location: { type: String, required: true },
-    area: { type: String, required: true, min: 0 },
+    area: { type: Number, required: true, min: 0 },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    serviceId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Service',
-      required: true,
+    servicesBookingId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ServiceBooking",
+      required: false,
     },
-    images: { 
-      type: [String], 
-      required: true,
-    },
+    images: [{ type: String }],
     created_at: { type: Date, default: Date.now },
   },
   { timestamps: true }

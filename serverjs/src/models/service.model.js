@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const serviceSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  rating: { type: Number, default: 0, min: 0, max: 5 },
   price_per_day: { type: Number, required: true },
   price_per_week: { type: Number, required: true },
   price_per_month: { type: Number, required: true },

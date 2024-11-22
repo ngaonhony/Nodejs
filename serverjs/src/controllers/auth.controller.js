@@ -1,4 +1,3 @@
-// Import các thư viện cần thiết
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -9,7 +8,6 @@ const {
 } = require("../utils/email");
 const winston = require("winston");
 
-// Tạo Access Token
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
@@ -18,14 +16,12 @@ const generateAccessToken = (user) => {
   );
 };
 
-// Tạo Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "7d",
   });
 };
 
-// Đăng ký người dùng mới
 exports.register = async (req, res) => {
   const { email, password, name, phone, role } = req.body;
   try {
@@ -64,7 +60,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// Đăng nhập
 exports.login = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
   const user = await User.findOne({ $or: [{ email }, { phone }] }).select(
@@ -91,7 +86,6 @@ exports.login = asyncHandler(async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  // Lưu Refresh Token vào cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -99,26 +93,27 @@ exports.login = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    balance: user.balance,
-    phone: user.phone,
-    address: user.address,
+    message: "Đăng nhập thành công",
     accessToken,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      balance: user.balance,
+      phone: user.phone,
+      address: user.address,
+    },
   });
 
-  console.log(accessToken);
-  winston.info(`Người dùng ${user.email} đã đăng nhập từ IP: ${req.ip}`);
+  console.log("Đăng nhập thành công. Token:", accessToken);
 });
 
 exports.adminLogin = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
 
-  // Tìm kiếm người dùng với quyền admin
   const admin = await User.findOne({
     $or: [{ email }, { phone }],
-    role: "admin", // Kiểm tra xem người dùng có phải là admin không
+    role: "admin",
   }).select("+password");
 
   if (!admin) {
@@ -137,19 +132,15 @@ exports.adminLogin = asyncHandler(async (req, res) => {
       message: "Email, số điện thoại hoặc mật khẩu không chính xác",
     });
   }
-
-  // Generate tokens
   const accessToken = generateAccessToken(admin);
   const refreshToken = generateRefreshToken(admin);
 
-  // Lưu Refresh Token vào cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  // Return response with user info
   res.status(200).json({
     message: "Đăng nhập admin thành công",
     accessToken,
@@ -166,7 +157,7 @@ exports.adminLogin = asyncHandler(async (req, res) => {
   winston.info(`Admin ${admin.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
-// API cấp lại Access Token mới từ Refres h Token
+// API cấp lại Access Token mới từ Refresh Token
 exports.refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
@@ -181,6 +172,8 @@ exports.refreshToken = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Người dùng không tồn tại" });
     }
+
+    // (Tùy chọn) Kiểm tra nếu `refreshToken` đã được lưu và hợp lệ trong cơ sở dữ liệu.
 
     const newAccessToken = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
@@ -198,7 +191,11 @@ exports.refreshToken = async (req, res) => {
 
 // Đăng xuất
 exports.logout = asyncHandler((req, res) => {
-  res.clearCookie("refreshToken");
+  res.clearCookie("refreshToken", "accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
   res.status(200).json({ message: "Đăng xuất thành công" });
   winston.info(`Người dùng đã đăng xuất từ IP: ${req.ip}`);
 });

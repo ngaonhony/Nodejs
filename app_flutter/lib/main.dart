@@ -1,7 +1,8 @@
-import 'package:app_flutter/pages/home.dart';
-import 'package:app_flutter/pages/login.dart';
-import 'package:app_flutter/pages/register.dart';
+import 'package:phongtronhom1/pages/home.dart';
+import 'package:phongtronhom1/pages/login.dart';
+import 'package:phongtronhom1/pages/register.dart';
 import 'package:flutter/material.dart';
+
 
 void main() {
   runApp(MyApp());

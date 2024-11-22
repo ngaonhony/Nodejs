@@ -116,10 +116,10 @@ class _FooterState extends State<Footer> {
               // Kiểm tra trạng thái đăng nhập
               if (isLoggedIn) {
                 // Nếu đã đăng nhập, điều hướng đến trang đăng tin
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PostScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => PostScreen()),
+                // );
               } else {
                 // Nếu chưa đăng nhập, điều hướng đến trang đăng nhập
                 Navigator.push(

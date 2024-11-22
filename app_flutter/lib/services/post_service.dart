@@ -2,57 +2,36 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PostApiService {
-  final String baseUrl = 'http://localhost:3000/api/posts';
+  final String baseUrl = 'http://10.40.6.110:3000/api/posts';
 
-  Future<List<dynamic>> getAllPosts() async {
-    final response = await http.get(Uri.parse(baseUrl));
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
+
+  Future<List<dynamic>> getAllPosts({int page = 1, int limit = 10}) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl?page=$page&limit=$limit'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['posts'];
+      } else {
+        throw Exception('Failed to load posts: ${response.body}');
+      }
+    } catch (error) {
+      print('Error fetching posts: $error');
       throw Exception('Failed to load posts');
     }
   }
 
-  Future<Map<String, dynamic>> getPostById(String _id) async {
-    final response = await http.get(Uri.parse('$baseUrl/$_id'));
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
+
+  Future<Map<String, dynamic>> getPostById(String id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load post by ID: ${response.body}');
+      }
+    } catch (error) {
+      print('Error fetching post by ID: $error');
       throw Exception('Failed to load post');
-    }
-  }
-
-  Future<Map<String, dynamic>> createPost(Map<String, dynamic> postData) async {
-    final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(postData),
-    );
-    if (response.statusCode == 201) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to create post');
-    }
-  }
-
-  Future<Map<String, dynamic>> updatePost(
-      String id, Map<String, dynamic> postData) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/$id'),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(postData),
-    );
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to update post');
-    }
-  }
-
-  Future<void> deletePost(String id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete post');
     }
   }
 }

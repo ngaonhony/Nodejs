@@ -13,7 +13,6 @@ exports.createService = async (req, res) => {
       title_color: req.body.title_color,
       auto_approval: req.body.auto_approval,
       prominent_badge: req.body.prominent_badge,
-      rating: req.body.rating, // Include rating
     });
 
     await service.save();
@@ -26,7 +25,7 @@ exports.createService = async (req, res) => {
 // Lấy tất cả dịch vụ
 exports.getAllServices = async (req, res) => {
   try {
-    const services = await Service.find().sort({ createdAt: -1 });
+    const services = await Service.find();
     res.send(services);
   } catch (error) {
     res.status(500).send({ message: "Error fetching services", error });

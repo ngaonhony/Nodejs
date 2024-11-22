@@ -7,10 +7,9 @@ import 'auth_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class UserService {
-  final String baseUrl = 'http://localhost:3000/api/users';
+  final String baseUrl = 'http://10.40.6.110:3000/api/users';
   final AuthService _authService = AuthService();
 
-  // Fetching current user details
   Future<Map<String, dynamic>> getCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
@@ -57,13 +56,11 @@ class UserService {
     return {};
   }
 
-  // Generate a random member ID
   String _generateMemberId() {
     final random = Random();
     return (random.nextInt(900000) + 100000).toString();
   }
 
-  // Handle errors from API responses
   void _handleError(http.Response response) {
     final errorData = jsonDecode(response.body);
     final message = errorData['message'] ?? 'Lỗi không xác định';
