@@ -12,7 +12,7 @@ const User = ({ user }) => {
           <div className="flex-shrink-0">
             <img
               className="avatar size-50"
-              src={defaultAvatar} // Sử dụng ảnh mặc định nếu không có avatar
+              src={defaultAvatar||"https://phongtro123.com/images/default-user.png"} // Sử dụng ảnh mặc định nếu không có avatar
               alt={user.name || 'Không xác định'} // Hiển thị 'Không xác định' nếu không có tên
             />
           </div>

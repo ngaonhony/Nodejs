@@ -21,16 +21,6 @@ export class UserService {
     return this.http.get<User[]>(this.apiUrl, { headers });
   }
 
-  // Thêm người dùng (nếu cần)
-  addUser(user: User): Observable<User> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.post<User>(this.apiUrl, user, { headers });
-  }
-
   // Cập nhật người dùng
   updateUser(user: User): Observable<User> {
     const token = localStorage.getItem('token');

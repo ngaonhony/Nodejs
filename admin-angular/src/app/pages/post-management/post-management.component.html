@@ -78,15 +78,15 @@
             <ng-container matColumnDef="category">
               <th mat-header-cell *matHeaderCellDef>Danh Mục</th>
               <td mat-cell *matCellDef="let post">
-                {{ post.categoryId.name || "N/A" }}
+                {{ post.categoryId?.name || "N/A" }}
               </td>
             </ng-container>
 
             <!-- Cột Dịch Vụ Đặt Chỗ -->
-            <ng-container matColumnDef="serviceBooking">
+            <ng-container matColumnDef="service">
               <th mat-header-cell *matHeaderCellDef> Dịch Vụ Đặt Chỗ </th>
               <td mat-cell *matCellDef="let post">
-                {{ post.serviceBookingId?.serviceId?.name || "N/A" }}
+                {{ post.serviceId?.name || "N/A" }}
               </td>
             </ng-container> 
 

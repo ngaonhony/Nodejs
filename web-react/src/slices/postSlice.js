@@ -1,78 +1,94 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getPosts, getPostById, createPost, updatePost, deletePost } from '../services/postService';
+import * as postService from '../services'; // Adjust the path
 
-// Async Thunks
-export const fetchPosts = createAsyncThunk('post/fetchPosts', async () => {
-  const response = await getPosts();
-  return response;
+// Async thunks for API calls using the service
+export const getPosts = createAsyncThunk('posts/getPosts', async () => {
+    const response = await postService.getPosts();
+    return response; // Directly return the data from the service
 });
 
-export const fetchPostById = createAsyncThunk('post/fetchPostById', async (id) => {
-  const response = await getPostById(id);
-  return response;
+export const getPostById = createAsyncThunk('posts/getPostById', async (postId) => {
+    const response = await postService.getPostById(postId);
+    return response;
 });
 
-export const addPost = createAsyncThunk('post/addPost', async (postData) => {
-  const response = await createPost(postData);
-  return response;
+export const createPost = createAsyncThunk('posts/createPost', async (postData) => {
+    const response = await postService.createPost(postData);
+    return response;
 });
 
-export const editPost = createAsyncThunk('post/editPost', async ({ id, postData }) => {
-  const response = await updatePost(id, postData);
-  return response;
+export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, postData }) => {
+    const response = await postService.updatePost(id, postData);
+    return response;
 });
 
-export const removePost = createAsyncThunk('post/removePost', async (id) => {
-  const response = await deletePost(id);
-  return response;
+export const deletePost = createAsyncThunk('posts/deletePost', async (id) => {
+    await postService.deletePost(id);
+    return id; // Return the id of the deleted post
 });
 
-// Slice
-const postSlice = createSlice({
-  name: 'post',
-  initialState: {
-    posts: [],
-    currentPost: null,
-    status: 'idle',
-    error: null,
-    isItemFavorited: false,
-  },
-  reducers: {
-    setCurrentPost: (state, action) => {
-      state.currentPost = action.payload;
+// Create the slice
+const postsSlice = createSlice({
+    name: 'posts',
+    initialState: {
+        posts: [],
+        loading: false,
+        error: null,
     },
-    toggleFavorite: (state) => {
-      state.isItemFavorited = !state.isItemFavorited;
+    reducers: {
+        setUser(state, action) {
+          state.user = action.payload;
+          // Save user to local storage
+          localStorage.setItem('user', JSON.stringify(action.payload));
+        },
+        clearUser(state) {
+          state.user = null; // Reset user to null
+          localStorage.removeItem('user'); // Clear from local storage
+        },
+      },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getPosts.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getPosts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.posts = action.payload;
+            })
+            .addCase(getPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(getPostById.pending, (state) => {
+              state.loading = true; 
+          })
+          .addCase(getPostById.fulfilled, (state, action) => {
+              state.loading = false; 
+              const existingIndex = state.posts.findIndex(post => post._id === action.payload._id);
+              if (existingIndex !== -1) {
+                  state.posts[existingIndex] = action.payload; 
+              } else {
+                  state.posts.push(action.payload); 
+              }
+          })
+          .addCase(getPostById.rejected, (state, action) => {
+              state.loading = false; // Clear loading state
+              state.error = action.error.message; // Set error message
+          })
+            .addCase(createPost.fulfilled, (state, action) => {
+                state.posts.push(action.payload);
+            })
+            .addCase(updatePost.fulfilled, (state, action) => {
+                const index = state.posts.findIndex(post => post.id === action.payload.id);
+                if (index !== -1) {
+                    state.posts[index] = action.payload;
+                }
+            })
+            .addCase(deletePost.fulfilled, (state, action) => {
+                state.posts = state.posts.filter(post => post.id !== action.payload);
+            });
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchPosts.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.posts = action.payload;
-      })
-      .addCase(fetchPosts.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(fetchPostById.fulfilled, (state, action) => {
-        state.currentPost = action.payload;
-      })
-      .addCase(addPost.fulfilled, (state, action) => {
-        state.posts.push(action.payload);
-      })
-      .addCase(editPost.fulfilled, (state, action) => {
-        const index = state.posts.findIndex((post) => post._id === action.payload._id);
-        state.posts[index] = action.payload;
-      })
-      .addCase(removePost.fulfilled, (state, action) => {
-        state.posts = state.posts.filter((post) => post._id !== action.payload._id);
-      });
-  },
 });
 
-export const { setCurrentPost, toggleFavorite } = postSlice.actions;
-export default postSlice.reducer;
+// Export the reducer to be used in the store
+export default postsSlice.reducer;

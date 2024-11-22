@@ -24,7 +24,7 @@ export class PostManagementComponent implements OnInit {
     'area',
     'user',
     'category',
-    'serviceBooking',
+    'service',
     'actions',
   ];
 

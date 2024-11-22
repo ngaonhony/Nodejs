@@ -1,67 +1,43 @@
 import React, { useState } from 'react';
-import anhphong1 from "../assets/images/anhphong1.png";
-import anhphong2 from "../assets/images/anhphong2.png";
-import anhphong3 from "../assets/images/anhphong3.png";
-import anhphong4 from "../assets/images/anhphong4.png";
-import anhphong5 from "../assets/images/phong5.png";
 
-const SlideShow = () => {
-  const images = [
-    anhphong1,
-    anhphong2,
-    anhphong3,
-    anhphong4,
-    anhphong5,
-  ];
+const SlideShow = ({ images }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const handleNext = () => {
-    setCurrentImageIndex((prevIndex) => 
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
-    );
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  const handlePrev = () => {
-    setCurrentImageIndex((prevIndex) => 
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
   return (
-    <div className="flex   
- w-full h-500px items-center justify-center space-x-4 bg-black p-4">
-      <button
-        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400"
-        onClick={handlePrev}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6   
- h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-
-      <div   
- className="w-[500px] h-[500px] overflow-hidden rounded-lg">
-        <img
-          src={images[currentImageIndex]}
-          alt="Nội dung chuyển ảnh"
-          className="w-full h-full object-cover transition duration-500 ease-in-out transform hover:scale-110"
-          style={{ maxHeight: '100%', maxWidth: '100%' }}
-        />
+    <div className="relative w-full h-500px mx-auto">
+      <div className="overflow-hidden relative" style={{ height: '26rem' }}>
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className={`h-[500px] absolute inset-0 transition-transform transform ${
+              index === currentIndex ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            <img src={image} alt={`Slide ${index}`} className="w-full h-full object-cover" />
+          </div>
+        ))}
       </div>
-
       <button
-        className="bg-yellow-300 p-2 rounded-lg hover:bg-gray-400"
-        onClick={handleNext}
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white p-2"
+        onClick={prevSlide}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6   
- h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
+        Prev
       </button>
-    </div>   
-
+      <button
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-2"
+        onClick={nextSlide}
+      >
+        Next
+      </button>
+    </div>
   );
 };
 

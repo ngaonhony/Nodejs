@@ -1,6 +1,7 @@
 export interface Service {
   _id?: string;
   name: string;
+  rating?: number;
   price_per_day: number;
   price_per_week: number;
   price_per_month: number;

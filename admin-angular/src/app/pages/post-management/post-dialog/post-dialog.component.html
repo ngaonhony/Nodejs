@@ -46,12 +46,12 @@
 
       <mat-form-field appearance="fill" class="third-width">
         <mat-label>Dịch vụ đặt chỗ</mat-label>
-        <mat-select [(ngModel)]="post.serviceBookingId" name="serviceBookingId" required>
-          <mat-option *ngFor="let booking of serviceBookings" [value]="booking._id">
-            {{ getServiceName(booking.serviceId) }}
+        <mat-select [(ngModel)]="post.serviceId" name="serviceId" required>
+          <mat-option *ngFor="let service of services" [value]="service._id">
+            {{ service.name }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="!post.serviceBookingId">Dịch vụ đặt chỗ là bắt buộc.</mat-error>
+        <mat-error *ngIf="!post.serviceId">Dịch vụ đặt chỗ là bắt buộc.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="third-width">
@@ -70,7 +70,7 @@
 <mat-dialog-actions>
   <button mat-button (click)="onCancel()">Hủy</button>
   <button mat-button (click)="onSave()" 
-          [disabled]="!post.title || !post.description || !post.price || !post.location || !post.area || !post.userId || !post.categoryId || !post.serviceBookingId">
+          [disabled]="!post.title || !post.description || !post.price || !post.location || !post.area || !post.userId || !post.categoryId || !post.serviceId">
     Lưu
   </button>
 </mat-dialog-actions>

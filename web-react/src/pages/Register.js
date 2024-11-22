@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
-import Navigator from "../components/Navigator";
-import Footer from "../components/Footer";
+import {Header,Navigator, Footer} from "../components";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services"; // Giả sử bạn có một hàm register trong authService
 
@@ -18,7 +16,6 @@ function Register() {
     e.preventDefault();
     setError('');
 
-    // Kiểm tra xem mật khẩu và xác nhận có khớp không
     if (password !== confirmPassword) {
       setError('Mật khẩu và xác nhận mật khẩu không khớp.');
       return;

@@ -2,10 +2,10 @@ import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../slices/categorySlice'; // Import action từ categorySlice
 import icons from '../ultils/icons';
-
+import { Link } from 'react-router-dom';
 const { GrNext } = icons;
 
-const ItemSidebar = () => {
+const Sidebar = () => {
     const dispatch = useDispatch();
     const { categories = []} = useSelector(state => state.categories || {});
 
@@ -18,10 +18,14 @@ const ItemSidebar = () => {
             <div className='flex flex-col gap-1 items-start'>
                 {categories.length > 0 ? (
                     categories.map((category) => (
-                        <div key={category._id} className='flex items-center'>
-                            <GrNext size={10} color='#ccc' />
-                            <p className='hover:text-red-500'>{category.name}</p> {/* Hiển thị tên danh mục */}
-                        </div>
+                        <Link
+              key={category._id}
+              to={`/category/${category._id}`}
+              className="flex items-center hover:text-red-500"
+            >
+              <GrNext size={10} color="#ccc" />
+              <p>{category.name}</p>
+            </Link>
                     ))
                 ) : (
                     <p>Không có danh mục nào</p>
@@ -31,4 +35,4 @@ const ItemSidebar = () => {
     );
 };
 
-export default memo(ItemSidebar);
+export default memo(Sidebar);

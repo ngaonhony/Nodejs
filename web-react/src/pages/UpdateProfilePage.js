@@ -1,26 +1,48 @@
-import { Link } from "react-router-dom";
 import Navigator from "../components/Navigator";
 import UserBar from "../components/UserBar";
-import React, { useState, useRef } from "react";
-
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserProfile } from "../slices/authSlice"; // Adjust import path accordingly
+import { Link } from "react-router-dom";
 const UpdateProfilePage = () => {
-  const [image, setImage] = useState(null);
-  const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const defaultImage = "https://phongtro123.com/images/default-user.png";
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+  const [showPasswordInputs, setShowPasswordInputs] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setPhone(user.phone); 
+    }
+  }, [user]);
+  const [updateStatus, setUpdateStatus] = useState(null); // null: chưa cập nhật, 'success': cập nhật thành công, 'error': cập nhật thất bại
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userData = { name, phone };
+  console.log(name, phone)
+    try {
+      if (user && user._id) {
+        setUpdateStatus(null); // Reset trạng thái cập nhật
+        await dispatch(updateUserProfile({ id: user._id, userData }));
+        setUpdateStatus('success'); // Cập nhật trạng thái thành công
+      } else {
+        console.error("User ID is not available");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      setUpdateStatus('error'); // Cập nhật trạng thái thất bại
     }
   };
-
-  const handleRemoveImage = () => {
-    const imageUrl = null;
-      setImage(imageUrl);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Xóa giá trị của input file
-    }
+  const handleChangePassword = () => {
+    setShowPasswordInputs(!showPasswordInputs); 
   };
   return (
     <div className="flex flex-col">
@@ -30,12 +52,11 @@ const UpdateProfilePage = () => {
       <div className="flex ">
         <div className="border flex flex-col gap-4 justify-start items-center">
           <div className="w-full sticky top-16 bg-white z-10 shadow-md">
-            {" "}
             <UserBar />
           </div>
         </div>
         <div className="flex flex-col mt-4 w-[1200px] mx-auto pl-8 pr-8 bg-gray-50 rounded shadow-lg">
-          <nav className="flex" aria-label="Breadcrumb">
+        <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
               <li className="inline-flex items-center">
                 <a
@@ -101,24 +122,30 @@ const UpdateProfilePage = () => {
           <h2 className="text-4xl mt-4 mb-4 w-1100">
             Cập nhật thông tin cá nhân
           </h2>
-          <form className="js-form-submit-data " action="#" method="POST">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-              <label
-                htmlFor="user_id"
-                className="col-span-1 md:col-span-1 col-form-label">
-                Mã thành viên
+          {updateStatus === 'success' && (
+    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+      Cập nhật thông tin thành công!
+    </div>
+  )}
+  {updateStatus === 'error' && (
+    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+      Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.
+    </div>
+  )}
+        <form onSubmit={handleSubmit} className="js-form-submit-data ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+              <label htmlFor="user_email" className="block mb-2 text-sm font-medium text-gray-900">
+                Email
               </label>
               <input
-                type="text"
-                readOnly
-                className=" border bg-gray-300 border-gray-300 text-gray-900 text-sm rounded-lg 
-        focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                id="user_id"
-                value="#145936"
+                type="email"
+                id="user_email"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled
               />
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
               <label
                 htmlFor="user_phone"
@@ -127,66 +154,29 @@ const UpdateProfilePage = () => {
               </label>
               <input
                 type="tel"
-                readOnly
-                className="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg 
-        focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 id="user_phone"
-                value="0964425306"
-                disabled
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                value={phone} // Bind phone state
+                onChange={(e) => setPhone(e.target.value)} // Handle phone input
+                disable
               />
-              <div className="text-sm text-blue-600 mt-2">
-                <Link to="#">Đổi số điện thoại</Link>
-              </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-              <label
-                htmlFor="user_name"
-                className="block mb-2 text-sm font-medium text-gray-900">
+              <label htmlFor="user_name" className="block mb-2 text-sm font-medium text-gray-900">
                 Tên hiển thị
               </label>
               <input
                 type="text"
                 id="user_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                  focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                placeholder="Ex: Nguyễn Văn A"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-              <label
-                htmlFor="user_email"
-                className="block mb-2 text-sm font-medium text-gray-900">
-                Email
-              </label>
-              <input
-                type="email"
-                id="user_email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                  focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                placeholder="name@flowbite.com"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-              <label
-                htmlFor="user_zalo"
-                className="block mb-2 text-sm font-medium text-gray-900">
-                Số Zalo
-              </label>
-              <input
-                type="tel"
-                id="user_phone"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                  focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                defaultValue="0964425306"
-                required
-              />
-            </div>
-
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
               <label
                 htmlFor="user_password"
@@ -194,10 +184,62 @@ const UpdateProfilePage = () => {
                 Mật khẩu
               </label>
               <div className="bg-gray-50 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-sm text-blue-600 mt-2">
-                <Link to="#">Đổi mật khẩu</Link>
+              <Link to="#">Đổi mật khẩu</Link>
               </div>
             </div>
 
+            {/* {showPasswordInputs && (
+              <div className="mt-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <label
+                    htmlFor="current_password"
+                    className="block mb-2 text-sm font-medium text-gray-900">
+                    Mật khẩu hiện tại
+                  </label>
+                  <input
+                    type="password"
+                    id="current_password"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                    focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                  <label
+                    htmlFor="new_password"
+                    className="block mb-2 text-sm font-medium text-gray-900">
+                    Mật khẩu mới
+                  </label>
+                  <input
+                    type="password"
+                    id="new_password"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                    focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                  <label
+                    htmlFor="confirm_password"
+                    className="block mb-2 text-sm font-medium text-gray-900">
+                    Xác nhận mật khẩu
+                  </label>
+                  <input
+                    type="password"
+                    id="confirm_password"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                    focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            )} */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
               <label
                 htmlFor="user_avatar"
@@ -210,47 +252,22 @@ const UpdateProfilePage = () => {
                     <div
                       className="user-avatar-preview js-one-image-preview rounded-full"
                       style={{
-                        background: image
-                          ? `url(${image}) center no-repeat`
-                          : `url(${defaultImage}) center no-repeat`,
+                        background: `url(${defaultImage}) center no-repeat`,
                         backgroundSize: "cover",
                         height: "150px",
                         width: "150px",
                       }}></div>
                   </div>
-                  <div className="mt-2">
-                    {image && (
-                      <div className="text-sm text-blue-600 mt-2">
-                        <button
-                          type="button"
-                          className="bg-gray-100 remove-image js-remove-one-image text-red-500 mb-2 py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                          onClick={handleRemoveImage}>
-                          Xóa hình này
-                        </button>
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      className="bg-gray-100 btn-add-avatar js-change-image-file py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                      onChange={handleImageChange}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
               <div className="flex justify-center col-span-1 md:col-span-2">
-                <button
-                  type="submit"
-                  className="btn btn-primary w-1/2 py-2 bg-blue-600 text-white rounded-lg">
+                <button type="submit" className="btn btn-primary w-1/2 py-2 bg-blue-600 text-white rounded-lg">
                   Lưu & Cập nhật
                 </button>
               </div>
             </div>
-            <input type="hidden" name="user_id" value="145936" />
           </form>
         </div>
       </div>
