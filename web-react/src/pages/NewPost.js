@@ -2,6 +2,8 @@
   import React, { useEffect, useState } from "react";
   import UserBar from "../components/UserBar";
 import { MdOutlineCloudUpload } from "react-icons/md";
+import { Link } from 'react-router-dom';
+
 const NewPost = () => {
   const [formData, setFormData] = useState({
     address: "",
@@ -524,11 +526,15 @@ const NewPost = () => {
                     </div>
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full bg-green-600 text-white p-3 rounded mt-4 hover:bg-green-700">
-                  Tạo tin đăng
-                </button>
+                <Link to="/management/new-post/payment">
+                  <button
+                    type="button"
+                    className="w-full bg-green-600 text-white p-3 rounded mt-4 hover:bg-green-700"
+                  >
+                      Tạo tin đăng
+                       </button>
+                  </Link>
+
               </form>
             </div>
             <div className="w-[30%] flex ">

@@ -10,7 +10,7 @@ import zalopay from '../assets/images/zalopay.png';
 import shoppeePay from '../assets/images/shopeepay2.svg';
 import onlineStore from '../assets/images/online-store.svg';
 import qrCode from '../assets/images/qr-code.png';
-
+import vnpay from '../assets/images/vnpay.png'
 const RechargePage = () => {
   return (
     <div className="flex flex-col">
@@ -69,12 +69,12 @@ Mời bạn chọn phương thức nạp tiền
                       title: 'Thẻ ATM Internet Banking',
                     },
                     {
-                      href: '/quan-ly/nap-tien/the-tin-dung',
-                      imgSrc: creditCard,
-                      title: 'Thẻ tín dụng quốc tế',
+                      href: '/quan-ly/nap-tien/vnpay',
+                      imgSrc: vnpay,
+                      title: 'VN PAY',
                     },
                     {
-                      href: '/quan-ly/nap-tien/momo',
+                      href: '/management/recharge-page/momo',
                       imgSrc: momo,
                       title: 'MOMO',
                     },
