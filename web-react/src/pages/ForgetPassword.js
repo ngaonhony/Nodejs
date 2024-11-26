@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Navigator from "../components/Navigator";
 import Footer from "../components/Footer";
-
+import {Link} from "react-router-dom"
 const ForgotPassword = () => {
   return (
     <div className="">
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
                     </button>
                 </form>
                 <p className="mt-6 text-center text-gray-700">
-                    Quay lại <a href="login.html" className="text-blue-500 hover:underline">Đăng Nhập</a>
+                    Quay lại <Link to="login.html" className="text-blue-500 hover:underline">Đăng Nhập</Link>
                 </p>
             </div>
         </div>

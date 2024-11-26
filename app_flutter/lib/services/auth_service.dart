@@ -6,7 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import "package:jwt_decode/jwt_decode.dart";
 
 class AuthService {
-  final String baseUrl = 'http://localhost:3000/api/auth';
+  final String baseUrl = 'http://10.40.6.110:3000/api/auth';
   final storage = FlutterSecureStorage();
 
   Future<void> register(
@@ -95,7 +95,7 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        // Có thể thêm logic tại đây nếu cần sau khi gửi lại mã thành công
+
       } else {
         _handleError(response);
       }
@@ -269,15 +269,17 @@ class AuthService {
         final String newToken = responseData['accessToken'];
 
         await _saveToken(newToken);
+
       } else {
         _handleError(response);
       }
     } catch (e) {
       throw Exception('Làm mới token thất bại: $e');
     }
+
   }
 
-  Future<void> checkTokenExpiration() async {
+  Future<bool> checkTokenExpiration() async {
     final token = await getToken();
     if (token == null) {
       throw Exception('Không tìm thấy token');
@@ -288,12 +290,16 @@ class AuthService {
     if (isExpired) {
       try {
         await refreshToken();
+        return true; // Token was expired, but successfully refreshed
       } catch (e) {
         await logout();
         throw Exception('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
       }
     }
+
+    return true;
   }
+
 
   void _handleError(http.Response response) {
     final errorData = jsonDecode(response.body);

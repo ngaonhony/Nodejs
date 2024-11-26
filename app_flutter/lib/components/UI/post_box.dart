@@ -4,10 +4,10 @@ import 'Post_Details.dart';
 class PostBox extends StatelessWidget {
   final String postId;
   final String title;
-  final String price; // Changed to String
-  final String area; // Changed to String
+  final String price;
+  final String area;
   final String location;
-  final String imageUrl;
+  final List<String> images; // Đổi sang List để lấy nhiều ảnh nếu cần
 
   PostBox({
     required this.postId,
@@ -15,11 +15,16 @@ class PostBox extends StatelessWidget {
     required this.price,
     required this.area,
     required this.location,
-    required this.imageUrl,
+    required this.images,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Sử dụng ảnh đầu tiên từ danh sách images, nếu không có thì dùng ảnh dự phòng
+    String displayImageUrl = (images.isNotEmpty && images[0].isNotEmpty)
+        ? images[0]
+        : 'https://via.placeholder.com/200';
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -50,9 +55,7 @@ class PostBox extends StatelessWidget {
                         top: Radius.circular(10),
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(imageUrl.isNotEmpty
-                            ? imageUrl
-                            : 'https://via.placeholder.com/200'),
+                        image: NetworkImage(displayImageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -64,7 +67,7 @@ class PostBox extends StatelessWidget {
                       padding: EdgeInsets.all(5),
                       color: Colors.black54,
                       child: Text(
-                        '1 ảnh',
+                        '${images.length} ảnh', // Hiển thị số lượng ảnh nếu có nhiều ảnh
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

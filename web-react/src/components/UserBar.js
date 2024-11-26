@@ -30,7 +30,13 @@ const UserBar = () => {
       {/* User Info */}
       <div className="text-center mb-6">
         <div className="flex items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-gray-300"></div>
+          <div className="w-20 h-20 rounded-full bg-gray-300">
+          <img
+              className="avatar size-50 w-20 h-20 rounded-full "
+              src="https://phongtro123.com/images/default-user.png" // Sử dụng ảnh mặc định nếu không có avatar
+              alt={'Không xác định'} // Hiển thị 'Không xác định' nếu không có tên
+            />
+          </div>
           <div className="text-center ml-4">
             <h2 className="text-lg font-semibold">{mockUserData.name}</h2>
             <p className="text-gray-600">{mockUserData.phone}</p>

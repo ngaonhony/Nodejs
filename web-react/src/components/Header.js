@@ -13,11 +13,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.accessToken);
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-
+  
   const handleLogout = () => {
     const confirmLogout = window.confirm("Bạn có chắc muốn đăng xuất?");
     if (confirmLogout) {
@@ -27,7 +25,7 @@ const Header = () => {
   };
 
   const handleNewPostClick = () => {
-    if (token) {
+    if (user) {
       navigate("/management/new-post");
     } else {
       navigate("/login");
@@ -44,7 +42,10 @@ const Header = () => {
 
   return (
     <div className="fixed-header w-1100 flex items-center justify-between bg-white shadow-md">
-      <Link to="/" className="flex items-center">
+      <Link
+        to="/"
+        className="flex items-center"
+      >
         <img
           src={logo}
           alt="logo"
@@ -53,7 +54,7 @@ const Header = () => {
       </Link>
 
       <div className="flex items-center gap-4 relative">
-        {token ? (
+        {user ? (
           <>
             <div className="relative inline-block text-left">
               <button
@@ -110,70 +111,70 @@ const Header = () => {
             </div>
 
             <div className="relative inline-block text-left">
-    <button
-        onClick={toggleProfileDropdown}
-        type="button"
-        className="flex items-center"
-    >
-        <div className="w-8 h-8 rounded-full bg-gray-300 mr-2">
-            <img
-                className="w-full h-full rounded-full"
-                src="/images/default_user.svg"
-                alt="User Avatar"
-            />
-        </div>
-        <span className="flex items-center">
-            {user ? user.name : "Tài khoản"}
-        </span>
-        {/* Mũi tên xuống */}
-        <span className="text-xl">
-            &#9662; {/* Ký tự Unicode cho mũi tên xuống */}
-        </span>
-    </button>
-
-    {isProfileDropdownOpen && (
-        <div className="absolute right-0 z-10 mt-2 w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div className="p-3">
-                <div className="flex items-center justify-between mb-2">
-                    <User user={user} /> {/* Sử dụng component User để hiển thị thông tin */}
+              <button
+                onClick={toggleProfileDropdown}
+                type="button"
+                className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-gray-300 mr-2">
+                  <img
+                    className="w-full h-full rounded-full"
+                    src="/images/default_user.svg"
+                    alt="User Avatar"
+                  />
                 </div>
-                <p className="mb-3 text-sm font-normal">
-                    <a href="#" className="hover:underline">
-                        @{user ? user.username : 'jeseleos'} {/* Hiển thị tên người dùng */}
-                    </a>
-                </p>
-                <p className="mb-4 text-sm">
-                    Open-source contributor. Building{" "}
-                    <a href="#" className="text-blue-600 hover:underline">
-                        flowbite.com
-                    </a>
-                    .
-                </p>
-                <ul className="flex text-sm">
-                    <li className="mr-2">
-                        <a href="#" className="hover:underline">
-                            <span className="font-semibold">{user ? user.followingCount : '0'}</span>
-                            <span> Following</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="hover:underline">
-                            <span className="font-semibold">{user ? user.followersCount : '0'}</span>
-                            <span> Followers</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    )}
-</div>
+                <span className="flex items-center">
+                  {user ? user.name : "Tài khoản"}
+                </span>
+                {/* Mũi tên xuống */}
+                <span className="text-xl">
+                  &#9662; {/* Ký tự Unicode cho mũi tên xuống */}
+                </span>
+              </button>
 
-            <button
-              className="text-white bg-red-600 px-4 py-2 rounded-md hover:bg-red-700 transition"
-              onClick={handleNewPostClick}>
-              <AiOutlinePlusCircle className="inline-block mr-2" />
-              Đăng tin mới
-            </button>
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 z-10 mt-2 w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm">
+                  <div className="p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <User user={user} />{" "}
+                      {/* Sử dụng component User để hiển thị thông tin */}
+                    </div>
+                    <p className="mb-3 text-sm font-normal">
+                      <Link to="#" className="hover:underline">
+                        @{user ? user.username : "jeseleos"}{" "}
+                        {/* Hiển thị tên người dùng */}
+                      </Link>
+                    </p>
+                    <p className="mb-4 text-sm">
+                      Open-source contributor. Building{" "}
+                      <Link to="#" className="text-blue-600 hover:underline">
+                        flowbite.com
+                      </Link>
+                      .
+                    </p>
+                    <ul className="flex text-sm">
+                      <li className="mr-2">
+                        <Link to="#" className="hover:underline">
+                          <span className="font-semibold">
+                            {user ? user.followingCount : "0"}
+                          </span>
+                          <span> Following</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="#" className="hover:underline">
+                          <span className="font-semibold">
+                            {user ? user.followersCount : "0"}
+                          </span>
+                          <span> Followers</span>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            
           </>
         ) : (
           <>
@@ -189,8 +190,15 @@ const Header = () => {
               bgColor="bg-[#3961fb]"
               path="/register"
             />
+           
           </>
         )}
+         <button
+              className="text-white bg-red-600 px-4 py-2 rounded-md hover:bg-red-700 transition"
+              onClick={handleNewPostClick}>
+              <AiOutlinePlusCircle className="inline-block mr-2" />
+              Đăng tin mới
+            </button>
       </div>
     </div>
   );

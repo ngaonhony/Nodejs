@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import {Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../slices/categorySlice';
 
-const Navigator = () => {
+const Navigator = ({ categoryId }) => {
     const dispatch = useDispatch();
-
     const { categories = [] } = useSelector(state => state.categories || {});
-
+    const state = useSelector((state) => state);
+    console.log(state)
     useEffect(() => {
-        const fetchData = () => {
-            dispatch(fetchCategories()); 
-        };
-
-        fetchData();
+        dispatch(fetchCategories()); 
     }, [dispatch]);
 
     const notActive = 'hover:bg-[#fb173d] px-4 h-full flex items-center';
@@ -25,12 +21,11 @@ const Navigator = () => {
                 {categories.length > 0 ? (
                     categories.map((category) => (
                         <div key={category._id} className='h-[50px] flex justify-center items-center'>
-                            <NavLink 
+                            <Link 
                                 to={`/category/${category._id}`} 
-                                className={({ isActive }) => isActive ? active : notActive}
                             >
                                 {category.name}
-                            </NavLink>
+                            </Link>
                         </div>
                     ))
                 ) : (
@@ -38,12 +33,12 @@ const Navigator = () => {
                 )}
 
                 <div className='h-[50px] flex justify-center items-center'>
-                    <NavLink 
+                    <Link 
                         to='/service-page' 
                         className={({ isActive }) => isActive ? active : notActive}
                     >
                         Bảng giá dịch vụ
-                    </NavLink>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -33,8 +33,6 @@ import { PostManagementComponent } from './pages/post-management/post-management
 import { PostDialogComponent } from './pages/post-management/post-dialog/post-dialog.component';
 import { ServiceManagementComponent } from './pages/service-management/service-management.component';
 import { ServiceDialogComponent } from './pages/service-management/service-dialog/service-dialog.component';
-import { ServiceBookingManagementComponent } from './pages/service-booking-management/service-booking-management.component';
-import { ServiceBookingDialogComponent } from './pages/service-booking-management/service-booking-dialog/service-booking-dialog.component';
 import { FeedbackManagementComponent } from './pages/feedback-management/feedback-management.component';
 import { FeedbackDialogComponent } from './pages/feedback-management/feedback-dialog/feedback-dialog.component';
 import { PaymentManagementComponent } from './pages/payment-management/payment-management.component';
@@ -56,8 +54,6 @@ import { LoginComponent } from './pages/login/login.component';
     PostDialogComponent,
     ServiceManagementComponent,
     ServiceDialogComponent,
-    ServiceBookingManagementComponent,
-    ServiceBookingDialogComponent,
     FeedbackManagementComponent,
     FeedbackDialogComponent,
     //PaymentManagementComponent,

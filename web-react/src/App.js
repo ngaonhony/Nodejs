@@ -1,16 +1,17 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home,Payment, Login,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
+  import { Home,Payment,CategoryPage, Login,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
 
   function App() {
     return (
       <div className="h-screen w-screen bg-primary">
         <Routes>
           <Route path='/*' element={<Home />} />
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/verify' element={<VerificationPage />} />
           <Route path='/forget-password' element={<ForgetPassword />} />
-          <Route path= '/detail-page' element={<DetailPage />} />
+          <Route path="/detail-page/:postId" element={<DetailPage />} />
           <Route path='/service-page' element={<ServicePage />} />
           <Route path='/feedback-page' element={<FeedbackPage />} />
           <Route path='/management/new-post' element={<NewPost />} />

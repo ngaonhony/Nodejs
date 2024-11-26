@@ -4,7 +4,6 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { CategoryManagementComponent } from './category-management/category-management.component';
 import { PostManagementComponent } from './post-management/post-management.component';
 import { ServiceManagementComponent } from './service-management/service-management.component';
-import { ServiceBookingManagementComponent } from './service-booking-management/service-booking-management.component';
 import { FeedbackManagementComponent } from './feedback-management/feedback-management.component';
 import { PaymentManagementComponent } from './payment-management/payment-management.component';
 export const PagesRoutes: Routes = [
@@ -41,13 +40,6 @@ export const PagesRoutes: Routes = [
     component: ServiceManagementComponent,
     data: {
       title: 'Service Management',
-    },
-  },
-  {
-    path: 'service-booking-manage',
-    component: ServiceBookingManagementComponent,
-    data: {
-      title: 'ServiceBooking Management',
     },
   },
   {

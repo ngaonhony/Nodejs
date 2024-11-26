@@ -15,7 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 export class ServiceManagementComponent implements OnInit {
   services: Service[] = [];
   dataSource = new MatTableDataSource<Service>();
-  displayedColumns: string[] = ['name', 'price_per_day', 'price_per_week', 'price_per_month','pushPrice', 'title_color', 'advantages', 'auto_approval', 'prominent_badge', 'actions'];
+  displayedColumns: string[] = ['name','rating', 'price_per_day', 'price_per_week', 'price_per_month','pushPrice', 'title_color', 'advantages', 'auto_approval', 'prominent_badge', 'actions'];
   isLoading = false; // Loading indicator
   errorMessage: string | null = null; // Error message
   isError: boolean = false; // Error state

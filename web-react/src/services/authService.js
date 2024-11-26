@@ -16,8 +16,8 @@ export const login = async (account, password) => {
       }, 
       { headers: { 'Content-Type': 'application/json' } }
     );
-    const { accessToken, user } = response.data; // Lấy token và thông tin người dùng từ phản hồi
-    return { accessToken, user };
+    localStorage.setItem("user", JSON.stringify(response.data));
+    return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại';
     throw new Error(errorMessage); // Ném lỗi với thông điệp cụ thể

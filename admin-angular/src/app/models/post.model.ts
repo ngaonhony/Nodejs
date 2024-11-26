@@ -9,7 +9,7 @@ export interface Post {
     area: string; 
     images?: string[]; 
     categoryId: string; 
-    serviceBookingId: string; 
+    serviceId: string; 
     createdAt?: Date;
     updatedAt?: Date; 
   }

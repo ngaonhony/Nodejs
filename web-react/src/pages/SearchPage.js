@@ -4,8 +4,8 @@ import Footer from '../components/Footer';
 import { Outlet } from 'react-router-dom';
 import Navigator from '../components/Navigator';
 import Search from './Search';
-import {  ItemSidebar } from '../components/'; 
-import { List } from './index'; 
+import {  Sidebar, } from '../components/'; 
+import {List  } from './index'; 
 
 const SearchPage = () => {
     const resultsFound = false; // Thay đổi giá trị này tùy vào kết quả tìm kiếm thực tế
@@ -29,7 +29,7 @@ const SearchPage = () => {
                         <List />
                     </div>
                     <div className='w-[30%] border flex flex-col gap-4 justify-start items-center'>
-                        <ItemSidebar />
+                        <Sidebar />
                     </div>
                 </div>
                 <div className='w-[1100px] flex justify-center items-center '></div>

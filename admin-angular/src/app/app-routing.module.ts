@@ -5,7 +5,6 @@ import { UserManagementComponent } from './pages/user-management/user-management
 import { CategoryManagementComponent } from './pages/category-management/category-management.component';
 import { PostManagementComponent } from './pages/post-management/post-management.component';
 import { ServiceManagementComponent } from './pages/service-management/service-management.component';
-import { ServiceBookingManagementComponent } from './pages/service-booking-management/service-booking-management.component';
 import { FeedbackManagementComponent } from './pages/feedback-management/feedback-management.component';
 import { PaymentManagementComponent } from './pages/payment-management/payment-management.component';
 import { AuthGuard } from './auth/auth.guard'; // Giả sử bạn đã định nghĩa AuthGuard
@@ -22,7 +21,6 @@ const routes: Routes = [
       { path: 'category-management/list', component: CategoryManagementComponent },
       { path: 'post-management/list', component: PostManagementComponent },
       { path: 'service-management/list', component: ServiceManagementComponent },
-      { path: 'service-booking-management/list', component: ServiceBookingManagementComponent },
       { path: 'feedback-management/list', component: FeedbackManagementComponent },
       { path: 'payment-management/list', component: PaymentManagementComponent },
     ],

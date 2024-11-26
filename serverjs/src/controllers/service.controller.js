@@ -13,6 +13,7 @@ exports.createService = async (req, res) => {
       title_color: req.body.title_color,
       auto_approval: req.body.auto_approval,
       prominent_badge: req.body.prominent_badge,
+      rating: req.body.rating, // Include rating
     });
 
     await service.save();

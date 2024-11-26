@@ -21,6 +21,7 @@ export class ServiceDialogComponent {
   ) {
     this.serviceForm = this.fb.group({
       name: ['', Validators.required],
+      rating: [0, [Validators.required, Validators.min(0), Validators.max(5)]] ,
       price_per_day: [0, [Validators.required, Validators.min(0)]],
       price_per_week: [0, [Validators.required, Validators.min(0)]],
       price_per_month: [0, [Validators.required, Validators.min(0)]],

@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Post } from '../../../models/post.model';
 import { CategoryService } from '../../../services/category.service'; 
 import { UserService } from '../../../services/user.service'; 
-import { ServiceBookingService } from '../../../services/service-booking.service';
+import { ServiceService } from '../../../services/service.service';
 
 @Component({
   selector: 'app-post-dialog',
@@ -13,7 +13,7 @@ import { ServiceBookingService } from '../../../services/service-booking.service
 export class PostDialogComponent {
   post: Post;
   categories: any[] = [];
-  serviceBookings: any[] = [];
+  services: any[] = [];
   users: any[] = [];
 
   serviceNameMap: { [key: string]: string } = {};
@@ -23,12 +23,12 @@ export class PostDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { post: Post },
     private categoryService: CategoryService,
     private userService: UserService,
-    private serviceBookingService: ServiceBookingService
+    private serviceService: ServiceService
   ) {
-    this.post = data.post ? { ...data.post } : { _id: '', userId: '', title: '', description: '', price: 0, location: '', area: '', images: [], categoryId: '', serviceBookingId: '' }; // Khởi tạo bài viết
+    this.post = data.post ? { ...data.post } : { _id: '', userId: '', title: '', description: '', price: 0, location: '', area: '', images: [], categoryId: '', serviceId: '' }; // Khởi tạo bài viết
     this.loadCategories();
     this.loadUsers();
-    this.loadServiceBookings();
+    this.loadServices();
   }
   loadUsers() {
     this.userService.getUsers().subscribe(
@@ -54,11 +54,11 @@ export class PostDialogComponent {
     );
   }
   
-  loadServiceBookings() {
-    this.serviceBookingService.getServiceBookings().subscribe(
+  loadServices() {
+    this.serviceService.getServices().subscribe(
       (data) => {
         console.log('Dữ liệu dịch vụ đặt chỗ:', data);
-        this.serviceBookings = Array.isArray(data) ? data : [];
+        this.services = Array.isArray(data) ? data : [];
       },
       (error) => {
         console.error('Lỗi khi lấy dịch vụ đặt chỗ:', error);
@@ -66,9 +66,6 @@ export class PostDialogComponent {
     );
   }
 
-  getServiceName(serviceId: any): string {
-    return serviceId.name || 'Unknown Service'; // Access the name directly from serviceId
-  }
   onCancel(): void {
     this.dialogRef.close(); // Đóng dialog
   }

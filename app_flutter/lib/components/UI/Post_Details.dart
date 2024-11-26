@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../services/post_service.dart';
-import 'package:intl/intl.dart'; // Để định dạng ngày tháng
-import 'package:url_launcher/url_launcher.dart'; // Để mở số điện thoại
+import 'package:phongtronhom1/services/post_service.dart';
+
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostDetails extends StatelessWidget {
   final String postId;
@@ -13,17 +14,17 @@ class PostDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chi Tiết Phòng Trọ'),
+        title: Text('Chi Tiết Bài Đăng'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: PostApiService().getPostById(postId),
+        future: PostApiService().getPostById(postId), // Sử dụng dịch vụ API đúng
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Lỗi khi tải dữ liệu'));
+            return Center(child: Text('Lỗi khi tải dữ liệu: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Không tìm thấy dữ liệu'));
+            return Center(child: Text('Không tìm thấy dữ liệu cho bài đăng này'));
           }
 
           final post = snapshot.data!;
@@ -42,10 +43,11 @@ class PostDetails extends StatelessWidget {
                         height: 200,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(post['imageUrl'] != null &&
-                                    post['imageUrl'].isNotEmpty
-                                ? post['imageUrl'][0]
-                                : 'https://via.placeholder.com/200'),
+                            image: NetworkImage(
+                              post['images'] != null && post['images'].isNotEmpty
+                                  ? post['images'][0]
+                                  : 'https://via.placeholder.com/200',
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -85,7 +87,7 @@ class PostDetails extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          'Địa chỉ: ${post['address']?['houseAndStreet'] ?? ''}, ${post['address']?['commune'] ?? ''}, ${post['address']?['district'] ?? ''}, ${post['address']?['province'] ?? ''}',
+                          'Địa chỉ: ${post['location'] ?? ''}',
                           style: TextStyle(fontSize: 14, color: Colors.black54),
                         ),
                         SizedBox(height: 10),
@@ -115,7 +117,7 @@ class PostDetails extends StatelessWidget {
                     leading: CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    title: Text(post['name'] ?? 'Không có tên'),
+                    title: Text(post['userId']?['name'] ?? 'Không có tên'),
                     subtitle: Text('Đang hoạt động'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -124,8 +126,8 @@ class PostDetails extends StatelessWidget {
                           icon: Icon(Icons.call),
                           color: Colors.blue,
                           onPressed: () {
-                            if (post['phone'] != null) {
-                              _launchCaller(post['phone']);
+                            if (post['userId']?['phone'] != null) {
+                              _launchCaller(post['userId']!['phone']);
                             }
                           },
                         ),
@@ -173,13 +175,10 @@ class PostDetails extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         Text('Mã tin: ${post['_id']}'),
-                        Text('Chuyên mục: ${post['category'] ?? "Không rõ"}'),
-                        Text(
-                            'Đối tượng thuê: ${post['objectForRent'] ?? "Không rõ"}'),
-                        Text(
-                            'Ngày đăng: ${_formatDate(post['createdAt']) ?? "Không rõ"}'),
-                        Text(
-                            'Ngày hết hạn: ${_formatDate(post['updatedAt']) ?? "Không rõ"}'),
+                        Text('Danh mục: ${post['categoryId']?['name'] ?? "Không rõ"}'),
+                        Text('Dịch vụ đặt chỗ: ${post['servicesBookingId']?['serviceName'] ?? "Không rõ"}'),
+                        Text('Ngày đăng: ${_formatDate(post['createdAt'])}'),
+                        Text('Ngày cập nhật: ${_formatDate(post['updatedAt'])}'),
                       ],
                     ),
                   ),
@@ -196,37 +195,8 @@ class PostDetails extends StatelessWidget {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
-                        Text('Liên hệ: ${post['name'] ?? "Không có tên"}'),
-                        Text(
-                            'Điện thoại: ${post['phone'] ?? "Không có số điện thoại"}'),
-                      ],
-                    ),
-                  ),
-                  Divider(),
-                  // Bản đồ
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Bản đồ',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                            'Địa chỉ: ${post['address']?['houseAndStreet'] ?? ''}, ${post['address']?['commune'] ?? ''}, ${post['address']?['district'] ?? ''}, ${post['address']?['province'] ?? ''}'),
-                        SizedBox(height: 10),
-                        Container(
-                          height: 200,
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                          child: Center(
-                            child: Text('Xem bản đồ',
-                                style: TextStyle(color: Colors.blue)),
-                          ),
-                        ),
+                        Text('Liên hệ: ${post['userId']?['name'] ?? "Không có tên"}'),
+                        Text('Điện thoại: ${post['userId']?['phone'] ?? "Không có số điện thoại"}'),
                       ],
                     ),
                   ),

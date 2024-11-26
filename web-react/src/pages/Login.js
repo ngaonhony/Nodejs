@@ -12,12 +12,13 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Lấy trạng thái từ Redux
   const { loading, error, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user) {
-      navigate('/'); // Điều hướng về trang chính nếu đã đăng nhập
+    const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+
+      navigate('/'); 
     }
   }, [user, navigate]);
 

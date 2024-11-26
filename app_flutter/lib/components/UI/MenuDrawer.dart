@@ -1,6 +1,6 @@
-import 'package:app_flutter/pages/Profile.dart';
-import 'package:app_flutter/pages/home.dart';
-import 'package:app_flutter/services/auth_service.dart';
+import '../../pages/Profile.dart';
+import '../../pages/home.dart';
+import '../../services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/user_service.dart';

@@ -1,5 +1,5 @@
-import 'package:app_flutter/pages/home.dart';
-import 'package:app_flutter/pages/login.dart';
+import '../pages/home.dart';
+import '../pages/login.dart';
 
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';

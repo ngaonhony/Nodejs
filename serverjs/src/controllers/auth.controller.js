@@ -99,19 +99,16 @@ exports.login = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    message: "Đăng nhập thành công",
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    balance: user.balance,
+    phone: user.phone,
+    address: user.address,
     accessToken,
-    user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      balance: user.balance,
-      phone: user.phone,
-      address: user.address,
-    },
   });
 
-console.log(accessToken)
+  console.log(accessToken);
   winston.info(`Người dùng ${user.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
@@ -121,7 +118,7 @@ exports.adminLogin = asyncHandler(async (req, res) => {
   // Tìm kiếm người dùng với quyền admin
   const admin = await User.findOne({
     $or: [{ email }, { phone }],
-    role: 'admin',  // Kiểm tra xem người dùng có phải là admin không
+    role: "admin", // Kiểm tra xem người dùng có phải là admin không
   }).select("+password");
 
   if (!admin) {
@@ -214,7 +211,9 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email, verificationCode });
 
   if (!user) {
-    return res.status(404).json({ message: "Mã xác thực hoặc email không hợp lệ." });
+    return res
+      .status(404)
+      .json({ message: "Mã xác thực hoặc email không hợp lệ." });
   }
 
   // Update user verification status
@@ -237,14 +236,18 @@ exports.resendVerificationCode = async (req, res) => {
   }
 
   // Generate a new verification code
-  const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const newVerificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
   user.verificationCode = newVerificationCode;
   await user.save();
 
   // Send the new verification email
   await sendVerificationEmail(email, newVerificationCode);
 
-  res.status(200).json({ message: "Mã xác thực mới đã được gửi đến email của bạn." });
+  res
+    .status(200)
+    .json({ message: "Mã xác thực mới đã được gửi đến email của bạn." });
 };
 
 // Quên mật khẩu
