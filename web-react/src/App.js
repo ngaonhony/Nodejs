@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home, Login,CategoryPage,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage} from './pages'
+  import { Home,Payment,CategoryPage, Login,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
 
   function App() {
     return (
@@ -21,6 +21,8 @@
           <Route path='/management/recharge-history-page' element={<RechargeHistoryPage />} />
           <Route path='/management/recharge-page' element={<RechargePage />} />
           <Route path='/search-page' element={<SearchPage />} />
+          <Route path='/management/recharge-page/momo' element={<MomoPage />} />
+          <Route path='/management/new-post/payment' element={<Payment />} />
           </Routes>
       </div>
     );

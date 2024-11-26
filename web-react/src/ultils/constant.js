@@ -8,7 +8,9 @@ export const path = {
     ServicePage: '/service-page',
     FeedbackPage:'/feedback-page',
     NewPost:'/mangement/new-post',
-    SearchPage:'./search-page'
+    SearchPage:'./search-page',
+    MomoPage: 'momo',
+    Payment:'payment'
 }
 
 export const text = {
