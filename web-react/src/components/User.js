@@ -2,16 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const User = ({ user }) => {
-    const defaultAvatar = 'https://example.com/default-avatar.png'; // Thay thế bằng URL ảnh mặc định của bạn
+    const defaultAvatar = 'https://phongtro123.com/images/default-user.png'; // Thay thế bằng URL ảnh mặc định của bạn
     if (!user) {
         return null; // Hoặc có thể trả về một thông báo hoặc hình ảnh mặc định
       }
     return (
-      <div className="flex flex-col h-full">
-        <div className="flex p-4 pb-3 px-3 w-full">
+      <div className="flex flex-col w-full h-full">
+        <div className="flex p-4 pb-3 px-3 ">
           <div className="flex-shrink-0">
             <img
-              className="avatar size-50"
+              className="avatar size-10"
               src={defaultAvatar||"https://phongtro123.com/images/default-user.png"} // Sử dụng ảnh mặc định nếu không có avatar
               alt={user.name || 'Không xác định'} // Hiển thị 'Không xác định' nếu không có tên
             />

@@ -5,7 +5,8 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 import provincesData from "../assets/data/vn_units.json";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../slices/categorySlice";
-import { createPost } from '../slices/postSlice';
+import { createPost } from "../slices/postSlice";
+
 const NewPost = () => {
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
@@ -13,15 +14,16 @@ const NewPost = () => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [formData, setFormData] = useState({
     location: "",
     title: "",
     description: "",
     price: "",
-    images: null,
-    province: "",
-    district: "",
-    ward: "",
+    area: "", // Added area
+    categoryId: "", // Added categoryId
+    serviceId: "", // Assuming you have this in the form
+    images: [], // Changed to an array
   });
 
   useEffect(() => {
@@ -29,92 +31,136 @@ const NewPost = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const getAddress = (data) => {
+  const getAddress = () => {
     const parts = [];
-    if (data.detail) parts.push(data.detail);
-    if (data.ward_name) parts.push(data.ward_name);
-    if (data.district_name) parts.push(data.district_name);
-    if (data.province_name) parts.push(data.province_name);
+    if (formData.detail) parts.push(formData.detail);
+    if (formData.ward_name) parts.push(formData.ward_name);
+    if (formData.district_name) parts.push(formData.district_name);
+    if (formData.province_name) parts.push(formData.province_name);
     return parts.join(", ");
   };
+
+  const updateLocation = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      location: getAddress(), // Update the location state
+    }));
+  };
+
   const handleProvinceChange = (e) => {
     const provinceCode = e.target.value;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       province: provinceCode,
       district: "",
       ward: "",
-    });
+      location: "",
+    }));
 
     const selectedProvince = provinces.find(
       (province) => province.Code === provinceCode
     );
     setDistricts(selectedProvince ? selectedProvince.District : []);
     setWards([]);
+    updateLocation();
+    setFormData((prevData) => ({
+      ...prevData,
+      province_name: selectedProvince ? selectedProvince.FullName : "",
+    }));
   };
+
   const handleDistrictChange = (e) => {
     const districtCode = e.target.value;
-    setFormData({ ...formData, district: districtCode, ward: "" });
+    setFormData((prevData) => ({
+      ...prevData,
+      district: districtCode,
+      ward: "",
+      location: "",
+    }));
 
     const selectedDistrict = districts.find(
       (district) => district.Code === districtCode
     );
     setWards(selectedDistrict ? selectedDistrict.Ward : []);
+    updateLocation();
+    setFormData((prevData) => ({
+      ...prevData,
+      district_name: selectedDistrict ? selectedDistrict.FullName : "",
+    }));
   };
+
   const handleWardChange = (e) => {
-    const ward = e.target.value;
-    setFormData({ ...formData, ward });
+    const wardCode = e.target.value;
+    const selectedWard = wards.find((ward) => ward.Code === wardCode);
+    setFormData((prevData) => ({
+      ...prevData,
+      ward: wardCode,
+      ward_name: selectedWard ? selectedWard.FullName : "",
+    }));
+    updateLocation();
   };
 
   const handleCategoryChange = (e) => {
-    const category = e.target.value;
-    setFormData({ ...formData, category });
+    setFormData((prevData) => ({ ...prevData, categoryId: e.target.value }));
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createPost({ ...formData, userId: user.id }))
-      .then(() => {
-        console.log('Post created successfully:', formData);
-        setFormData({
-          location: "",
-          title: "",
-          description: "",
-          price: "",
-          images: null,
-          category: "",
-        });
-      })
-      .catch((error) => {
-        console.error('Error creating post:', error);
-      });
-  };
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result); // Set the image preview
-      };
-      reader.readAsDataURL(file); // Read the file as a data URL
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => URL.createObjectURL(file)); // Tạo URL tạm thời cho hình ảnh
+    setFormData((prevData) => ({
+      ...prevData,
+      images: [...prevData.images, ...files],
+    }));
+    setImagePreviews((prevPreviews) => [...prevPreviews, ...newImages]); // Cập nhật URL tạm thời
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const postData = new FormData();
+    postData.append("area", formData.area);
+    postData.append("description", formData.description);
+    postData.append("location", formData.location);
+    postData.append("price", formData.price);
+    postData.append("title", formData.title);
+    postData.append("categoryId", formData.categoryId);
+
+    // Thêm hình ảnh vào FormData
+    formData.images.forEach((image) => {
+      postData.append("images", image);
+    });
+
+    try {
+      const data = await dispatch(createPost(postData));
+      console.log("Post created successfully:", data);
+      // Reset các trường dữ liệu
+      setFormData({
+        location: "",
+        title: "",
+        description: "",
+        price: "",
+        area: "",
+        categoryId: "",
+        serviceId: "",
+        images: [],
+      });
+    } catch (error) {
+      console.error("Error creating post:", error);
     }
   };
-  
+
   return (
     <div className="flex flex-col">
       <div className="w-full sticky top-0 bg-white z-10">
         <Navigator />
       </div>
-      <div className="flex ">
+      <div className="flex">
         <div className="border flex flex-col gap-4 justify-start items-center">
           <div className="w-full sticky top-16 bg-white z-10 shadow-md">
-            {" "}
             <UserBar />
           </div>
         </div>
@@ -205,7 +251,7 @@ const NewPost = () => {
             </div>
           </div>
           <div className="flex w-full">
-            <div className="w-[70%] pr-8  ">
+            <div className="w-[70%] pr-8">
               <h1 className="text-2xl font-bold pt-6 mb-4 w-1100">
                 Địa chỉ cho thuê
               </h1>
@@ -217,20 +263,8 @@ const NewPost = () => {
                     </label>
                     <select
                       name="province"
-                      value={formData.province}
-                      onChange={(e) => {
-                        handleProvinceChange(e);
-                        const selectedProvince = provinces.find(
-                          (province) => province.Code === e.target.value
-                        );
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          province_name: selectedProvince
-                            ? selectedProvince.FullName
-                            : "",
-                        }));
-                      }}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      onChange={handleProvinceChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                       <option value="">-- Chọn tỉnh --</option>
                       {provinces.map((province) => (
                         <option key={province.Code} value={province.Code}>
@@ -245,20 +279,8 @@ const NewPost = () => {
                     </label>
                     <select
                       name="district"
-                      value={formData.district}
-                      onChange={(e) => {
-                        handleDistrictChange(e);
-                        const selectedDistrict = districts.find(
-                          (district) => district.Code === e.target.value
-                        );
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          district_name: selectedDistrict
-                            ? selectedDistrict.FullName
-                            : "",
-                        }));
-                      }}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      onChange={handleDistrictChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                       <option value="">-- Chọn huyện --</option>
                       {districts.map((district) => (
                         <option key={district.Code} value={district.Code}>
@@ -273,18 +295,8 @@ const NewPost = () => {
                     </label>
                     <select
                       name="ward"
-                      value={formData.ward}
-                      onChange={(e) => {
-                        handleWardChange(e);
-                        const selectedWard = wards.find(
-                          (ward) => ward.Code === e.target.value
-                        );
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          ward_name: selectedWard ? selectedWard.FullName : "",
-                        }));
-                      }}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      onChange={handleWardChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                       <option value="">-- Chọn phường --</option>
                       {wards.map((ward) => (
                         <option key={ward.Code} value={ward.Code}>
@@ -300,30 +312,24 @@ const NewPost = () => {
                     <input
                       type="text"
                       name="detail"
-                      value={formData.detail} // Liên kết với formData.detail
-                      onChange={(e) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          detail: e.target.value, // Cập nhật địa chỉ chi tiết
-                        }))
-                      }
+                      onChange={handleChange}
                       className="w-full p-2 border rounded mt-1"
                       placeholder="Nhập địa chỉ chi tiết"
                     />
                   </div>
-                  <div className="mb-4 w-full px-2">
-                    <label className="block  text-gray-700 font-semibold">
-                      Địa chỉ cho thuê:
-                    </label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={getAddress(formData)}
-                      className="w-full bg-gray-200 p-2 border rounded mt-1"
-                      placeholder="Nhập địa chỉ"
-                      disabled
-                    />
-                  </div>
+                </div>
+                <div className="mb-4 w-full px-2">
+                  <label className="block text-gray-700 font-semibold">
+                    Địa chỉ cho thuê:
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={getAddress()}
+                    className="w-full bg-gray-200 p-2 border rounded mt-1"
+                    placeholder="Nhập địa chỉ"
+                    disabled
+                  />
                 </div>
                 <h1 className="text-2xl font-bold mb-4 w-1100">
                   Thông tin mô tả
@@ -333,13 +339,13 @@ const NewPost = () => {
                     Danh mục:
                   </label>
                   <select
-                    name="category"
-                    value={formData.category}
+                    name="categoryId"
+                    value={formData.categoryId}
                     onChange={handleCategoryChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5">
                     <option value="">-- Chọn danh mục --</option>
                     {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
+                      <option key={category._id} value={category._id}>
                         {category.name}
                       </option>
                     ))}
@@ -372,80 +378,72 @@ const NewPost = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label
-                    htmlFor="name"
-                    className="block text-gray-700 font-bold mb-2">
+                  <label className="block text-gray-700 font-bold mb-2">
                     Tên liên hệ:
                   </label>
                   <input
                     type="text"
-                    id="name"
                     name="name"
                     value={user.name}
-                    onChange={handleChange}
+                    className="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    disabled
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-bold mb-2">
+                    Điện thoại:
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={user.phone}
                     className="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     disabled
                   />
                 </div>
                 <div className="mb-4">
                   <label
-                    htmlFor="phone"
+                    htmlFor="price"
                     className="block text-gray-700 font-bold mb-2">
-                    Điện thoại:
+                    Giá cho thuê:
                   </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={user.phone}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    disabled
-                  />
-                </div>
-                <label
-                  htmlFor="rent"
-                  className="block text-gray-700 font-bold mb-2">
-                  Giá cho thuê:
-                </label>
-                <div className="mb-4 flex w-1/2">
-                  <div className="flex-1 w-1">
+                  <div className="flex w-1/2">
                     <input
                       type="text"
-                      id="rent"
-                      name="rent"
-                      value={formData.rent}
+                      id="price"
+                      name="price"
+                      value={formData.price}
                       onChange={handleChange}
-                      className="shadow appearance-none border rounded  py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       required
                     />
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0">
+                      <span className="text-gray-500">đồng/tháng</span>
+                    </span>
                   </div>
-                  <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                    <span className="text-gray-500">đồng/tháng</span>
-                  </span>
                 </div>
-                <label
-                  htmlFor="area"
-                  className="block text-gray-700 font-bold mb-2">
-                  Diện tích:
-                </label>
-                <div className="flex mb-4 w-1/2">
-                  <div className="flex-1 w-1">
+                <div className="mb-4">
+                  <label
+                    htmlFor="area"
+                    className="block text-gray-700 font-bold mb-2">
+                    Diện tích:
+                  </label>
+                  <div className="flex mb-4 w-1/2">
                     <input
                       type="number"
                       id="area"
                       name="area"
                       value={formData.area}
                       onChange={handleChange}
-                      className="shadow appearance-none border rounded-l-md w-1/2 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-l-md w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       required
                     />
-                  </div>
-                  <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                    <span className="text-gray-500">
-                      m<sup>2</sup>
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0">
+                      <span className="text-gray-500">
+                        m<sup>2</sup>
+                      </span>
                     </span>
-                  </span>
+                  </div>
                 </div>
                 <div className="mb-4">
                   <h1 className="text-2xl font-bold mb-4 w-1100">Hình ảnh</h1>
@@ -453,31 +451,49 @@ const NewPost = () => {
                     <div className="relative h-40 rounded-lg border-dashed border-2 border-gray-200 bg-white flex justify-center items-center hover:cursor-pointer">
                       <div className="absolute">
                         <div className="flex flex-col items-center">
-                          <MdOutlineCloudUpload className="text-gray-200 w-12 h-12" />
-                          <span className="block text-gray-400 font-normal">
-                            Attach you files here
-                          </span>
-                          <span className="block text-gray-400 font-normal">
-                            or
-                          </span>
-                          <span className="block text-blue-400 font-normal">
-                            Browse files
-                          </span>
+                          {imagePreviews.length > 0 ? (
+                            <div className="flex flex-wrap mt-2">
+                              {imagePreviews.map((img, index) => (
+                                <div key={index} className="w-24 h-24 m-2">
+                                  <img
+                                    src={img}
+                                    alt={`preview ${index}`}
+                                    className="w-full h-full object-cover rounded"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div>
+                              <MdOutlineCloudUpload className="text-gray-200 w-12 h-12" />
+                              <span className="block text-gray-400 font-normal">
+                                Attach your files here
+                              </span>
+                              <span className="block text-gray-400 font-normal">
+                                or
+                              </span>
+                              <span className="block text-blue-400 font-normal">
+                                Browse files
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <input
                         type="file"
+                        multiple
+                        onChange={handleImageChange}
                         className="h-full w-full opacity-0"
-                        name=""
                       />
                     </div>
                     <div className="flex justify-between items-center text-gray-400">
-                      <span>Accepted file type:.doc only</span>
+                      <span>Accepted file types: .jpg, .png</span>
                       <span className="flex items-center ">
                         <i className="fa fa-lock mr-1"></i> secure
                       </span>
                     </div>
                   </div>
+                  {/* Hiển thị hình ảnh đã chọn */}
                 </div>
                 <button
                   type="submit"

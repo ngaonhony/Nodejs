@@ -33,10 +33,23 @@
   }
 
   .full-width {
-    flex: 1; /* Mỗi input chiếm không gian bằng nhau */
+    max-width: 200px; /* Set a maximum width */
+    width: 100%; /* Ensure it takes full width of its container */
+  }
+  
+  /* Optional: Adjust the input field to match the form field width */
+  .mat-form-field {
+    width: 100%; /* Make sure the form field takes the full width */
   }
 
   /* Tùy chọn: Điều chỉnh chiều rộng của dialog */
   mat-dialog-content {
     min-width: 400px; /* Điều chỉnh theo nhu cầu */
+  }
+
+  .limited-width {
+    max-width: 400px; /* Set a maximum width for the cell */
+    overflow: hidden; /* Hide overflow content */
+    text-overflow: ellipsis; /* Show ellipsis for overflow text */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
   }

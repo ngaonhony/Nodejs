@@ -39,7 +39,8 @@ exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("userId", "name phone createdAt")
-      .populate("serviceId","name rating")
+      .populate("categoryId", "name")
+      .populate("serviceId","name rating title_color")
     res.send(posts);
   } catch (error) {
     res.status(500).send({ message: "Error fetching posts", error });
@@ -51,7 +52,7 @@ exports.getPostById = async (req, res) => {
     const post = await Post.findById(req.params.id)
       .populate("userId", "name phone createdAt")
       .populate("categoryId", "name")
-      .populate("serviceId", "name rating"); 
+      .populate("serviceId", "name rating title_color"); 
     if (!post) {
       return res.status(404).send({ message: "Post not found" });
     }

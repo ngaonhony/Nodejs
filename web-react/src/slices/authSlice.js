@@ -129,7 +129,6 @@ const authSlice = createSlice({
             })
             .addCase(verifyUserCode.fulfilled, (state, action) => {
                 state.loading = false;
-                // Xử lý thông tin xác thực nếu cần
             })
             .addCase(verifyUserCode.rejected, (state, action) => {
                 state.loading = false;
@@ -141,7 +140,6 @@ const authSlice = createSlice({
             })
             .addCase(resendVerification.fulfilled, (state, action) => {
                 state.loading = false;
-                // Xử lý phản hồi nếu cần
             })
             .addCase(resendVerification.rejected, (state, action) => {
                 state.loading = false;
@@ -152,7 +150,7 @@ const authSlice = createSlice({
               })
               .addCase(fetchUserById.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload; // Update user with fetched data
+                state.user = action.payload; 
                 state.error = null;
               })
               .addCase(fetchUserById.rejected, (state, action) => {
@@ -174,6 +172,5 @@ const authSlice = createSlice({
     },
 });
 
-// Xuất action creators và reducer
 export const { setUser, clearUser,logout } = authSlice.actions;
 export default authSlice.reducer;

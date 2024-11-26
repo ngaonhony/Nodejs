@@ -2,6 +2,7 @@ import React from 'react';
 import icons from '../ultils/icons';
 import { Link } from 'react-router-dom';
 import Button from './Button';
+import { useSelector } from "react-redux";
 const { 
   IoIosLogOut, 
   MdHistory, 
@@ -25,6 +26,7 @@ const mockUserData = {
 };
 
 const UserBar = () => {
+  const user = useSelector((state) => state.auth.user);
   return (
     <div className="max-w-xs pl-6 pr-6 pb-4 mb-4 bg-white shadow-md rounded">
       {/* User Info */}
@@ -38,12 +40,12 @@ const UserBar = () => {
             />
           </div>
           <div className="text-center ml-4">
-            <h2 className="text-lg font-semibold">{mockUserData.name}</h2>
-            <p className="text-gray-600">{mockUserData.phone}</p>
+            <h2 className="text-lg font-semibold">{user.name}</h2>
+            <p className="text-gray-600">{user.phone}</p>
           </div>
         </div>
-        <p className="text-gray-800">Mã thành viên: <span className="font-semibold">{mockUserData.memberCode}</span></p>
-        <p className="text-gray-800">TK Chính: <span className="font-semibold">{mockUserData.accountBalance}</span></p>
+        <p className="text-gray-800">Mã thành viên: <span className="font-semibold">123456</span></p>
+        <p className="text-gray-800">TK Chính: <span className="font-semibold">0</span></p>
         
         {/* Buttons */}
         <div className="flex justify-center mt-4">
@@ -59,9 +61,9 @@ const UserBar = () => {
 
       {/* Support Info */}
       <div className="bg-yellow-100 p-2 rounded mb-6 text-center">
-        <p className="font-semibold">Nhân viên hỗ trợ riêng của bạn:</p>
-        <p>{mockUserData.supportStaff.name}</p>
-        <p className="text-red-600">{mockUserData.supportStaff.phone}</p>
+        <p className="font-semibold">Nhân viên hỗ trợ của bạn:</p>
+        <p>Khánh</p>
+        <p className="text-red-600">0123456789</p>
       </div>
 
       {/* Menu */}

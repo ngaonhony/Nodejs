@@ -20,15 +20,24 @@ const postSchema = new mongoose.Schema(
     serviceId: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Service',
-      required: true,
     },
     images: { 
-      type: [String], 
-      required: true,
+      type: Array,
+      default:[] 
     },
-    created_at: { type: Date, default: Date.now },
+    expiredAt: {
+      type: Date,
+    },
+    duration: { 
+      type: Number,
+      min: 1 
+    }
   },
   { timestamps: true }
 );
+postSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 module.exports = mongoose.model("Post", postSchema);

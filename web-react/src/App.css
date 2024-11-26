@@ -44,3 +44,10 @@
   -webkit-line-clamp: 3; /* Number of lines to show */
   text-overflow: ellipsis;
 }
+
+.truncated-title {
+  max-width: 200px; /* Set a width limit */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

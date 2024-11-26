@@ -5,10 +5,18 @@ const RoomListing = ({ post }) => {
     <div className="font-sans w-full mx-auto p-5 border-gray-300 bg-white">
       <div className="border-b border-gray-300 pb-2 mb-5">
         <h2 className="text-orange-500 text-xl">
-          <span className="ml-2 text-yellow-500 text-2xl">
-            {"★".repeat(post.serviceId.rating)}
-          </span>
+          <div className="flex text-red-600 font-medium">
+        <span className="text-yellow-500">
+          {"★".repeat(post.serviceId?.rating || 0)}
+        </span>
+        <Link
+          to={`/detail-page/${post._id}`}
+          style={{ color: post.serviceId?.title_color || '#000000' }} // Default to black if title_color is not set
+          className="ml-2 hover:text-red-500 transition-colors duration-300"
+        >
           {post.title}
+        </Link>
+      </div>
         </h2>
         <p className="text-2xl text-green-600 font-bold">{post.price} triệu/tháng</p>
       </div>

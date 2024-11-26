@@ -19,7 +19,7 @@ const List = ({ categoryId }) => {
     return <p className="text-gray-500">Loading posts...</p>;
   }
 
-  let filteredPosts = posts;
+  let filteredPosts = posts.filter(post => post.serviceId);
   const currentCategoryId = categoryId || new URLSearchParams(location.search).get('categoryId');
 
   // Filter posts by category
@@ -29,11 +29,11 @@ const List = ({ categoryId }) => {
 
   // Sort posts by rating
   const sortedPosts = [...filteredPosts].sort((a, b) => {
-    const ratingA = (a.serviceId && a.serviceId.rating) ? a.serviceId.rating : 0;
-    const ratingB = (b.serviceId && b.serviceId.rating) ? b.serviceId.rating : 0;
-
+    const ratingA = a.serviceId?.rating || 0;
+    const ratingB = b.serviceId?.rating || 0;
     return ratingB - ratingA; // Descending order
   });
+
 
   const handlePostClick = (postId) => {
     setSelectedPostId(postId);
@@ -69,20 +69,21 @@ const List = ({ categoryId }) => {
                 />
               </div>
               <div className="w-3/5">
-                  <div className="flex justify-between gap-4 w-full">
-                    <div className="flex text-red-600 font-medium">
-                      <span className="ml-2 text-yellow-500 text-2xl">
-                      {"★".repeat(post.serviceId?.rating || 0)}
-                      </span>
-                      <Link
-                        to={`/detail-page/${post._id}`}
-                        className="ml-2 hover:text-red-500 transition-colors duration-300"
-                        onClick={() => handlePostClick(post._id)}
-                      >
-                        {post.title}
-                      </Link>
-                    </div>
-                  </div>
+              <div className="flex justify-between gap-4 w-full">
+      <div className="flex text-red-600 font-medium">
+        <span className="text-yellow-500">
+          {"★".repeat(post.serviceId?.rating || 0)}
+        </span>
+        <Link
+          to={`/detail-page/${post._id}`}
+          style={{ color: post.serviceId?.title_color || '#000000' }} // Default to black if title_color is not set
+          className="ml-2 hover:text-red-500 transition-colors duration-300"
+          onClick={() => handlePostClick(post._id)}
+        >
+          {post.title}
+        </Link>
+      </div>
+    </div>
                 <div className="my-2 flex items-center justify-between gap-[2px]">
                   <span className="font-bold text-green-600">
                     {post.price} triệu/tháng
@@ -96,13 +97,13 @@ const List = ({ categoryId }) => {
                 <div className="flex items-center mt-3 justify-between">
                   <div className="flex items-center">
                     <img
-                      src={post.userAvatarUrl}
+                      src="{post.userAvatarUrl}"
                       alt="avatar"
                       className="w-[30px] h-[30px] object-cover rounded-full"
                     />
                     <p>{post.userId ? post.userId.name : "Unknown User"}</p>
                   </div>
-                  {post.serviceId.rating === 5 && (
+                  {post.serviceId?.rating === 5 && (
                     <div className="flex items-center gap-1">
                       <button type="button" className="bg-blue-700 text-white p-1 rounded-md">
                         Gọi {post.userId?.phone || "Unknown"}

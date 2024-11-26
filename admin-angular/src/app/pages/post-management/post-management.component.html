@@ -32,7 +32,7 @@
           <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container matColumnDef="title">
               <th mat-header-cell *matHeaderCellDef>Tiêu Đề</th>
-              <td mat-cell *matCellDef="let post">{{ post.title }}</td>
+              <td mat-cell *matCellDef="let post" class="limited-width">{{ post.title }}</td>
             </ng-container>
 
             <ng-container matColumnDef="description">
@@ -58,7 +58,9 @@
 
             <ng-container matColumnDef="location">
               <th mat-header-cell *matHeaderCellDef>Địa Điểm</th>
-              <td mat-cell *matCellDef="let post">{{ post.location }}</td>
+              <td mat-cell *matCellDef="let post">
+                <textarea [(ngModel)]="post.location" rows="3" cols="20"></textarea>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="area">

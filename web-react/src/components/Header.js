@@ -118,7 +118,7 @@ const Header = () => {
                 <div className="w-8 h-8 rounded-full bg-gray-300 mr-2">
                   <img
                     className="w-full h-full rounded-full"
-                    src="/images/default_user.svg"
+                    src="https://phongtro123.com/images/default-user.png"
                     alt="User Avatar"
                   />
                 </div>
@@ -136,12 +136,10 @@ const Header = () => {
                   <div className="p-3">
                     <div className="flex items-center justify-between mb-2">
                       <User user={user} />{" "}
-                      {/* Sử dụng component User để hiển thị thông tin */}
                     </div>
                     <p className="mb-3 text-sm font-normal">
                       <Link to="#" className="hover:underline">
                         @{user ? user.username : "jeseleos"}{" "}
-                        {/* Hiển thị tên người dùng */}
                       </Link>
                     </p>
                     <p className="mb-4 text-sm">

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/posts';
 const getToken = () => {
-    return localStorage.getItem('token'); // Adjust this to your token storage method
+    return localStorage.getItem('accessToken'); // Adjust this to your token storage method
 };
 // Hàm lấy tất cả bài viết
 export const getPosts = async () => {
@@ -31,7 +31,8 @@ export const createPost = async (postData) => {
     try {
         const response = await axios.post(API_URL, postData, {
             headers: {
-                Authorization: `Bearer ${token}`, // Set the Authorization header with the token
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             },
         });
         return response.data; // Return the newly created post
