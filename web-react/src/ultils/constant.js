@@ -10,7 +10,8 @@ export const path = {
     NewPost:'/mangement/new-post',
     SearchPage:'./search-page',
     MomoPage: 'momo',
-    Payment:'payment'
+    Payment:'payment',
+    GatewayPayment:'gatewaypayment'
 }
 
 export const text = {

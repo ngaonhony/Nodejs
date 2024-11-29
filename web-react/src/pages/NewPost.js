@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import UserBar from "../components/UserBar";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { Link } from 'react-router-dom';
-
 import provincesData from "../assets/data/vn_units.json";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../slices/categorySlice";

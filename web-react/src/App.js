@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home,Payment,CategoryPage, Login,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
+  import { Home,Payment,CategoryPage, Login,Register, GatewayPayment,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
 
   function App() {
     return (
@@ -23,6 +23,7 @@
           <Route path='/search-page' element={<SearchPage />} />
           <Route path='/management/recharge-page/momo' element={<MomoPage />} />
           <Route path='/management/new-post/payment' element={<Payment />} />
+          <Route path='/management/gatewaypayment' element={<GatewayPayment />} />
           </Routes>
       </div>
     );

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import UserBar from "../components/UserBar";
 import { Link } from "react-router-dom";
 
+
 const Payment = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVipFilter, setSelectedVipFilter] = useState("all");
@@ -218,9 +219,11 @@ const Payment = () => {
             </div>
 
             {/* Nút Thanh toán */}
-            <button className="mt-6 w-full bg-orange-500 text-white font-bold py-2 rounded-lg">
-              Thanh toán {(selectedPackagePrice * selectedDays).toLocaleString()}đ
-            </button>
+            <Link to="/management/gatewaypayment">
+      <button className="mt-6 w-full bg-orange-500 text-white font-bold py-2 rounded-lg">
+        Thanh toán {(selectedPackagePrice * selectedDays).toLocaleString()}đ
+      </button>
+    </Link>
           </div>
         </div>
       </div>
