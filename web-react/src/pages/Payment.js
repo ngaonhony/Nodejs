@@ -10,7 +10,7 @@ import { createPost } from "../slices/postSlice";
 const Payment = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { postData } = location.state || {};
+  const { postData } = location.state || JSON.parse(localStorage.getItem('postData'));
   const { services = [] } = useSelector((state) => state.services);
   const userId = useSelector((state) => state.auth.user._id);
   const [selectedDays, setSelectedDays] = useState(3);
@@ -74,9 +74,8 @@ const Payment = () => {
             post.append(key, postData[key]);
         }
     }
-
     // Append images to FormData
-    if (postData.images && postData.images.length > 0) {
+    if (postData && postData.images) {
         postData.images.forEach((image) => {
             post.append("images", image); // Append each image file
         });
@@ -86,14 +85,14 @@ const Payment = () => {
 
     // Create the post first
     try {
-      await dispatch(createPost(post)).unwrap(); // Unwrap to handle fulfillment or rejection
+      await dispatch(createPost(post));
       console.log("Post created successfully");
       
       // Now handle the payment
       if (selectedPaymentMethod === "momo") {
         const response = await axios.post("http://localhost:3000/api/momo/paymentMoMo", { amount: totalAmount });
         if (response.data && response.data.payUrl) {
-          window.location.href = response.data.payUrl; // Redirect to MoMo payment URL
+          //window.location.href = response.data.payUrl; // Redirect to MoMo payment URL
         } else {
           console.error("No payment URL received:", response.data);
         }

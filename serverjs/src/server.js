@@ -111,13 +111,9 @@ app.get("/api/test", (req, res) => {
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).send("Something went wrong!");
-<<<<<<< HEAD
-});
-=======
 });
 
 // Start the server và lắng nghe yêu cầu
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
->>>>>>> dc56269a010e24dbe2173911b5bba7da61537a7b

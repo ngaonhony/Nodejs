@@ -134,8 +134,7 @@ const NewPost = () => {
         categoryId: formData.categoryId,
         images: formData.images, // Giữ nguyên danh sách hình ảnh
     };
-
-    // Chuyển hướng đến trang thanh toán với dữ liệu bài đăng
+    localStorage.setItem('postData', JSON.stringify(postData));
     navigate("/management/new-post/payment", { state: { postData } });
 };
 
