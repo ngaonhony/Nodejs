@@ -29,7 +29,10 @@
     "config": "^3.3.12",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+<<<<<<< HEAD
     "crypto": "^1.0.1",
+=======
+>>>>>>> dc56269a010e24dbe2173911b5bba7da61537a7b
     "crypto-js": "^4.2.0",
     "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
