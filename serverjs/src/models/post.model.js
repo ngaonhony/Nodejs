@@ -28,10 +28,6 @@ const postSchema = new mongoose.Schema(
     expiredAt: {
       type: Date,
     },
-    duration: { 
-      type: Number,
-      min: 1 
-    }
   },
   { timestamps: true }
 );

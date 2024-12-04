@@ -26,6 +26,7 @@ exports.createPost = async (req, res) => {
       categoryId: req.body.categoryId,
       serviceId: req.body.serviceId,
       images: imageUrls,
+      expiredAt:req.body.expiredAt,
     });
 
     const savedPost = await newPost.save();

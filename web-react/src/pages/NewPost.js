@@ -2,14 +2,15 @@ import Navigator from "../components/Navigator";
 import React, { useEffect, useState } from "react";
 import UserBar from "../components/UserBar";
 import { MdOutlineCloudUpload } from "react-icons/md";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import provincesData from "../assets/data/vn_units.json";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../slices/categorySlice";
 import { createPost } from "../slices/postSlice";
 
 const NewPost = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
   const user = useSelector((state) => state.auth.user);
@@ -123,37 +124,20 @@ const NewPost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const postData = new FormData();
-    postData.append("area", formData.area);
-    postData.append("description", formData.description);
-    postData.append("location", formData.location);
-    postData.append("price", formData.price);
-    postData.append("title", formData.title);
-    postData.append("categoryId", formData.categoryId);
+    // Tạo đối tượng postData từ formData
+    const postData = {
+        area: formData.area,
+        description: formData.description,
+        location: getAddress(),
+        price: formData.price,
+        title: formData.title,
+        categoryId: formData.categoryId,
+        images: formData.images, // Giữ nguyên danh sách hình ảnh
+    };
 
-    // Thêm hình ảnh vào FormData
-    formData.images.forEach((image) => {
-      postData.append("images", image);
-    });
-
-    try {
-      const data = await dispatch(createPost(postData));
-      console.log("Post created successfully:", data);
-      // Reset các trường dữ liệu
-      setFormData({
-        location: "",
-        title: "",
-        description: "",
-        price: "",
-        area: "",
-        categoryId: "",
-        serviceId: "",
-        images: [],
-      });
-    } catch (error) {
-      console.error("Error creating post:", error);
-    }
-  };
+    // Chuyển hướng đến trang thanh toán với dữ liệu bài đăng
+    navigate("/management/new-post/payment", { state: { postData } });
+};
 
   return (
     <div className="flex flex-col">
@@ -497,15 +481,11 @@ const NewPost = () => {
                   </div>
                   {/* Hiển thị hình ảnh đã chọn */}
                 </div>
-                <Link to="/management/new-post/payment">
-                  <button
-                    type="button"
-                    className="w-full bg-green-600 text-white p-3 rounded mt-4 hover:bg-green-700"
-                  >
-                      Tạo tin đăng
-                       </button>
-                  </Link>
-
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white p-3 rounded mt-4 hover:bg-green-700">
+                  Tạo tin đăng
+                </button>
               </form>
             </div>
             <div className="w-[30%] flex ">

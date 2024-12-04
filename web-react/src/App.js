@@ -21,7 +21,7 @@
           <Route path='/management/recharge-history-page' element={<RechargeHistoryPage />} />
           <Route path='/management/recharge-page' element={<RechargePage />} />
           <Route path='/search-page' element={<SearchPage />} />
-          <Route path='/management/recharge-page/momo' element={<MomoPage />} />
+          <Route path='/management/new-post/payment/momo' element={<MomoPage />} />
           <Route path='/management/new-post/payment' element={<Payment />} />
           </Routes>
       </div>

@@ -1,42 +1,131 @@
 import Navigator from "../components/Navigator";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import UserBar from "../components/UserBar";
-import { Link } from "react-router-dom";
+import { fetchServices } from "../slices/serviceSlice";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { createPost } from "../slices/postSlice";
 
 const Payment = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedVipFilter, setSelectedVipFilter] = useState("all");
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState("publish");
-  const [isVipDropdownOpen, setVipDropdownOpen] = useState(false);
-  const [isStatusDropdownOpen, setStatusDropdownOpen] = useState(false);
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { postData } = location.state || {};
+  const { services = [] } = useSelector((state) => state.services);
+  const userId = useSelector((state) => state.auth.user._id);
   const [selectedDays, setSelectedDays] = useState(3);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("momo");
-  const [selectedPackagePrice, setSelectedPackagePrice] = useState(10000); // Dùng state để lưu giá trị gói tin đã chọn
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [timeUnit, setTimeUnit] = useState("day");
 
-  const packages = [
-    { name: "Tin VIP 3", price: 10000 },
-    { name: "Tin VIP 2", price: 20000 },
-    { name: "Tin VIP 1", price: 50000 },
-  ];
+  useEffect(() => {
+    dispatch(fetchServices());
+  }, [dispatch]);
 
-  // Xử lý khi người dùng chọn số ngày
+  // Handle user selecting number of days
   const handleSelectDays = (e) => {
     setSelectedDays(e.target.value);
   };
 
-  // Xử lý khi người dùng thay đổi phương thức thanh toán
+  // Handle payment method change
   const handlePaymentMethodChange = (e) => {
     setSelectedPaymentMethod(e.target.value);
   };
 
-  // Xử lý khi người dùng chọn gói tin
+  // Handle package selection
   const handlePackageSelect = (e) => {
-    const selectedPackage = packages.find(pkg => pkg.name === e.target.value);
-    if (selectedPackage) {
-      setSelectedPackagePrice(selectedPackage.price);
+    const selectedPkg = services.find((pkg) => pkg.name === e.target.value);
+    setSelectedPackage(selectedPkg);
+  };
+
+  const handleTimeUnitChange = (e) => {
+    setTimeUnit(e.target.value);
+    setSelectedDays(e.target.value === "day" ? 1 : e.target.value === "week" ? 7 : 30);
+  };
+
+  const calculateTotalAmount = (pkg, days, unit) => {
+    if (!pkg) return 0;
+    switch (unit) {
+      case "day":
+        return pkg.price_per_day * days;
+      case "week":
+        return pkg.price_per_week * Math.ceil(days / 7);
+      case "month":
+        return pkg.price_per_month * Math.ceil(days / 30);
+      default:
+        return 0;
     }
   };
 
+  const handlePayment = async () => {
+    const totalAmount = calculateTotalAmount(selectedPackage, selectedDays, timeUnit);
+    const currentDate = new Date();
+    const expirationDate = new Date(currentDate);
+    expirationDate.setDate(currentDate.getDate() + selectedDays);
+
+    const post = new FormData();
+    post.append("userId", userId);
+    post.append("serviceId", selectedPackage ? selectedPackage._id : null);
+    post.append("expiredAt", expirationDate.toISOString());
+
+    // Append other post data
+    for (const key in postData) {
+        if (key !== 'images') {
+            post.append(key, postData[key]);
+        }
+    }
+
+    // Append images to FormData
+    if (postData.images && postData.images.length > 0) {
+        postData.images.forEach((image) => {
+            post.append("images", image); // Append each image file
+        });
+    }
+
+    console.log("Payment Data:", post);
+
+    // Create the post first
+    try {
+      await dispatch(createPost(post)).unwrap(); // Unwrap to handle fulfillment or rejection
+      console.log("Post created successfully");
+      
+      // Now handle the payment
+      if (selectedPaymentMethod === "momo") {
+        const response = await axios.post("http://localhost:3000/api/momo/paymentMoMo", { amount: totalAmount });
+        if (response.data && response.data.payUrl) {
+          window.location.href = response.data.payUrl; // Redirect to MoMo payment URL
+        } else {
+          console.error("No payment URL received:", response.data);
+        }
+      } else if (selectedPaymentMethod === "zalopay") {
+        const response = await axios.post("http://localhost:3000/api/zaloPay/payment", {
+          amount: totalAmount,
+          bankCode: "",
+          language: "vn",
+        });
+        if (response.data && response.data.order_url) {
+          window.location.href = response.data.order_url; // Redirect to ZaloPay payment URL
+        } else {
+          console.error("No payment URL received:", response.data);
+        }
+      } else if (selectedPaymentMethod === "vnpay") {
+        const response = await axios.post("http://localhost:3000/api/order/create_payment_url", {
+          amount: totalAmount,
+          bankCode: "",
+          language: "vn",
+        });
+        if (response.data && response.data.paymentUrl) {
+          window.location.href = response.data.paymentUrl; // Redirect to VNPAY payment URL
+        } else {
+          console.error("No payment URL received:", response.data);
+        }
+      } else {
+        alert("Please select a payment method!");
+      }
+    } catch (error) {
+      console.error("Error during post creation or payment:", error.response ? error.response.data : error.message);
+    }
+  };
   return (
     <div className="flex flex-col">
       <div className="w-full sticky top-0 bg-white z-10">
@@ -109,38 +198,63 @@ const Payment = () => {
             {/* Gói tin đăng */}
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Gói thời gian</label>
-                <select className="border border-gray-300 rounded-lg p-2 w-full">
-                  <option value="ngay">Đăng theo ngày</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Chọn loại tin</label>
+                <label className="block text-sm font-medium mb-2">
+                  Chọn loại tin
+                </label>
                 <select
                   className="border border-gray-300 rounded-lg p-2 w-full"
                   onChange={handlePackageSelect}
-                >
-                  {packages.map((pkg, index) => (
+                  defaultValue="">
+                  <option value="" disabled>
+                    -- Chọn loại tin --
+                  </option>
+                  {services.map((pkg, index) => (
                     <option key={index} value={pkg.name}>
-                      {pkg.name} ({pkg.price.toLocaleString()}đ/ngày)
+                      {pkg.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Số ngày</label>
+                <label className="block text-sm font-medium mb-2">
+                  Gói thời gian
+                </label>
                 <select
                   className="border border-gray-300 rounded-lg p-2 w-full"
-                  value={selectedDays}
-                  onChange={handleSelectDays}
+                  onChange={handleTimeUnitChange}
+                  value={timeUnit}
+                  defaultValue="">
+                  <option value="">-- Chọn gói thời gian --</option>
+                  <option value="day">Đăng theo ngày</option>
+                  <option value="week">Đăng theo tuần</option>
+                  <option value="month">Đăng theo tháng</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Số ngày
+                </label>
+                <select
+                  className="border border-gray-300 rounded-lg p-2 w-full"
+                  value={timeUnit === "month" ? 30 : selectedDays}
+                  onChange={timeUnit === "month" ? null : handleSelectDays}
+                  disabled={timeUnit === "month"} // Vô hiệu hóa chọn ngày khi chọn tháng
                 >
-                  {[...Array(60).keys()].map((day) => (
-                    <option key={day + 1} value={day + 1}>
-                      {day + 1} ngày
-                    </option>
-                  ))}
+                  {timeUnit === "day" &&
+                    [...Array(6).keys()].map((day) => (
+                      <option key={day + 1} value={day + 1}>
+                        {day + 1} ngày
+                      </option>
+                    ))}
+                  {timeUnit === "week" &&
+                    [...Array(23).keys()].map((day) => (
+                      <option key={day + 7} value={day + 7}>
+                        {day + 7} ngày
+                      </option>
+                    ))}
+                  {timeUnit === "month" && <option value={30}>30 ngày</option>}
                 </select>
               </div>
             </div>
@@ -149,77 +263,113 @@ const Payment = () => {
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
               <h3 className="text-sm font-bold">Thông tin thanh toán</h3>
               <div className="grid grid-cols-2 gap-4 text-sm mt-2">
-                <p>Loại tin: <span className="font-medium">{packages.find(pkg => pkg.price === selectedPackagePrice)?.name}</span></p>
-                <p>Gói thời gian: <span className="font-medium">Đăng theo ngày</span></p>
-                <p>Số ngày VIP: <span className="font-medium">{selectedDays} ngày</span></p>
-                <p>Thành tiền: <span className="font-medium text-red-500">{(selectedPackagePrice * selectedDays).toLocaleString()}đ</span></p>
+                <p>
+                  Loại tin:{" "}
+                  <span className="font-medium">
+                    {selectedPackage ? selectedPackage.name : "Chưa chọn"}
+                  </span>
+                </p>
+                <p>
+                  Gói thời gian:{" "}
+                  <span className="font-medium">Đăng theo ngày</span>
+                </p>
+                <p>
+                  Số ngày:{" "}
+                  <span className="font-medium">{selectedDays} ngày</span>
+                </p>
+                <p>
+                  Thành tiền:
+                  <span className="font-medium text-red-500">
+                    {calculateTotalAmount(
+                      selectedPackage,
+                      selectedDays,
+                      timeUnit
+                    ).toLocaleString()}
+                    đ
+                  </span>
+                </p>
               </div>
             </div>
 
             {/* Phương thức thanh toán */}
-            <h2 className="text-lg font-bold mb-4">Chọn phương thức thanh toán</h2>
+            <h2 className="text-lg font-bold mb-4">
+              Chọn phương thức thanh toán
+            </h2>
             <div className="grid grid-cols-1 gap-4">
               <div className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  id="momo" 
+                <input
+                  type="radio"
+                  name="payment"
+                  id="momo"
                   value="momo"
-                  checked={selectedPaymentMethod === 'momo'} 
+                  checked={selectedPaymentMethod === "momo"}
                   onChange={handlePaymentMethodChange}
-                  className="mr-2" />
+                  className="mr-2"
+                />
                 <label htmlFor="momo">Thanh toán ví MoMo</label>
               </div>
               <div className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  id="credit" 
-                  value="credit" 
-                  checked={selectedPaymentMethod === 'credit'} 
+                <input
+                  type="radio"
+                  name="payment"
+                  id="credit"
+                  value="credit"
+                  checked={selectedPaymentMethod === "credit"}
                   onChange={handlePaymentMethodChange}
-                  className="mr-2" />
+                  className="mr-2"
+                />
                 <label htmlFor="credit">Thanh toán thẻ quốc tế</label>
               </div>
               <div className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  id="bank" 
-                  value="bank" 
-                  checked={selectedPaymentMethod === 'bank'} 
+                <input
+                  type="radio"
+                  name="payment"
+                  id="bank"
+                  value="bank"
+                  checked={selectedPaymentMethod === "bank"}
                   onChange={handlePaymentMethodChange}
-                  className="mr-2" />
+                  className="mr-2"
+                />
                 <label htmlFor="bank">Chuyển khoản ngân hàng</label>
               </div>
 
               <div className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  id="zalopay" 
+                <input
+                  type="radio"
+                  name="payment"
+                  id="zalopay"
                   value="zalopay"
-                  checked={selectedPaymentMethod === 'zalopay'} 
+                  checked={selectedPaymentMethod === "zalopay"}
                   onChange={handlePaymentMethodChange}
-                  className="mr-2" />
+                  className="mr-2"
+                />
                 <label htmlFor="momo">Thanh toán ví ZaloPay</label>
               </div>
               <div className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  id="vnpay" 
+                <input
+                  type="radio"
+                  name="payment"
+                  id="vnpay"
                   value="vnpay"
-                  checked={selectedPaymentMethod === 'vnpay'} 
+                  checked={selectedPaymentMethod === "vnpay"}
                   onChange={handlePaymentMethodChange}
-                  className="mr-2" />
+                  className="mr-2"
+                />
                 <label htmlFor="momo">Thanh toán VNPAY</label>
               </div>
             </div>
 
             {/* Nút Thanh toán */}
-            <button className="mt-6 w-full bg-orange-500 text-white font-bold py-2 rounded-lg">
-              Thanh toán {(selectedPackagePrice * selectedDays).toLocaleString()}đ
+            <button
+              className="mt-6 w-full bg-orange-500 text-white font-bold py-2 rounded-lg"
+              onClick={handlePayment}>
+              Thanh toán{" "}
+              {calculateTotalAmount(
+                selectedPackage,
+                selectedDays,
+                timeUnit
+              ).toLocaleString()}
+              đ
             </button>
           </div>
         </div>
