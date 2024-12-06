@@ -78,7 +78,7 @@ const UserBar = () => {
             <i className="material-icons mr-2">{<CiEdit />}</i> Sửa thông tin cá nhân
           </Link>
         </li>
-        <li className="flex items-center text-gray-800 hover:text-black cursor-pointer">
+        {/* <li className="flex items-center text-gray-800 hover:text-black cursor-pointer">
           <Link to="/management/recharge-page" className="flex items-center">
             <i className="material-icons mr-2">{<FaDollarSign />}</i> Nạp tiền vào tài khoản
           </Link>
@@ -87,7 +87,7 @@ const UserBar = () => {
           <Link to="/management/recharge-history-page" className="flex items-center">
             <i className="material-icons mr-2">{<MdHistory />}</i> Lịch sử nạp tiền
           </Link>
-        </li>
+        </li> */}
         <li className="flex items-center text-gray-800 hover:text-black cursor-pointer">
           <Link to="/management/payment-history-page" className="flex items-center">
             <i className="material-icons mr-2">{<IoReceiptOutline />}</i> Lịch sử thanh toán

@@ -1,6 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import GoogleMapReact from 'google-map-react';
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
 const RoomListing = ({ post }) => {
+  const [location, setLocation] = useState({ lat: null, lng: null });
+  const [address] = useState(post.location); // Địa chỉ từ post
+
+  useEffect(() => {
+    const fetchCoordinates = async (addr) => {
+      const apiKey = process.env.REACT_APP_MAP_API; // Lấy khóa API từ biến môi trường
+      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addr)}&key=${apiKey}`);
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        return {
+          lat: data.results[0].geometry.location.lat,
+          lng: data.results[0].geometry.location.lng,
+        };
+      }
+      return null;
+    };
+
+    const checkAddresses = async () => {
+      // Danh sách các mức độ địa chỉ
+      const addressLevels = [
+        address,  // Chi tiết
+        address.replace(/.*?(?=,)/, ''), // Xã (cắt chi tiết)
+        address.replace(/,\s*[^,]*$/, ''), // Huyện (cắt xã)
+      ];
+
+      for (const addr of addressLevels) {
+        const coords = await fetchCoordinates(addr);
+        if (coords) {
+          setLocation(coords);
+          return;
+        }
+      }
+
+      console.error("Không tìm thấy địa chỉ.");
+    };
+
+    checkAddresses();
+  }, [address]);
   return (
     <div className="font-sans w-full mx-auto p-5 border-gray-300 bg-white">
       <div className="border-b border-gray-300 pb-2 mb-5">
@@ -45,15 +86,22 @@ const RoomListing = ({ post }) => {
       </div>
       {/* Map */}
       <div className="mt-5">
-        <h3 className="text-gray-800 border-b border-gray-300 pb-1">Bản đồ</h3>
-        <iframe
-          title="map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.5962821447777!2d106.65003107579785!3d10.844622058892602!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528a5a0b41f03%3A0xc16d6bd5b3a10cf0!2zNzk2IMSQLiBMw6ogxJDhu6ljIFRow7osIFBoxrDhu51uZyAxNSwgUXXhuq1uIEfDsiBW4bqhLCBIw7ogQ2jDrSBNaW5o!5e0!3m2!1sen!2s!4v1697527932812!5m2!1sen!2s"
-          width="100%"
-          height="300"
-          className="border-none"
-          allowFullScreen=""
-          loading="lazy"></iframe>
+      <div style={{ height: '400px', width: '100%' }}>
+      <GoogleMapReact
+          bootstrapURLKeys={{ key: process.env.REACT_APP_MAP_API }} // Thay thế bằng khóa API của bạn
+          defaultCenter={location.lat ? location : { lat: 10.762622, lng: 106.660172 }} // Tọa độ mặc định
+          defaultZoom={14}
+          center={location.lat ? location : { lat: 10.762622, lng: 106.660172 }} // Tọa độ mặc định
+        >
+          {location.lat && (
+            <AnyReactComponent
+              lat={location.lat}
+              lng={location.lng}
+              text="Marker"
+            />
+          )}
+        </GoogleMapReact>
+      </div>
       </div>
       <Link className="btn btn-report btn-outline" to="/feedback-page">
         <i></i> Gửi phản hồi

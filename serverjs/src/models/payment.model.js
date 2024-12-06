@@ -13,10 +13,7 @@ const paymentSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
     },
-    bankCode: {
-        type: String,
-        required: false,
-    },
+    paymentId: { type: String, required: true, unique: true },
     status: {
       type: String,
     },

@@ -6,7 +6,6 @@ import { fetchServices } from "../slices/serviceSlice";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { createPost } from "../slices/postSlice";
-
 const Payment = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -17,32 +16,23 @@ const Payment = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("momo");
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [timeUnit, setTimeUnit] = useState("day");
-
   useEffect(() => {
     dispatch(fetchServices());
   }, [dispatch]);
-
-  // Handle user selecting number of days
   const handleSelectDays = (e) => {
     setSelectedDays(e.target.value);
   };
-
-  // Handle payment method change
   const handlePaymentMethodChange = (e) => {
     setSelectedPaymentMethod(e.target.value);
   };
-
-  // Handle package selection
   const handlePackageSelect = (e) => {
     const selectedPkg = services.find((pkg) => pkg.name === e.target.value);
     setSelectedPackage(selectedPkg);
   };
-
   const handleTimeUnitChange = (e) => {
     setTimeUnit(e.target.value);
     setSelectedDays(e.target.value === "day" ? 1 : e.target.value === "week" ? 7 : 30);
   };
-
   const calculateTotalAmount = (pkg, days, unit) => {
     if (!pkg) return 0;
     switch (unit) {
@@ -56,54 +46,47 @@ const Payment = () => {
         return 0;
     }
   };
-
+  const generateRandomPaymentId = () => {
+    return 'PAY-' + Math.random().toString(36).substr(2, 9);
+};
   const handlePayment = async () => {
     const totalAmount = calculateTotalAmount(selectedPackage, selectedDays, timeUnit);
     const currentDate = new Date();
     const expirationDate = new Date(currentDate);
     expirationDate.setDate(currentDate.getDate() + selectedDays);
-
     const post = new FormData();
+    const paymentId = generateRandomPaymentId();
     post.append("userId", userId);
     post.append("serviceId", selectedPackage ? selectedPackage._id : null);
     post.append("expiredAt", expirationDate.toISOString());
-
-    // Append other post data
+    post.append("paymentId", paymentId);
     for (const key in postData) {
         if (key !== 'images') {
             post.append(key, postData[key]);
         }
     }
-    // Append images to FormData
     if (postData && postData.images) {
         postData.images.forEach((image) => {
-            post.append("images", image); // Append each image file
+            post.append("images", image); 
         });
     }
-
     console.log("Payment Data:", post);
-
-    // Create the post first
-    try {
-      await dispatch(createPost(post));
-      console.log("Post created successfully");
-      
-      // Now handle the payment
+    try {await dispatch(createPost(post));
       if (selectedPaymentMethod === "momo") {
-        const response = await axios.post("http://localhost:3000/api/momo/paymentMoMo", { amount: totalAmount });
+        const response = await axios.post("http://localhost:3000/api/momo/paymentMoMo", { amount: totalAmount, paymentId : paymentId, });
         if (response.data && response.data.payUrl) {
-          //window.location.href = response.data.payUrl; // Redirect to MoMo payment URL
+          window.location.href = response.data.payUrl; 
         } else {
           console.error("No payment URL received:", response.data);
         }
       } else if (selectedPaymentMethod === "zalopay") {
         const response = await axios.post("http://localhost:3000/api/zaloPay/payment", {
           amount: totalAmount,
-          bankCode: "",
+          paymentId: paymentId,
           language: "vn",
         });
         if (response.data && response.data.order_url) {
-          window.location.href = response.data.order_url; // Redirect to ZaloPay payment URL
+          //window.location.href = response.data.order_url;
         } else {
           console.error("No payment URL received:", response.data);
         }
@@ -114,7 +97,7 @@ const Payment = () => {
           language: "vn",
         });
         if (response.data && response.data.paymentUrl) {
-          window.location.href = response.data.paymentUrl; // Redirect to VNPAY payment URL
+          window.location.href = response.data.paymentUrl;
         } else {
           console.error("No payment URL received:", response.data);
         }

@@ -21,6 +21,7 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Service',
     },
+    paymentId: { type: String, required: true, unique: true },
     images: { 
       type: Array,
       default:[] 

@@ -18,8 +18,8 @@
           <Route path='/management/manage-post-page' element={<ManagePostPage />} />
           <Route path='/management/update-profile-page' element={<UpdateProfilePage />} />
           <Route path='/management/payment-history-page' element={<PaymentHistoryPage />} />
-          <Route path='/management/recharge-history-page' element={<RechargeHistoryPage />} />
-          <Route path='/management/recharge-page' element={<RechargePage />} />
+          {/* <Route path='/management/recharge-history-page' element={<RechargeHistoryPage />} />
+          <Route path='/management/recharge-page' element={<RechargePage />} /> */}
           <Route path='/search-page' element={<SearchPage />} />
           <Route path='/management/new-post/payment/momo' element={<MomoPage />} />
           <Route path='/management/new-post/payment' element={<Payment />} />

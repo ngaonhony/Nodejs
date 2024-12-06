@@ -2,9 +2,8 @@ const axios = require("axios").default;
 const crypto = require("crypto");
 const config = require("../config/config");
 const MoMoTransaction = require("../models/payment.model");
-const { createPost } = require("./post.controller");
 const paymentMoMo = async (req, res) => {
-  const { amount, postData } = req.body;
+  const { amount, paymentId } = req.body;
 
   // Validate amount
   if (!amount || isNaN(amount) || amount <= 0) {
@@ -75,7 +74,7 @@ const paymentMoMo = async (req, res) => {
       orderId,
       amount,
       paymentMethod: "momo",
-      bankCode: result.data.bankCode || "",
+      paymentId,
       status: result.data.message === "Thành công." ? "success" : "failed",
     });
     await newTransaction.save();

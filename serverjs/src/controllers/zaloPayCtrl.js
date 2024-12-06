@@ -13,11 +13,11 @@ const config = {
 };
 
 const payment = async (req, res) => {
-  const { amount, bankCode } = req.body;
+  const { amount, paymentId } = req.body;
 
   const embed_data = {
     redirecturl: "http://localhost:3001/management/manage-post-page",
-  }; // Sau khi thanh toán xong sẽ chuyển hướng về địa chỉ này
+  };
   const items = [];
   const transID = Math.floor(Math.random() * 1000000);
 
@@ -29,10 +29,9 @@ const payment = async (req, res) => {
     item: JSON.stringify(items),
     embed_data: JSON.stringify(embed_data),
     amount: amount,
-    // ngrok http 5000
     callback_url: "http://localhost:3001/management/manage-post-page",
     description: `Lazada - Payment for the order #${transID}`,
-    bank_code: bankCode,
+    paymentId: paymentId,
   };
 
   const data = `${config.app_id}|${order.app_trans_id}|${order.app_user}|${order.amount}|${order.app_time}|${order.embed_data}|${order.item}`;
@@ -44,7 +43,7 @@ const payment = async (req, res) => {
     const newTransaction = new ZaloPay({
       orderId: order.app_trans_id,
       amount: order.amount,
-      bankCode: order.bank_code || "",
+      paymentId: order.paymentId,
       status: result.data.return_code === 1 ? "success" : "failed",
       paymentMethod:"zalopay",
     });

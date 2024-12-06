@@ -25,6 +25,7 @@ exports.createPost = async (req, res) => {
       area: req.body.area,
       categoryId: req.body.categoryId,
       serviceId: req.body.serviceId,
+      paymentId: req.body.paymentId,
       images: imageUrls,
       expiredAt:req.body.expiredAt,
     });
@@ -92,7 +93,6 @@ exports.updatePost = async (req, res) => {
     post.location = req.body.location;
     post.area = req.body.area;
     post.categoryId = req.body.categoryId;
-    post.servicesId = req.body.servicesId;
     post.images = imageUrls;
 
     const updatedPost = await post.save();
