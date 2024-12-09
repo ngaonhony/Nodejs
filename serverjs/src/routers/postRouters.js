@@ -19,5 +19,6 @@ router.post("/", protect, upload.array("images"), postController.createPost);
 router.get("/:id", postController.getPostById);
 router.put("/:id", protect, upload.array("images"), postController.updatePost);
 router.delete("/:id", protect, postController.deletePost);
-
+router.get("/user/:id", protect, postController.getUserPosts);
+router.get("/search", postController.searchPosts);
 module.exports = router;
