@@ -6,6 +6,7 @@ const authRouter = require("./authRouter");
 const serviceRouter = require("./serviceRouters");
 const zaloPayRouter = require("./zaloPayRoute");
 const momoRouter = require("./momoRoute");
+const paymentRouter = require("./paymentRouters");
 const initRoutes = (app) => {
   app.use("/api/users", userRouter);
   app.use("/api/categories", categoryRouter);
@@ -15,6 +16,7 @@ const initRoutes = (app) => {
   app.use("/api/services", serviceRouter);
   app.use("/api/zaloPay", zaloPayRouter);
   app.use("/api/momo", momoRouter);
+  app.use("/api/payments", paymentRouter);
   app.get("/", (req, res) => {
     res.send("Server đã khởi động ......");
   });

@@ -75,7 +75,7 @@ const Header = () => {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Sửa thông tin cá nhân
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/management/recharge-page"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Nạp tiền vào tài khoản
@@ -84,7 +84,7 @@ const Header = () => {
                       to="/management/recharge-history-page"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Lịch sử nạp tiền
-                    </Link>
+                    </Link> */}
                     <Link
                       to="/management/payment-history-page"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

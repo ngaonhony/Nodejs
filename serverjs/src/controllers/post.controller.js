@@ -15,7 +15,6 @@ exports.createPost = async (req, res) => {
     if (!req.userId) {
       return res.status(400).json({ message: "Không tìm thấy userId" });
     }
-
     const newPost = new Post({
       userId: req.userId,
       title: req.body.title,
@@ -28,8 +27,8 @@ exports.createPost = async (req, res) => {
       paymentId: req.body.paymentId,
       images: imageUrls,
       expiredAt:req.body.expiredAt,
+      status: req.body.status || 'active',
     });
-
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
@@ -65,20 +64,14 @@ exports.getPostById = async (req, res) => {
 };
 exports.updatePost = async (req, res) => {
   try {
-    const userId = req.userId;
-
+    console.log("Request Body:", req.body);
     const post = await Post.findById(req.params.id);
-    if (!post || post.userId.toString() !== userId) {
-      return res.status(403).json({ message: "Unauthorized access to post" });
-    }
-
-    let imageUrls = post.images;
+    let imageUrls = post.images;  
     if (req.files && req.files.length > 0) {
       for (const imageUrl of imageUrls) {
         const publicId = imageUrl.split("/").pop().split(".")[0];
         await deleteImage(publicId);
       }
-
       imageUrls = [];
       for (const file of req.files) {
         const result = await uploadImage(file.path);
@@ -86,15 +79,12 @@ exports.updatePost = async (req, res) => {
         fs.unlinkSync(file.path);
       }
     }
-
-    post.title = req.body.title;
     post.description = req.body.description;
     post.price = req.body.price;
-    post.location = req.body.location;
     post.area = req.body.area;
     post.categoryId = req.body.categoryId;
     post.images = imageUrls;
-
+    post.status = req.body.status;
     const updatedPost = await post.save();
     res.status(200).json(updatedPost);
   } catch (error) {
@@ -105,7 +95,6 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const userId = req.userId;
-
     const post = await Post.findById(req.params.id);
     if (!post || post.userId.toString() !== userId) {
       return res.status(403).json({ message: "Unauthorized access to post" });

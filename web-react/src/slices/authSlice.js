@@ -80,7 +80,6 @@ const authSlice = createSlice({
         logout(state) {
             state.user = null;
             state.accessToken = null;
-            // Xóa thông tin khỏi localStorage
             localStorage.removeItem('user');
             localStorage.removeItem('accessToken');
         },

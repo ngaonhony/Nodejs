@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import UserBar from "../components/UserBar";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getPosts } from "../slices/postSlice";
+import { getPosts, updatePost } from "../slices/postSlice";
+import Button from "../components/Button";
 const posts = [];
 
 const ManagePostsPage = () => {
@@ -32,11 +33,23 @@ const ManagePostsPage = () => {
   const currentUser = userId;
   let filteredPosts = posts;
 
-  if(currentUser){ filteredPosts = posts.filter(post => post.userId._id === currentUser);}
-  console.log(currentUser,filteredPosts)
+  if (currentUser) {
+    filteredPosts = posts.filter((post) => post.userId._id === currentUser);
+  }
+  console.log(currentUser, filteredPosts);
   const truncateTitle = (title, maxLength) => {
-    if (!title) return '';
-    return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
+    if (!title) return "";
+    return title.length > maxLength
+      ? title.substring(0, maxLength) + "..."
+      : title;
+  };
+  const handleStatusChange = async (postId, newStatus) => {
+    try {
+      await dispatch(updatePost({ postId, status: newStatus })).unwrap();
+      dispatch(getPosts()); // Tải lại danh sách bài đăng sau khi cập nhật
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
   };
   return (
     <div className="flex flex-col">
@@ -238,6 +251,9 @@ const ManagePostsPage = () => {
                     Hết hạn
                   </th>
                   <th scope="col" class="px-6 py-3">
+                    Status
+                  </th>
+                  <th scope="col" class="px-6 py-3">
                     Action
                   </th>
                 </tr>
@@ -280,23 +296,39 @@ const ManagePostsPage = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {truncateTitle(post.title, 30)} {/* Truncate to 30 characters */}
-              </td>
-              <td
-  className="px-6 py-4 text-base"
-  style={{ color: post.serviceId?.title_color || '#000000' }} // Default to black if color_title is not set
->
-  {post.serviceId?.name}
-</td>
+                        {truncateTitle(post.title, 30)}{" "}
+                      </td>
+                      <td
+                        className="px-6 py-4 text-base"
+                        style={{
+                          color: post.serviceId?.title_color || "#000000",
+                        }}>
+                        {post.serviceId?.name}
+                      </td>
                       <td class="px-6 py-4 text-base">{post.price}</td>
-                      <td class="px-6 py-4 text-base">{formatDate(post.updatedAt)}</td>
-                      <td class="px-6 py-4 text-base">$2999</td>
                       <td class="px-6 py-4 text-base">
-                        <a
-                          href="#"
-                          class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                          Edit
-                        </a>
+                        {formatDate(post.updatedAt)}
+                      </td>
+                      <td class="px-6 py-4 text-base">
+                        {formatDate(post.expiredAt)}
+                      </td>
+                      <td className="px-6 py-4 text-base">
+                        <span
+                          className={`font-medium ${
+                            post.status === "active"
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}>
+                          {post.status === "active" ? "Hiện" : "Ẩn"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-base">
+                        <Button
+                          text={"Sửa"}
+                          textColor="text-white"
+                          bgColor="bg-[#3961fb]"
+                          path={`/management/update-post-page/${post._id}`}
+                        />
                       </td>
                     </tr>
                   ))

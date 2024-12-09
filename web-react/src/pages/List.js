@@ -9,7 +9,7 @@ const List = ({ categoryId }) => {
   const { posts, error } = useSelector((state) => state.posts);
   const location = useLocation();
   const [selectedPostId, setSelectedPostId] = useState(null);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 8;
@@ -23,19 +23,22 @@ const List = ({ categoryId }) => {
     return <p className="text-gray-500">Loading posts...</p>;
   }
 
-  let filteredPosts = posts.filter(post => post.serviceId);
-  const currentCategoryId = categoryId || new URLSearchParams(location.search).get('categoryId');
+  let filteredPosts = posts.filter((post) => post.serviceId && post.status === "active");
+  const currentCategoryId =
+    categoryId || new URLSearchParams(location.search).get("categoryId");
 
   // Filter posts by category
   if (currentCategoryId) {
-    filteredPosts = posts.filter((post) => post.categoryId._id === currentCategoryId);
+    filteredPosts = posts.filter(
+      (post) => post.categoryId._id === currentCategoryId
+    );
   }
 
   // Sort posts by rating
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     const ratingA = a.serviceId?.rating || 0;
     const ratingB = b.serviceId?.rating || 0;
-    return ratingB - ratingA; // Descending order
+    return ratingB - ratingA; 
   });
 
   const handlePostClick = (postId) => {
@@ -74,7 +77,9 @@ const List = ({ categoryId }) => {
       <div className="items">
         {currentPosts.length > 0 ? (
           currentPosts.map((post) => (
-            <div key={post.id} className="w-full flex border-t border-orange-600 p-4">
+            <div
+              key={post.id}
+              className="w-full flex border-t border-orange-600 p-4">
               <div className="w-2/5 flex flex-wrap gap-[2px] items-center">
                 <img
                   src={post.images}
@@ -90,10 +95,11 @@ const List = ({ categoryId }) => {
                     </span>
                     <Link
                       to={`/detail-page/${post._id}`}
-                      style={{ color: post.serviceId?.title_color || '#000000' }} // Default to black if title_color is not set
+                      style={{
+                        color: post.serviceId?.title_color || "#000000",
+                      }} // Default to black if title_color is not set
                       className="ml-2 hover:text-red-500 transition-colors duration-300"
-                      onClick={() => handlePostClick(post._id)}
-                    >
+                      onClick={() => handlePostClick(post._id)}>
                       {post.title}
                     </Link>
                   </div>
@@ -111,7 +117,7 @@ const List = ({ categoryId }) => {
                 <div className="flex items-center mt-3 justify-between">
                   <div className="flex items-center">
                     <img
-                      src={post.userAvatarUrl}
+                      src={post.userAvatarUrl ||"https://phongtro123.com/images/default-user.png"}
                       alt="avatar"
                       className="w-[30px] h-[30px] object-cover rounded-full"
                     />
@@ -119,17 +125,18 @@ const List = ({ categoryId }) => {
                   </div>
                   {post.serviceId?.rating === 5 && (
                     <div className="flex items-center gap-1">
-                      <button type="button" className="bg-blue-700 text-white p-1 rounded-md">
+                      <button
+                        type="button"
+                        className="bg-blue-700 text-white p-1 rounded-md">
                         Gọi {post.userId?.phone || "Unknown"}
                       </button>
-                      <Link 
-    to={`https://zalo.me/${post.userId?.phone}`} 
-    target="_blank" 
-    rel="noopener noreferrer"
-    className="text-blue-700 p-1 rounded-md border border-blue-700 text-center flex items-center justify-center"
-  >
-    Nhắn Zalo
-  </Link>
+                      <Link
+                        to={`https://zalo.me/${post.userId?.phone}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-700 p-1 rounded-md border border-blue-700 text-center flex items-center justify-center">
+                        Nhắn Zalo
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -139,7 +146,8 @@ const List = ({ categoryId }) => {
         ) : (
           <div className="w-full flex border-t border-orange-600 p-4 justify-center items-center">
             <p className="text-center text-gray-500">
-              Không có tin đăng nào trong danh mục này. Hãy thử chọn danh mục khác!
+              Không có tin đăng nào trong danh mục này. Hãy thử chọn danh mục
+              khác!
             </p>
           </div>
         )}
@@ -150,8 +158,11 @@ const List = ({ categoryId }) => {
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`mx-1 px-3 py-1 rounded-md ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'}`}
-          >
+            className={`mx-1 px-3 py-1 rounded-md ${
+              currentPage === index + 1
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-black"
+            }`}>
             {index + 1}
           </button>
         ))}

@@ -9,24 +9,18 @@ export const getPosts = createAsyncThunk('posts/getPosts', async () => {
 
 export const getPostById = createAsyncThunk('posts/getPostById', async (postId) => {
     const response = await postService.getPostById(postId);
+    console.log(response); // Kiểm tra dữ liệu nhận được
     return response;
 });
-
 export const createPost = createAsyncThunk('posts/createPost', async (postData) => {
     const response = await postService.createPost(postData);
     return response;
 });
 
-export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, postData }) => {
-    const response = await postService.updatePost(id, postData);
+export const updatePost = createAsyncThunk('posts/updatePost', async ({ postId, postData }) => {
+    const response = await postService.updatePost(postId, postData);
     return response;
 });
-
-export const deletePost = createAsyncThunk('posts/deletePost', async (id) => {
-    await postService.deletePost(id);
-    return id; // Return the id of the deleted post
-});
-
 // Create the slice
 const postsSlice = createSlice({
     name: 'posts',
@@ -35,7 +29,12 @@ const postsSlice = createSlice({
         loading: false,
         error: null,
     },
-    reducers: {},
+    reducers: {setCurrentPost(state, action) {
+        state.currentPost = action.payload; // Lưu bài viết vào currentPost
+    },
+    clearCurrentPost(state) {
+        state.currentPost = null; // Xóa bài viết hiện tại
+    },},
     extraReducers: (builder) => {
         builder
             .addCase(getPosts.pending, (state) => {
@@ -50,21 +49,15 @@ const postsSlice = createSlice({
                 state.error = action.error.message;
             })
             .addCase(getPostById.pending, (state) => {
-              state.loading = true; 
-          })
-          .addCase(getPostById.fulfilled, (state, action) => {
-              state.loading = false; 
-              const existingIndex = state.posts.findIndex(post => post._id === action.payload._id);
-              if (existingIndex !== -1) {
-                  state.posts[existingIndex] = action.payload; 
-              } else {
-                  state.posts.push(action.payload); 
-              }
-          })
-          .addCase(getPostById.rejected, (state, action) => {
-              state.loading = false; // Clear loading state
-              state.error = action.error.message; // Set error message
-          })
+                state.status = 'loading';
+            })
+            .addCase(getPostById.fulfilled, (state, action) => {
+                state.currentPost = action.payload; // Lưu bài viết vào currentPost
+            })
+            .addCase(getPostById.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
             .addCase(createPost.fulfilled, (state, action) => {
                 state.posts.push(action.payload);
             })
@@ -74,11 +67,7 @@ const postsSlice = createSlice({
                     state.posts[index] = action.payload;
                 }
             })
-            .addCase(deletePost.fulfilled, (state, action) => {
-                state.posts = state.posts.filter(post => post.id !== action.payload);
-            });
     },
 });
-
-// Export the reducer to be used in the store
+export const { setCurrentPost, clearCurrentPost } = postsSlice.actions;
 export default postsSlice.reducer;

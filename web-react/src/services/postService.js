@@ -43,15 +43,16 @@ export const createPost = async (postData) => {
 };
 
 // Function to update a post with token authentication
-export const updatePost = async (id, postData) => {
-    const token = getToken(); // Retrieve the token
+export const updatePost = async (postId, postData) => {
+    const token = getToken(); 
+    console.log("Received postIds:", postId);
     try {
-        const response = await axios.put(`${API_URL}/${id}`, postData, {
+        const response = await axios.put(`${API_URL}/${postId}`, postData, {
             headers: {
-                Authorization: `Bearer ${token}`, // Set the Authorization header with the token
+                Authorization: `Bearer ${token}`,'Content-Type': 'multipart/form-data',
             },
         });
-        return response.data; // Return the updated post
+        return response.data; 
     } catch (error) {
         console.error('Error updating post:', error);
         throw new Error('Error updating post: ' + error.message);

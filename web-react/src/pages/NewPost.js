@@ -123,8 +123,6 @@ const NewPost = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Tạo đối tượng postData từ formData
     const postData = {
         area: formData.area,
         description: formData.description,
@@ -347,6 +345,8 @@ const NewPost = () => {
                     onChange={handleChange}
                     className="w-full p-2 border rounded mt-1"
                     placeholder="Nhập tiêu đề"
+                    pattern=".{20,}" // At least 20 characters
+                    title="Vui lòng nhập tối thiểu 20 ký tự."
                   />
                 </div>
                 <div className="mb-4">
@@ -360,6 +360,7 @@ const NewPost = () => {
                     className="w-full p-2 border rounded mt-1"
                     rows="4"
                     placeholder="Mô tả chi tiết"
+                    title="Vui lòng nhập mô tả chi tiết về tin đăng của bạn."
                   />
                 </div>
                 <div className="mb-4">
@@ -394,13 +395,15 @@ const NewPost = () => {
                   </label>
                   <div className="flex w-1/2">
                     <input
-                      type="text"
+                      type="number"
                       id="price"
                       name="price"
                       value={formData.price}
                       onChange={handleChange}
                       className="shadow appearance-none border rounded py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       required
+                      pattern="\d+" // Only numbers allowed
+                      title="Vui lòng nhập giá cho thuê (chỉ chữ số)."
                     />
                     <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0">
                       <span className="text-gray-500">đồng/tháng</span>
@@ -422,6 +425,8 @@ const NewPost = () => {
                       onChange={handleChange}
                       className="shadow appearance-none border rounded-l-md w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       required
+                      pattern="\d+" // Only numbers allowed
+                      title="Vui lòng nhập diện tích hợp lệ (chỉ chữ số)."
                     />
                     <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-r-md border-gray-300 border-l-0">
                       <span className="text-gray-500">

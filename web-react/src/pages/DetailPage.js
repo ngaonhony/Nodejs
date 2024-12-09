@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Outlet, useParams, Link } from "react-router-dom";
@@ -7,35 +7,33 @@ import { Sidebar, Landlord, List } from "../components";
 import Slideshow from "./SlideShow";
 import DetailItem from "./DetailItem";
 import { useDispatch, useSelector } from "react-redux";
-import { getPostById, getPosts} from '../slices/postSlice';
+import { getPosts, getPostById } from "../slices/postSlice";
 
 const DetailPage = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
   const { posts } = useSelector((state) => state.posts);
-
+  const currentPost = useSelector((state) => state.posts.currentPost);
   useEffect(() => {
-    dispatch(getPosts()); // Lấy tất cả bài viết
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (postId) {
-      dispatch(getPostById(postId)); 
-    }
+    dispatch(getPosts());
+    dispatch(getPostById(postId));
   }, [dispatch, postId]);
-  const post = posts.find(p => p._id === postId);
-
+  const post = posts.find((p) => p._id === postId) || currentPost;
+  if (!currentPost) {
+    return <div>Loading...</div>; // Hoặc có thể hiển thị thông báo khác
+  }
   return (
     <div className="flex flex-col items-center h-full">
       <Header />
       <Navigator />
       <div className="max-w-screen-xl flex flex-col items-center justify-start mt-3">
         <Outlet />
-        <div className="flex flex-col gap-3 w-1100 px-8">          
-        <nav className="flex" aria-label="Breadcrumb">
+        <div className="flex flex-col gap-3 w-1100 px-8">
+          <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
               <li className="inline-flex items-center">
-                <Link to=""
+                <Link
+                  to=""
                   className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                   <svg
                     className="w-3 h-3 me-2.5"
@@ -64,9 +62,10 @@ const DetailPage = () => {
                       d="m1 9 4-4-4-4"
                     />
                   </svg>
-                  <Link to="#"
+                  <Link
+                    to="#"
                     className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
-                    {post.categoryId.name}
+                    {post.categoryId?.name}
                   </Link>
                 </div>
               </li>
@@ -94,28 +93,28 @@ const DetailPage = () => {
             </ol>
           </nav>
           <div className="flex w-full justify-center gap-5 py-5 shadow-md">
-            
             <div className="flex w-[60%] flex-col">
-              <Slideshow images={post.images} /> 
+              <Slideshow images={post.images} />
             </div>
             <div className=" flex flex-col gap-6 justify-start items-">
-              <div className="w-72 m-5 p-5 rounded-lg bg-yellow-200 text-center font-sans"><Landlord user={post.userId} posts={posts} /></div>
-            
+              <div className="w-72 m-5 p-5 rounded-lg bg-yellow-200 text-center font-sans">
+                <Landlord user={post.userId} posts={posts} />
+              </div>
             </div>
           </div>
 
           <div className="flex w-full justify-center py-5 gap-4 shadow-md">
             <div className="flex w-[70%]">
-              <DetailItem post={post} /> 
+              <DetailItem post={post} />
             </div>
             <div className="w-[30%] flex flex-col gap-4">
               <Sidebar />
             </div>
           </div>
-          
+
           <div className="flex w-full justify-center">
             <div className="flex">
-            <List />
+              <List />
             </div>
           </div>
         </div>

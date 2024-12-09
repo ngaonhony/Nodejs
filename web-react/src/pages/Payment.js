@@ -10,6 +10,7 @@ const Payment = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { postData } = location.state || JSON.parse(localStorage.getItem('postData'));
+  console.log(postData)
   const { services = [] } = useSelector((state) => state.services);
   const userId = useSelector((state) => state.auth.user._id);
   const [selectedDays, setSelectedDays] = useState(3);
@@ -86,7 +87,7 @@ const Payment = () => {
           language: "vn",
         });
         if (response.data && response.data.order_url) {
-          //window.location.href = response.data.order_url;
+          window.location.href = response.data.order_url;
         } else {
           console.error("No payment URL received:", response.data);
         }

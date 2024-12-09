@@ -1,5 +1,5 @@
   import { Routes, Route} from 'react-router-dom'
-  import { Home,Payment,CategoryPage, Login,Register, GatewayPayment,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage} from './pages'
+  import { Home,Payment,CategoryPage, Login,Register,VerificationPage,ForgetPassword,SearchPage,DetailPage,ServicePage,FeedbackPage,NewPost,ManagePostPage,UpdateProfilePage,PaymentHistoryPage,RechargeHistoryPage,RechargePage, MomoPage,UpdatePostPage} from './pages'
 
   function App() {
     return (
@@ -17,13 +17,10 @@
           <Route path='/management/new-post' element={<NewPost />} />
           <Route path='/management/manage-post-page' element={<ManagePostPage />} />
           <Route path='/management/update-profile-page' element={<UpdateProfilePage />} />
+          <Route path='/management/update-post-page/:postId' element={<UpdatePostPage />} />
           <Route path='/management/payment-history-page' element={<PaymentHistoryPage />} />
-          {/* <Route path='/management/recharge-history-page' element={<RechargeHistoryPage />} />
-          <Route path='/management/recharge-page' element={<RechargePage />} /> */}
           <Route path='/search-page' element={<SearchPage />} />
-          <Route path='/management/new-post/payment/momo' element={<MomoPage />} />
           <Route path='/management/new-post/payment' element={<Payment />} />
-          <Route path='/management/gatewaypayment' element={<GatewayPayment />} />
           </Routes>
       </div>
     );

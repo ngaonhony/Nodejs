@@ -14,7 +14,7 @@ const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "30m" }
+    { expiresIn: "1d" }
   );
 };
 
@@ -185,7 +185,7 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30m" }
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({ accessToken: newAccessToken });
