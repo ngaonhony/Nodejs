@@ -1,6 +1,7 @@
 const Post = require("../models/post.model");
 const { uploadImage, deleteImage } = require("../config/cloudinary");
 const fs = require("fs");
+const validator = require("validator");
 
 exports.createPost = async (req, res) => {
   try {
@@ -38,13 +39,22 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate("userId", "name phone createdAt")
-      .populate("categoryId", "name")
-      .populate("serviceId","name rating title_color")
-    res.send(posts);
+    const filters = {};
+    if (req.query.title)
+      filters.title = { $regex: req.query.title, $options: "i" };
+    if (req.query.location)
+      filters.location = { $regex: req.query.location, $options: "i" };
+    if (req.query.categoryId) filters.categoryId = req.query.categoryId;
+
+    const posts = await Post.find(filters).populate(
+      "userId categoryId serviceId"
+    );
+
+    res.status(200).json({
+      posts,
+    });
   } catch (error) {
-    res.status(500).send({ message: "Error fetching posts", error });
+    res.status(500).json({ message: "Lỗi khi lấy danh sách bài đăng", error });
   }
 };
 
@@ -53,7 +63,7 @@ exports.getPostById = async (req, res) => {
     const post = await Post.findById(req.params.id)
       .populate("userId", "name phone createdAt")
       .populate("categoryId", "name")
-      .populate("serviceId", "name rating title_color"); 
+      .populate("serviceId", "name rating title_color");
     if (!post) {
       return res.status(404).send({ message: "Post not found" });
     }
@@ -104,5 +114,91 @@ exports.deletePost = async (req, res) => {
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getUserPosts = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: "Không tìm thấy userId" });
+    }
+    const posts = await Post.find({ userId })
+      .populate("categoryId serviceId")
+      .exec();
+
+    if (!posts || posts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy bài đăng của người dùng" });
+    }
+
+    res.status(200).json({
+      posts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Lỗi khi lấy danh sách bài đăng của người dùng",
+      error,
+    });
+  }
+};
+exports.searchPosts = async (req, res) => {
+  try {
+    const filters = {};
+
+    if (req.query.title) {
+      filters.title = { $regex: req.query.title, $options: "i" };
+    }
+    if (req.query.description) {
+      filters.description = { $regex: req.query.description, $options: "i" };
+    }
+    if (req.query.location) {
+      filters.location = { $regex: req.query.location, $options: "i" };
+    }
+
+    if (req.query.categoryId) {
+      filters.categoryId = req.query.categoryId;
+    }
+
+    const minPrice = validator.toInt(req.query.minPrice, { default: 0 });
+    const maxPrice = validator.toInt(req.query.maxPrice, { default: Infinity });
+    const minArea = validator.toInt(req.query.minArea, { default: 0 });
+    const maxArea = validator.toInt(req.query.maxArea, { default: Infinity });
+
+    if (minPrice !== 0 || maxPrice !== Infinity) {
+      filters.price = { $gte: minPrice, $lte: maxPrice };
+    }
+    if (minArea !== 0 || maxArea !== Infinity) {
+      filters.area = { $gte: minArea, $lte: maxArea };
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10; // Default limit
+    const skip = (page - 1) * limit;
+
+    const sortBy = req.query.sortBy || "createdAt"; // Default sort by creation date
+
+    const posts = await Post.find(filters)
+      .populate("userId categoryId serviceId")
+      .sort({ [sortBy]: -1 }) //Sort descending by default
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    const totalPosts = await Post.countDocuments(filters); // Get total count for pagination
+
+    if (posts.length === 0) {
+      return res.status(404).json({ message: "Không tìm thấy bài đăng nào" });
+    }
+
+    res.status(200).json({ posts, totalPosts, page, limit });
+  } catch (error) {
+    console.error("Error in searchPosts:", error); // Log the error for debugging
+    res.status(500).json({
+      message: "Lỗi khi tìm kiếm bài đăng",
+      error: error.message, //Only send the message, not the whole error object to the client
+    });
   }
 };
