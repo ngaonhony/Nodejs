@@ -24,7 +24,7 @@
     <!-- Tên Dịch Vụ Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Tên Dịch Vụ </th>
-      <td mat-cell *matCellDef="let service">{{ service.name }}</td>
+      <td mat-cell *matCellDef="let service" [style.color]="service.title_color">{{ service.name }}</td>
     </ng-container>
 
      <!-- Đánh Giá Column -->

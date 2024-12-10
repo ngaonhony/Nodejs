@@ -652,3 +652,8 @@
 2024-12-05T13:54:21.824Z [INFO] - Request: GET /favicon.ico
 2024-12-06T09:44:23.836Z [INFO] - Request: GET /api/payments
 2024-12-06T09:46:18.413Z [INFO] - Request: GET /api/post
+2024-12-09T16:38:54.537Z [INFO] - Request: GET /api/
+2024-12-09T17:02:34.256Z [INFO] - Request: GET /api/user
+2024-12-09T17:03:25.604Z [INFO] - Request: GET /api/
+2024-12-09T17:04:08.885Z [INFO] - Request: GET /api/
+2024-12-10T13:16:11.186Z [INFO] - Request: DELETE /api/post/67583edf67d658e3efc25581

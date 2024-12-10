@@ -34,9 +34,7 @@ import { PostDialogComponent } from './pages/post-management/post-dialog/post-di
 import { ServiceManagementComponent } from './pages/service-management/service-management.component';
 import { ServiceDialogComponent } from './pages/service-management/service-dialog/service-dialog.component';
 import { FeedbackManagementComponent } from './pages/feedback-management/feedback-management.component';
-import { FeedbackDialogComponent } from './pages/feedback-management/feedback-dialog/feedback-dialog.component';
 import { PaymentManagementComponent } from './pages/payment-management/payment-management.component';
-import { PaymentDialogComponent } from './pages/payment-management/payment-dialog/payment-dialog.component';
 import { LoginComponent } from './pages/login/login.component';
 @NgModule({
   declarations: [
@@ -55,9 +53,7 @@ import { LoginComponent } from './pages/login/login.component';
     ServiceManagementComponent,
     ServiceDialogComponent,
     FeedbackManagementComponent,
-    FeedbackDialogComponent,
-    //PaymentManagementComponent,
-    //PaymentDialogComponent,
+    PaymentManagementComponent,
     AppNavItemComponent,
     LoginComponent,
   ],

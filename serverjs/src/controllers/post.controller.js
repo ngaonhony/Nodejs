@@ -5,6 +5,7 @@ const validator = require("validator");
 
 exports.createPost = async (req, res) => {
   try {
+    console.log("Dữ liệu nhận vào:", req.body);
     const imageUrls = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
@@ -27,12 +28,13 @@ exports.createPost = async (req, res) => {
       serviceId: req.body.serviceId,
       paymentId: req.body.paymentId,
       images: imageUrls,
-      expiredAt:req.body.expiredAt,
-      status: req.body.status || 'active',
+      expiredAt: req.body.expiredAt,
+      status: req.body.status || "active",
     });
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
+    console.error("Lỗi khi tạo bài viết:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -46,13 +48,11 @@ exports.getAllPosts = async (req, res) => {
       filters.location = { $regex: req.query.location, $options: "i" };
     if (req.query.categoryId) filters.categoryId = req.query.categoryId;
 
-    const posts = await Post.find(filters).populate(
-      "userId categoryId serviceId"
-    );
+    const posts = await Post.find(filters)
+      .populate("userId categoryId serviceId")
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      posts,
-    });
+    res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy danh sách bài đăng", error });
   }
@@ -76,7 +76,7 @@ exports.updatePost = async (req, res) => {
   try {
     console.log("Request Body:", req.body);
     const post = await Post.findById(req.params.id);
-    let imageUrls = post.images;  
+    let imageUrls = post.images;
     if (req.files && req.files.length > 0) {
       for (const imageUrl of imageUrls) {
         const publicId = imageUrl.split("/").pop().split(".")[0];
@@ -89,12 +89,15 @@ exports.updatePost = async (req, res) => {
         fs.unlinkSync(file.path);
       }
     }
-    post.description = req.body.description;
-    post.price = req.body.price;
-    post.area = req.body.area;
-    post.categoryId = req.body.categoryId;
-    post.images = imageUrls;
-    post.status = req.body.status;
+    if (req.body.title) post.title = req.body.title;
+    if (req.body.description) post.description = req.body.description;
+    if (req.body.price) post.price = req.body.price;
+    if (req.body.location) post.location = req.body.location;
+    if (req.body.area) post.area = req.body.area;
+    if (req.body.categoryId) post.categoryId = req.body.categoryId;
+    if (req.body.servicesId) post.servicesId = req.body.servicesId;
+    if (imageUrls && imageUrls.length > 0) post.images = imageUrls;
+    if (req.body.status) post.status = req.body.status;
     const updatedPost = await post.save();
     res.status(200).json(updatedPost);
   } catch (error) {
@@ -104,12 +107,6 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   try {
-    const userId = req.userId;
-    const post = await Post.findById(req.params.id);
-    if (!post || post.userId.toString() !== userId) {
-      return res.status(403).json({ message: "Unauthorized access to post" });
-    }
-
     await Post.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {

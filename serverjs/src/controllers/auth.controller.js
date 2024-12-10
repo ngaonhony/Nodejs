@@ -1,3 +1,4 @@
+// Import các thư viện cần thiết
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -8,20 +9,23 @@ const {
 } = require("../utils/email");
 const winston = require("winston");
 
+// Tạo Access Token
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "30m" }
   );
 };
 
+// Tạo Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: "1d",
   });
 };
 
+// Đăng ký người dùng mới
 exports.register = async (req, res) => {
   const { email, password, name, phone, role } = req.body;
   try {
@@ -60,6 +64,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// Đăng nhập
 exports.login = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
   const user = await User.findOne({ $or: [{ email }, { phone }] }).select(
@@ -86,6 +91,7 @@ exports.login = asyncHandler(async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
+  // Lưu Refresh Token vào cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -93,28 +99,26 @@ exports.login = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    message: "Đăng nhập thành công",
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    balance: user.balance,
+    phone: user.phone,
+    address: user.address,
     accessToken,
-    user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      balance: user.balance,
-      phone: user.phone,
-      address: user.address,
-    },
   });
 
-  console.log("Đăng nhập thành công. Token:", accessToken);
+  console.log(accessToken);
   winston.info(`Người dùng ${user.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
 exports.adminLogin = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
 
+  // Tìm kiếm người dùng với quyền admin
   const admin = await User.findOne({
     $or: [{ email }, { phone }],
-    role: "admin",
+    role: "admin", // Kiểm tra xem người dùng có phải là admin không
   }).select("+password");
 
   if (!admin) {
@@ -134,15 +138,18 @@ exports.adminLogin = asyncHandler(async (req, res) => {
     });
   }
 
+  // Generate tokens
   const accessToken = generateAccessToken(admin);
   const refreshToken = generateRefreshToken(admin);
 
+  // Lưu Refresh Token vào cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
   });
 
+  // Return response with user info
   res.status(200).json({
     message: "Đăng nhập admin thành công",
     accessToken,
@@ -159,6 +166,7 @@ exports.adminLogin = asyncHandler(async (req, res) => {
   winston.info(`Admin ${admin.email} đã đăng nhập từ IP: ${req.ip}`);
 });
 
+// API cấp lại Access Token mới từ Refres h Token
 exports.refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
@@ -177,7 +185,7 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "30m" }
     );
 
     res.status(200).json({ accessToken: newAccessToken });
@@ -188,15 +196,18 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
+// Đăng xuất
 exports.logout = asyncHandler((req, res) => {
   res.clearCookie("refreshToken");
   res.status(200).json({ message: "Đăng xuất thành công" });
   winston.info(`Người dùng đã đăng xuất từ IP: ${req.ip}`);
 });
 
+// Xác thực email
 exports.verifyEmail = asyncHandler(async (req, res) => {
-  const { verificationCode, email } = req.body;
+  const { verificationCode, email } = req.body; // Get email and verification code from request body
 
+  // Find the user by email and verification code
   const user = await User.findOne({ email, verificationCode });
 
   if (!user) {
@@ -205,8 +216,9 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
       .json({ message: "Mã xác thực hoặc email không hợp lệ." });
   }
 
+  // Update user verification status
   user.verified = true;
-  user.verificationCode = undefined;
+  user.verificationCode = undefined; // Clear the verification code
   await user.save();
 
   winston.info(`Xác thực email thành công cho người dùng: ${user.email}`);
@@ -216,18 +228,21 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
 exports.resendVerificationCode = async (req, res) => {
   const { email } = req.body;
 
+  // Find the user by email
   const user = await User.findOne({ email });
 
   if (!user) {
     return res.status(404).json({ message: "Người dùng không tồn tại." });
   }
 
+  // Generate a new verification code
   const newVerificationCode = Math.floor(
     100000 + Math.random() * 900000
   ).toString();
   user.verificationCode = newVerificationCode;
   await user.save();
 
+  // Send the new verification email
   await sendVerificationEmail(email, newVerificationCode);
 
   res
@@ -251,7 +266,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     100000 + Math.random() * 900000
   ).toString();
   user.verificationCode = verificationCode;
-  user.resetPasswordExpires = Date.now() + 3600000;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 giờ
   await user.save();
   await sendResetPasswordEmail(email, verificationCode);
 
@@ -261,6 +276,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     .json({ message: "Vui lòng kiểm tra email để đặt lại mật khẩu" });
 });
 
+// Đặt lại mật khẩu
 exports.resetPassword = asyncHandler(async (req, res) => {
   const { verificationCode, password } = req.body;
   const user = await User.findOne({

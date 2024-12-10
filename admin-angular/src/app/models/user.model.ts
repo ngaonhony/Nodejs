@@ -4,8 +4,6 @@ export interface User {
   password: string;
   email: string;
   phone?: string;
-  address: string;
-  balance: number;
   role: 'user' | 'admin';
   createdAt?: Date;
   updatedAt?: Date;

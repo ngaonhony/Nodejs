@@ -11,7 +11,6 @@ router.get(
   authorize("admin"),
   feedbackController.getAllFeedbacks
 );
-router.get("/:id", feedbackController.getFeedbackById);
 router.put("/:id", feedbackController.updateFeedback);
 router.delete("/:id", feedbackController.deleteFeedback);
 

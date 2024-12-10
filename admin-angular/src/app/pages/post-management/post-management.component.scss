@@ -23,13 +23,11 @@
   .grid-form {
     display: flex;
     flex-direction: column;
-    gap: 16px; /* Khoảng cách giữa các hàng trong form */
   }
 
   .form-row {
     display: flex;
     justify-content: space-between;
-    gap: 16px; /* Khoảng cách giữa các trường trong cùng một hàng */
   }
 
   .full-width {

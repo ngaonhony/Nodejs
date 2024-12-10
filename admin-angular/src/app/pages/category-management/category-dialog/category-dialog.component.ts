@@ -35,29 +35,22 @@ export class CategoryDialogComponent {
   saveCategory() {
     if (this.categoryForm.valid) {
       const categoryData = this.categoryForm.value;
-
-      // Log the category data before sending
-      console.log('Dữ liệu danh mục:', categoryData);
-
       if (this.isEditMode) {
-        // Get ID from data.category
-        const categoryId = this.data.category._id; // Ensure you are using _id from MongoDB
+        const categoryId = this.data.category._id; 
         console.log('ID danh mục:', categoryId);
         if (!categoryId) {
           console.error('ID danh mục không hợp lệ.');
           return;
         }
-        // Call service to update category
         this.categoryService.updateCategory({ ...categoryData, _id: categoryId }).subscribe(
           () => {
             this.dialogRef.close(true);
           },
           error => {
-            console.error('Lỗi cập nhật danh mục', error); // Log error message
+            console.error('Lỗi cập nhật danh mục', error);
           }
         );
       } else {
-        // Call service to add new category
         this.categoryService.addCategory(categoryData).subscribe(() => {
           this.dialogRef.close(true);
         }, error => {

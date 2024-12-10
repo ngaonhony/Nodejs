@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select("name email status").sort({ createdAt: -1 }); // Chọn các trường cần thiết
+    const users = await User.find().select("name email phone role status").sort({ createdAt: -1 }); // Chọn các trường cần thiết
     res.status(200).send(users); // Trả về mảng người dùng trực tiếp
   } catch (error) {
     console.error(error);

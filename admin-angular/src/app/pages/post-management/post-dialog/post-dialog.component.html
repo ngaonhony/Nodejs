@@ -1,76 +1,106 @@
-<h2 mat-dialog-title>Cập nhật bài viết</h2>
+<h2 mat-dialog-title>{{ isEditMode ? 'Cập nhật bài viết' : 'Thêm bài viết' }}</h2>
 <mat-dialog-content>
-  <form class="grid-form">
+  <form [formGroup]="postForm" class="grid-form">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Tiêu đề</mat-label>
-      <input matInput [(ngModel)]="post.title" name="title" required />
-      <mat-error *ngIf="!post.title">Tiêu đề là bắt buộc.</mat-error>
+      <input matInput formControlName="title" required />
+      <mat-error *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched">
+        Tiêu đề là bắt buộc.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Mô tả</mat-label>
-      <textarea matInput [(ngModel)]="post.description" name="description" required></textarea>
-      <mat-error *ngIf="!post.description">Mô tả là bắt buộc.</mat-error>
+      <textarea matInput formControlName="description" required></textarea>
+      <mat-error *ngIf="postForm.get('description')?.invalid && postForm.get('description')?.touched">
+        Mô tả là bắt buộc.
+      </mat-error>
     </mat-form-field>
 
     <div class="form-row">
       <mat-form-field appearance="fill" class="half-width">
         <mat-label>Giá</mat-label>
-        <input type="number" matInput [(ngModel)]="post.price" name="price" required />
-        <mat-error *ngIf="post.price <= 0">Giá phải lớn hơn 0.</mat-error>
+        <input type="number" matInput formControlName="price" required />
+        <mat-error *ngIf="postForm.get('price')?.invalid && postForm.get('price')?.touched">
+          Giá phải lớn hơn 0.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="half-width">
         <mat-label>Diện tích</mat-label>
-        <input matInput [(ngModel)]="post.area" name="area" required />
-        <mat-error *ngIf="!post.area">Diện tích là bắt buộc.</mat-error>
+        <input matInput formControlName="area" required />
+        <mat-error *ngIf="postForm.get('area')?.invalid && postForm.get('area')?.touched">
+          Diện tích là bắt buộc.
+        </mat-error>
       </mat-form-field>
     </div>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Địa điểm</mat-label>
-      <textarea matInput [(ngModel)]="post.location" name="location" required></textarea>
-      <mat-error *ngIf="!post.location">Địa điểm là bắt buộc.</mat-error>
+      <textarea matInput formControlName="location" required></textarea>
+      <mat-error *ngIf="postForm.get('location')?.invalid && postForm.get('location')?.touched">
+        Địa điểm là bắt buộc.
+      </mat-error>
     </mat-form-field>
 
     <div class="form-row">
       <mat-form-field appearance="fill" class="third-width">
         <mat-label>Người dùng</mat-label>
-        <mat-select [(ngModel)]="post.userId" name="userId" required>
+        <mat-select formControlName="userId" required>
           <mat-option *ngFor="let user of users" [value]="user._id">
             {{ user.name }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="!post.userId">Người dùng là bắt buộc.</mat-error>
+        <mat-error *ngIf="postForm.get('userId')?.invalid && postForm.get('userId')?.touched">
+          Người dùng là bắt buộc.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="third-width">
         <mat-label>Dịch vụ đặt chỗ</mat-label>
-        <mat-select [(ngModel)]="post.serviceId" name="serviceId" required>
+        <mat-select formControlName="serviceId">
           <mat-option *ngFor="let service of services" [value]="service._id">
             {{ service.name }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="!post.serviceId">Dịch vụ đặt chỗ là bắt buộc.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="third-width">
         <mat-label>Danh mục</mat-label>
-        <mat-select [(ngModel)]="post.categoryId" name="categoryId" required>
+        <mat-select formControlName="categoryId" required>
           <mat-option *ngFor="let category of categories" [value]="category._id">
             {{ category.name }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="!post.categoryId">Danh mục là bắt buộc.</mat-error>
+        <mat-error *ngIf="postForm.get('categoryId')?.invalid && postForm.get('categoryId')?.touched">
+          Danh mục là bắt buộc.
+        </mat-error>
       </mat-form-field>
     </div>
+    <div>
+      <label for="fileUpload">Hình Ảnh:</label>
+      <input type="file" id="fileUpload" (change)="onFileSelected($event)" accept="image/*">
+    </div>
+
+    <div *ngIf="postForm.value.image">
+      <h3>Ảnh đã chọn:</h3>
+      <img [src]="postForm.value.image" alt="Ảnh đã chọn" style="max-width: 100px; margin-right: 10px;" />
+    </div>
+
+    <!-- Ẩn trường chọn ngày nếu ở chế độ chỉnh sửa -->
+    <mat-form-field *ngIf="!isEditMode" appearance="fill">
+      <mat-label>Số Ngày Hết Hạn</mat-label>
+      <input matInput type="number" formControlName="daysToAdd" min="1" required />
+      <mat-error *ngIf="postForm.get('daysToAdd')?.invalid && postForm.get('daysToAdd')?.touched">
+        Số ngày là bắt buộc.
+      </mat-error>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Hủy</button>
-  <button mat-button (click)="onSave()" 
-          [disabled]="!post.title || !post.description || !post.price || !post.location || !post.area || !post.userId || !post.categoryId || !post.serviceId">
+  <button mat-button (click)="close()">Hủy</button>
+  <button mat-button (click)="savePost()" [disabled]="postForm.invalid">
     Lưu
   </button>
 </mat-dialog-actions>

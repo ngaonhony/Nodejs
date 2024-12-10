@@ -474,6 +474,7 @@ const NewPost = () => {
                         multiple
                         onChange={handleImageChange}
                         className="h-full w-full opacity-0"
+                        required
                       />
                     </div>
                     <div className="flex justify-between items-center text-gray-400">

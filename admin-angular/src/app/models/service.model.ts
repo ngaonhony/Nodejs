@@ -10,6 +10,4 @@ export interface Service {
   title_color: string;
   auto_approval?: boolean;
   prominent_badge?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
   }

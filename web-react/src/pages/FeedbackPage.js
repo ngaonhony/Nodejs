@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import Navigator from '../components/Navigator';
 import Footer from "../components/Footer";
-
+import { createFeedback } from '../services/feedbackService';
 const mockData = {
   contactInfo: {
     message: "Chúng tôi biết bạn có rất nhiều sự lựa chọn. Nhưng cảm ơn vì đã lựa chọn PhongTro123.Com.",
@@ -15,12 +15,14 @@ const mockData = {
   contactForm: {
     name: '',
     phone: '',
-    message: ''
+    comment: ''
   }
 };
 
 const FeedbackPage = () => {
   const [formData, setFormData] = useState(mockData.contactForm);
+  const [error, setError] = useState(null);
+  const [successComment, setSuccessComment] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +32,20 @@ const FeedbackPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitted contact form:', formData);
+    try {
+      // Call the createFeedback function with the form data
+      await createFeedback(formData);
+      setSuccessComment('Cảm ơn bạn đã gửi phản hồi!');
+      setFormData(mockData.contactForm); 
+      setTimeout(() => {
+        setSuccessComment('');
+      }, 5000);
+    } catch (error) {
+      setError('Có lỗi xảy ra khi gửi phản hồi: ' + error.message);
+    }
   };
-
   return (
     <div className=' bg-gray-100'>
       <div className="w-full flex flex-col items-center h-full border">
@@ -84,6 +95,8 @@ const FeedbackPage = () => {
                 <span className="section-title text-xl font-semibold">Liên hệ trực tuyến</span>
               </div>
               <div className="section-content">
+              {successComment && <p className="text-green-500">{successComment}</p>}
+              {error && <p className="text-red-500">{error}</p>}
                 <form method="POST" className="form-access" onSubmit={handleSubmit}>
                   <div className="form-group mb-4">
                     <label className="label-title">Họ tên của bạn</label>
@@ -110,8 +123,8 @@ const FeedbackPage = () => {
                   <div className="form-group mb-4">
                     <label className="label-title">Nội dung</label>
                     <textarea
-                      name="message"
-                      value={formData.message}
+                      name="comment"
+                      value={formData.comment}
                       onChange={handleInputChange}
                       required
                       className="form-control w-full p-2 border border-gray-300 rounded"

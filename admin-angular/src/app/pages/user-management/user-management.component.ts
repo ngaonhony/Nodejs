@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
   dataSource = new MatTableDataSource<User>();
-  displayedColumns: string[] = ['name', 'email', 'phone', 'address', 'balance', 'role', 'actions'];
+  displayedColumns: string[] = ['name', 'email', 'phone', 'role', 'actions'];
   isLoading = false; // Loading indicator
   errorMessage: string | null = null; // Error message
   isError: boolean = false; // Error state

@@ -8,14 +8,13 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     title: { type: String, maxlength: 100 },
-    description: { type: String, required: true, maxlength: 1000 },
-    price: { type: String, required: true, min: 0 },
+    description: { type: String, maxlength: 1000 },
+    price: { type: Number,  min: 0 },
     location: { type: String},
-    area: { type: String, required: true, min: 0 },
+    area: { type: Number, min: 0 },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
     serviceId: { 
       type: mongoose.Schema.Types.ObjectId, 

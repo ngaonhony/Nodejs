@@ -1,68 +1,40 @@
-.container {
-    margin: 20px;
-    padding:0!important;;
-  }
-  .user-management,
-.user-management * {
-  padding-top: 0 !important;  
-  padding-bottom: 0 !important; 
+.example-spacer {
+  flex: 1 1 auto; // Chiếm không gian còn lại
 }
 
+.toolbar-actions {
+  margin-left: auto; /* Đẩy nút sang bên phải */
+}
 .toolbar-container {
   display: flex;
-  align-items: center; 
-  justify-content: center; 
-  gap: 16px; 
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: space-between; /* Đẩy không gian giữa các phần tử */
 }
 
-.table-responsive {
-  padding: 0; /* Đặt padding 0 cho bảng nếu cần */
+.add-category-button {
+  background-color: #4CAF50; /* Màu xanh lá cây */
+  color: white; /* Màu chữ trắng */
+  
+  &:hover {
+    background-color: #45a049; /* Màu khi hover */
+  }
 }
 
-.mat-card-content {
-  padding: 0 !important;; /* Đặt padding 0 cho nội dung của mat-card */
+/* category-management.component.scss */
+.notification-container {
+padding: 10px;
+margin: 10px 0;
+border-radius: 5px;
 }
-  .user-management {
-    padding:0;
-    display: flex;
-    flex-direction: column;
-    .search-field {
-      margin-left: auto; // Đẩy ô tìm kiếm sang bên phải
-      margin-right: 16px; // Khoảng cách bên phải
-    }
-    table {
-      width: 100%;
-    }
-  }  
-  .mat-table {
-    width: 100%;
-  }
-  
-  .example-spacer {
-    flex: 1 1 auto; // Chiếm không gian còn lại
-  }
-  
-  .toolbar-actions {
-    margin-left: auto; /* Đẩy nút sang bên phải */
-  }
-  .toolbar-container {
-    display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: space-between; /* Đẩy không gian giữa các phần tử */
-  }
-  
-  .add-user-button {
-    background-color: #4CAF50; /* Màu xanh lá cây */
-    color: white; /* Màu chữ trắng */
-    
-    &:hover {
-      background-color: #45a049; /* Màu khi hover */
-    }
-  }
-  .fixed-size {
-    width: 200px; /* Đặt chiều rộng cố định */
-    height: 50px; /* Đặt chiều cao cố định */
-    overflow: hidden; /* Ẩn nội dung thừa */
-    text-overflow: ellipsis; /* Hiển thị dấu ba chấm (...) cho nội dung quá dài */
-    white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
-  }
+
+.error {
+background-color: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+}
+
+.success {
+background-color: #d4edda;
+color: #155724;
+border: 1px solid #c3e6cb;
+}
