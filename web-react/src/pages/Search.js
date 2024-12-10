@@ -1,107 +1,95 @@
-import React, { useState } from 'react';
-import { SearchItem } from '../components';
-import icons from '../ultils/icons';
-import Modal1 from '../components/Modal1';
-import Modal2 from '../components/Modal2'; 
-import Modal3 from '../components/Modal3'; 
-import Modal4 from '../components/Modal4';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import icons from "../ultils/icons";
+import { Link } from "react-router-dom";
 
-
-const { BsChevronRight, HiOutlineLocationMarker, TbReportMoney, RiCrop2Line, MdOutlineHouseSiding, FiSearch } = icons;
+const { FiSearch } = icons;
 
 const Search = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false); 
-    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false); 
-    const [isRentalModalOpen, setIsRentalModalOpen] = useState(false); 
-    const [ setSelectedAreaRange] = useState([30, 50]);
-    const [ setSelectedPriceRange] = useState([0, 10]);
-    const [ setSelectedLocation] = useState('Tất cả'); 
-    const [ setSelectedRental] = useState('Phòng trọ');
+  const [searchTerm, setSearchTerm] = useState("");
+  const { posts } = useSelector((state) => state.posts);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(5); // Đếm số lượng bài viết hiển thị
 
-    const handleApplyArea = (range) => {
-        setSelectedAreaRange(range);
-        setIsModalOpen(false);
-    };
+  const handleInputChange = (event) => {
+    const input = event.target.value;
+    setSearchTerm(input);
 
-    const handleApplyPrice = (range) => {
-        setSelectedPriceRange(range); // Lưu giá trị khi áp dụng giá
-        setIsPriceModalOpen(false); // Đóng modal giá sau khi áp dụng
-    };
+    // Lọc danh sách bài viết dựa trên chữ nhập
+    if (input) {
+      const filtered = posts.filter(post => 
+        post.title.toLowerCase().includes(input.toLowerCase())
+      );
+      setFilteredPosts(filtered);
+      setVisibleCount(5); // Reset số lượng hiển thị khi tìm kiếm mới
+    } else {
+      setFilteredPosts([]);
+      setVisibleCount(5); // Reset khi không có gì tìm kiếm
+    }
+  };
 
-    const handleApplyLocation = (location) => {
-        setSelectedLocation(location); // Lưu địa điểm khi áp dụng
-        setIsLocationModalOpen(false); // Đóng modal địa điểm
-    };
+  const handleShowMore = () => {
+    setVisibleCount(prevCount => prevCount + 5); // Tăng số lượng hiển thị thêm 5
+  };
 
-    const handleApplyRental = (rental) => {
-        setSelectedRental(rental); // Lưu loại nhà thuê khi áp dụng
-        setIsRentalModalOpen(false); // Đóng modal loại nhà thuê
-    };
-
-    const areaText = `Diện tích`;
-    const priceText = `Giá`;
-    const locationText = 'Địa điểm'; // Địa điểm hiện tại
-    const rentalText = 'Vị trí'; // Loại nhà thuê hiện tại
-
-    return (
-        <div className='flex justify-center'>
-            <div className='h-[55px] p-[10px] bg-[#febb02] rounded-lg flex items-center justify-around gap-2'>
-                <div onClick={() => setIsRentalModalOpen(true)}> 
-                    <SearchItem 
-                        IconBefore={<MdOutlineHouseSiding />} 
-                        fontWeight 
-                        IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
-                        buttonText={rentalText}
-                    />
+  return (
+    <div className="flex justify-center my-4">
+      <div className="relative max-w-[1000px] p-2 bg-[#febb02] rounded-lg flex items-center shadow-lg">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleInputChange}
+          placeholder="Tìm kiếm bài viết..."
+          className="flex-1 p-2 border border-gray-300 rounded-md"
+          style={{ width:"1000px",height: "40px", backgroundColor: '#fff' }}
+        />
+        <Link to="/search-page">
+          <button
+            type="button"
+            className="ml-2 py-2 px-4 bg-[#1266dd] text-sm flex items-center justify-center gap-2 text-white font-medium rounded-lg hover:bg-[#0f5bb5] transition duration-300">
+            <FiSearch />
+          </button>
+        </Link>
+      </div>
+      {filteredPosts.length > 0 && (
+        <div className="absolute bg-white shadow-lg mt-2 rounded-lg w-full z-50 max-w-[1000px]" style={{ marginTop: "50px" }}>
+          {filteredPosts.slice(0, visibleCount).map((post) => (
+            <div key={post._id} className="flex p-2 hover:bg-gray-100">
+              <div className="flex flex-wrap gap-[2px] items-center">
+                <img
+                  src={post.images}
+                  alt="preview"
+                  className="w-20 h-20 block object-cover rounded-md"
+                />
+              </div>
+              <div className="flex justify-between gap-4 w-full">
+                <div className="flex text-red-600 font-medium">
+                  <span className="text-yellow-500">
+                    {"★".repeat(post.serviceId?.rating || 0)}
+                  </span>
+                  <Link
+                    to={`/detail-page/${post._id}`}
+                    style={{
+                      color: post.serviceId?.title_color || "#000000", // Màu mặc định là đen
+                    }}
+                    className="ml-2 hover:text-red-500 transition-colors duration-300">
+                    {post.title}
+                  </Link>
                 </div>
-                <div onClick={() => setIsLocationModalOpen(true)}> 
-                    <SearchItem 
-                        IconBefore={<HiOutlineLocationMarker />} 
-                        buttonText={locationText} // Hiển thị địa điểm đã chọn
-                        IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
-                    />
-                </div>
-                <div onClick={() => setIsPriceModalOpen(true)}> 
-                    <SearchItem 
-                        IconBefore={<TbReportMoney />} 
-                        buttonText={priceText} // Hiển thị giá đã chọn
-                        IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
-                    />
-                </div>
-                <div onClick={() => setIsModalOpen(true)}>  
-                    <SearchItem 
-                        IconBefore={<RiCrop2Line />} 
-                        buttonText={areaText} // Hiển thị diện tích đã chọn
-                        IconAfter={<BsChevronRight color='rgb(156, 163, 175)' />} 
-                    />
-                </div>
-                <button
-    type='button'
-    className='outline-none py-2 px-4 bg-[#1266dd] text-sm flex items-center justify-center gap-2 text-white font-medium rounded-lg'
->
-    <Link to="/search-page" className="flex items-center w-full h-full"> {/* Link bao bọc nút */}
-        <FiSearch />
-        Tìm kiếm
-    </Link>
-</button>
-
+              </div>
             </div>
-            {isModalOpen && (
-                <Modal1 onClose={() => setIsModalOpen(false)} onApply={handleApplyArea} /> 
-            )}
-            {isPriceModalOpen && (
-                <Modal2 onClose={() => setIsPriceModalOpen(false)} onApply={handleApplyPrice} /> 
-            )}
-            {isLocationModalOpen && (
-                <Modal3 onClose={() => setIsLocationModalOpen(false)} onApply={handleApplyLocation} /> 
-            )}
-            {isRentalModalOpen && (
-                <Modal4 onClose={() => setIsRentalModalOpen(false)} onApply={handleApplyRental} /> 
-            )} {/* Modal4 cho chọn loại nhà thuê */}
+          ))}
+          {visibleCount < filteredPosts.length && ( // Hiển thị nút "Xem thêm" nếu còn bài viết
+            <button
+              onClick={handleShowMore}
+              className="w-full py-2 bg-[#1266dd] text-white font-medium rounded-lg hover:bg-[#0f5bb5] transition duration-300">
+              Xem thêm
+            </button>
+          )}
         </div>
-    );
-}
+      )}
+    </div>
+  );
+};
 
 export default Search;

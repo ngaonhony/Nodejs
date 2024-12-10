@@ -9,55 +9,38 @@ const List = ({ categoryId }) => {
   const { posts, error } = useSelector((state) => state.posts);
   const location = useLocation();
   const [selectedPostId, setSelectedPostId] = useState(null);
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 8;
 
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch]);
-
-  // Check if posts are defined
   if (!posts) {
     return <p className="text-gray-500">Loading posts...</p>;
   }
-
   let filteredPosts = posts.filter((post) => post.serviceId && post.status === "active");
   const currentCategoryId =
     categoryId || new URLSearchParams(location.search).get("categoryId");
-
-  // Filter posts by category
   if (currentCategoryId) {
     filteredPosts = posts.filter(
       (post) => post.categoryId._id === currentCategoryId
     );
   }
-
-  // Sort posts by rating
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     const ratingA = a.serviceId?.rating || 0;
     const ratingB = b.serviceId?.rating || 0;
     return ratingB - ratingA; 
   });
-
   const handlePostClick = (postId) => {
     setSelectedPostId(postId);
   };
-
   if (error) {
     return <p className="text-red-500">{error.message}</p>;
   }
-
-  // Calculate the current posts to display
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-  // Calculate total pages
   const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
