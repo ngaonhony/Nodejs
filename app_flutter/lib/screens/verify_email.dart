@@ -1,6 +1,6 @@
 import '../pages/login.dart';
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../services/AuthService.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;

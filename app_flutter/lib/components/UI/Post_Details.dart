@@ -1,14 +1,76 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:phongtronhom1/services/post_service.dart';
-
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:phongtronhom1/services/PostApiService.dart';
+import 'package:intl/intl.dart';
 
 class PostDetails extends StatelessWidget {
   final String postId;
 
   PostDetails({required this.postId});
+
+  void _openImageSlideShow(BuildContext context, List<String> images) {
+    final PageController pageController = PageController();
+
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.grey[200],
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            Container(
+              height: 400,
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: images.length,
+                itemBuilder: (context, index) {
+                  return Image.network(
+                    images[index],
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(child: Text('Lỗi tải ảnh'));
+                    },
+                  );
+                },
+              ),
+            ),
+            // Mũi tên trái
+            Positioned(
+              top: 180,
+              left: 10,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.black26, size: 30),
+                onPressed: () {
+                  pageController.previousPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+            // Mũi tên phải
+            Positioned(
+              top: 180,
+              right: 10,
+              child: IconButton(
+                icon: Icon(Icons.arrow_forward_ios, color: Colors.black26, size: 30),
+                onPressed: () {
+                  pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +79,13 @@ class PostDetails extends StatelessWidget {
         title: Text('Chi Tiết Bài Đăng'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: PostApiService().getPostById(postId), // Sử dụng dịch vụ API đúng
+        future: PostApiService().getPostById(postId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Lỗi khi tải dữ liệu: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data! == null) {
             return Center(child: Text('Không tìm thấy dữ liệu cho bài đăng này'));
           }
 
@@ -35,44 +97,27 @@ class PostDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hình ảnh
                   Stack(
                     children: [
-                      Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              post['images'] != null && post['images'].isNotEmpty
-                                  ? post['images'][0]
-                                  : 'https://via.placeholder.com/200',
+                      GestureDetector(
+                        onTap: () {
+                          _openImageSlideShow(context, List<String>.from(post['images']));
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                post['images'] != null && post['images'].isNotEmpty ? post['images'][0] : 'https://via.placeholder.com/200',
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Icon(
-                          Icons.photo,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: IconButton(
-                          icon: Icon(Icons.favorite_border),
-                          color: Colors.white,
-                          onPressed: () {},
                         ),
                       ),
                     ],
                   ),
-                  // Thông tin chính
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -94,7 +139,7 @@ class PostDetails extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              '${post['price']?.toString() ?? '0'} đồng/tháng',
+                              '${post['price']?.toString() ?? '0'} triệu/tháng',
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -112,7 +157,6 @@ class PostDetails extends StatelessWidget {
                     ),
                   ),
                   Divider(),
-                  // Thông tin người đăng
                   ListTile(
                     leading: CircleAvatar(
                       child: Icon(Icons.person),
@@ -135,14 +179,13 @@ class PostDetails extends StatelessWidget {
                           icon: Icon(Icons.message),
                           color: Colors.lightBlue,
                           onPressed: () {
-                            // Mở ứng dụng tin nhắn nếu có
+                            // Bạn có thể thêm chức năng nhắn tin ở đây
                           },
                         ),
                       ],
                     ),
                   ),
                   Divider(),
-                  // Thông tin mô tả
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -174,9 +217,7 @@ class PostDetails extends StatelessWidget {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
-                        Text('Mã tin: ${post['_id']}'),
                         Text('Danh mục: ${post['categoryId']?['name'] ?? "Không rõ"}'),
-                        Text('Dịch vụ đặt chỗ: ${post['servicesBookingId']?['serviceName'] ?? "Không rõ"}'),
                         Text('Ngày đăng: ${_formatDate(post['createdAt'])}'),
                         Text('Ngày cập nhật: ${_formatDate(post['updatedAt'])}'),
                       ],

@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:phongtronhom1/components/UI/PostListPage.dart';
 import 'package:phongtronhom1/pages/login.dart';
-import 'package:phongtronhom1/services/auth_service.dart';
+import 'package:phongtronhom1/services/AuthService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/UI/MenuDrawer.dart';
 import '../screens/search_box.dart';
-import '../components/UI/directory.dart';
+import '../components/UI/Category.dart';
 import '../components/UI/info_box.dart';
-import '../services/post_service.dart';
+import '../services/PostApiService.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
-
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String? userId;
   AuthService _authService = AuthService();
   Future<List<dynamic>>? _postsFuture;
+
+  double _opacity = 1.0;
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
-    _postsFuture = PostApiService().getAllPosts();
     _postsFuture = _fetchPosts();
   }
 
@@ -41,87 +41,98 @@ class _HomeState extends State<Home> {
       });
     }
   }
+
   Future<List<dynamic>> _fetchPosts() async {
     try {
       bool isTokenValid = await _authService.checkTokenExpiration();
 
       if (!isTokenValid) {
+        _startLogoutAnimation();
+        await Future.delayed(const Duration(seconds: 1));
         await _authService.logout();
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginPage()),
               (route) => false,
         );
-        return []; // Return an empty list after logging out
+        return [];
       }
 
-      // Call API from PostApiService to get the list of posts
       final posts = await PostApiService().getAllPosts();
       return posts;
 
     } catch (e) {
-      // Handle other errors (not related to token)
       print(e);
-      return []; // Return an empty list in case of error
+      return [];
     }
+  }
+
+  void _startLogoutAnimation() {
+    setState(() {
+      _opacity = 0.0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Header(),
-      endDrawer: MenuDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SearchBox(),
-            const SizedBox(height: 8),
-            if (userId != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: AuthInfo(),
+    return AnimatedOpacity(
+      opacity: _opacity,
+      duration: const Duration(seconds: 1),
+      child: Scaffold(
+        appBar: Header(),
+        endDrawer: MenuDrawer(),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SearchBox(),
+              const SizedBox(height: 8),
+              if (userId != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: AuthInfo(),
+                  ),
                 ),
-              ),
-            const SizedBox(height: 8),
-            SizedBox(height: 420, child: DanhMuc()),
-            const SizedBox(height: 16),
-            _buildTitleSection(),
-            const SizedBox(height: 8),
-            _buildFeaturedAreas(),
-            const SizedBox(height: 16),
-            PostListPage(postsFuture: _postsFuture!), // Sử dụng PostListPage với Future từ Home
-          ],
+              const SizedBox(height: 8),
+              SizedBox(height: 400, child: DanhMuc()),
+              const SizedBox(height: 10),
+              _buildTitleSection(),
+              const SizedBox(height: 8),
+              _buildFeaturedAreas(),
+              const SizedBox(height: 16),
+              SizedBox(height : 500 ,child: PostListPage()) // Gọi PostListPage ở đây
+
+            ],
+          ),
         ),
+        bottomNavigationBar: Footer(),
       ),
-      bottomNavigationBar: Footer(),
     );
   }
 
   Widget _buildTitleSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Cho Thuê Phòng Trọ, Giá Rẻ, Tiện Nghi, Mới Nhất 2024',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Cho thuê phòng trọ - Kênh thông tin số 1 về phòng trọ giá rẻ, '
-                'phòng trọ sinh viên, phòng trọ cao cấp mới nhất năm 2024.',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Khu vực nổi bật',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ],
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    const Text(
+    'Cho Thuê Phòng Trọ, Giá Rẻ, Tiện Nghi, Mới Nhất 2024',
+    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 8),
+    Text(
+    'Cho thuê phòng trọ - Kênh thông tin số 1 về phòng trọ giá rẻ, ''phòng trọ sinh viên, phòng trọ cao cấp mới nhất năm 2024.',
+      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+    ),
+      const SizedBox(height: 16),
+      const Text(
+        'Khu vực nổi bật',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
+    ],
+    ),
     );
   }
 

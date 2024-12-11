@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'auth_service.dart';
+
+import 'AuthService.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class UserService {
-  final String baseUrl = 'http://10.40.6.110:3000/api/users';
+  final String baseUrl = 'http://192.168.100.243:3000/api/users';
   final AuthService _authService = AuthService();
 
   Future<Map<String, dynamic>> getCurrentUser() async {
@@ -45,6 +45,8 @@ class UserService {
           'balance': user['balance'] ?? 0,
           'memberId': memberId,
           "phone": user['phone'],
+          "email" : user['email'],
+          "address" : user['address'],
         };
       } else {
         _handleError(response);
@@ -90,6 +92,8 @@ class UserService {
     }
 
     try {
+      print('Gửi yêu cầu PATCH tới: $url');
+      print('Dữ liệu gửi đi: $updates');
       final response = await http.patch(
         url,
         headers: {
@@ -98,7 +102,8 @@ class UserService {
         },
         body: jsonEncode(updates),
       );
-
+      print('Mã trạng thái phản hồi: ${response.statusCode}');
+      print('Nội dung phản hồi: ${response.body}');
       if (response.statusCode == 200) {
         print("Cập nhật thông tin thành công.");
       } else {

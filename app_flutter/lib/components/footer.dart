@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../pages/PostManager.dart';
 import '../pages/Profile.dart';
 import '../pages/login.dart';
 import '../pages/register.dart';
 import '../pages/home.dart';
-import '../pages/Post.dart'; // Import PostScreen for navigation
+import '../screens/post_screen/post_screen.dart';
 
 class Footer extends StatefulWidget {
   @override
@@ -52,17 +53,14 @@ class _FooterState extends State<Footer> {
                 ),
                 // Nút Yêu thích (để trống)
                 IconButton(
-                  icon: const Icon(Icons.favorite_border),
+                  icon: const Icon(Icons.receipt_long),
                   onPressed: () {
-                    // Điều hướng đến trang yêu thích (nếu có)
+
                   },
-                  tooltip: 'Yêu thích',
+                  tooltip: 'Bảng Giá Dịch Vụ',
                 ),
-                // Khoảng trống cho FloatingActionButton
                 const SizedBox(width: 48),
-                // Các nút tùy chọn dựa trên trạng thái đăng nhập
                 if (!isLoggedIn) ...[
-                  // Nếu chưa đăng nhập: Đăng nhập và Đăng ký
                   IconButton(
                     icon: const Icon(Icons.login),
                     onPressed: () {
@@ -84,11 +82,13 @@ class _FooterState extends State<Footer> {
                     tooltip: 'Đăng ký',
                   ),
                 ] else ...[
-                  // Nếu đã đăng nhập: Quản lý tin và Cá nhân
                   IconButton(
                     icon: const Icon(Icons.list_alt),
                     onPressed: () {
-                      // Điều hướng đến trang Quản lý tin (nếu có)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PostManager()),
+                      );
                     },
                     tooltip: 'Quản lý tin',
                   ),
@@ -107,21 +107,17 @@ class _FooterState extends State<Footer> {
             ),
           ),
         ),
-        // Nút FloatingActionButton Đăng tin miễn phí
         Positioned(
           bottom: 10.0,
           left: MediaQuery.of(context).size.width / 2 - 30,
           child: FloatingActionButton(
             onPressed: () {
-              // Kiểm tra trạng thái đăng nhập
               if (isLoggedIn) {
-                // Nếu đã đăng nhập, điều hướng đến trang đăng tin
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => PostScreen()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PostScreen()),
+                );
               } else {
-                // Nếu chưa đăng nhập, điều hướng đến trang đăng nhập
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

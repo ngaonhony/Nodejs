@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/user_service.dart';
+import '../../services/UserService.dart';
 
 class AuthInfo extends StatefulWidget {
   const AuthInfo({Key? key}) : super(key: key);

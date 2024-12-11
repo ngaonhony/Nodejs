@@ -7,7 +7,7 @@ class PostBox extends StatelessWidget {
   final String price;
   final String area;
   final String location;
-  final List<String> images; // Đổi sang List để lấy nhiều ảnh nếu cần
+  final List<String> images;
 
   PostBox({
     required this.postId,
@@ -20,7 +20,7 @@ class PostBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sử dụng ảnh đầu tiên từ danh sách images, nếu không có thì dùng ảnh dự phòng
+
     String displayImageUrl = (images.isNotEmpty && images[0].isNotEmpty)
         ? images[0]
         : 'https://via.placeholder.com/200';

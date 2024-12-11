@@ -1,9 +1,9 @@
 import '../../pages/Profile.dart';
 import '../../pages/home.dart';
-import '../../services/auth_service.dart';
+import '../../services/AuthService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../services/user_service.dart';
+import '../../services/UserService.dart';
 import '../../services/feedback.dart';
 import '../../pages/login.dart';
 import '../../pages/register.dart';
@@ -18,20 +18,19 @@ class _MenuDrawerState extends State<MenuDrawer> {
   String? phoneNumber;
   bool isLoggedIn = false;
   final UserService _userService = UserService();
-  final AuthService auth = AuthService(); // Initialize UserService
+  final AuthService auth = AuthService();
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus(); // Check login status on widget initialization
+    _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('accessToken'); // Retrieve token
+    final String? token = prefs.getString('accessToken');
 
     if (token != null) {
-      // If there's a token, fetch user info from API
       try {
         final userData = await _userService.getCurrentUser();
         setState(() {
@@ -54,7 +53,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     return Drawer(
       child: Column(
         children: <Widget>[
-          _buildHeader(context), // Build header dynamically
+          _buildHeader(context),
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
@@ -76,7 +75,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                 }),
                 _buildMenuListTile('Cho thuê căn hộ dịch vụ', Icons.apartment,
                     () {
-                  // Handle service apartment rental navigation
+
                 }),
                 _buildMenuListTile(
                     'Cho thuê mặt bằng', Icons.store_mall_directory, () {

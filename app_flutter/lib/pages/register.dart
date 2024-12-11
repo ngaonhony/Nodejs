@@ -2,7 +2,7 @@ import '../pages/home.dart';
 import '../pages/login.dart';
 import 'package:flutter/material.dart';
 import '../screens/verify_email.dart'; // Màn hình xác thực email
-import '../services/auth_service.dart';
+import '../services/AuthService.dart';
 
 class Register extends StatefulWidget {
   @override

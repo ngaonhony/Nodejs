@@ -1,9 +1,15 @@
+import '../../screens/userManager/EditProfileScreen.dart';
+
+import '../pages/PostManager.dart';
+
+import '../screens/post_screen/post_screen.dart';
+
 import '../pages/home.dart';
 import '../pages/login.dart';
 
 import 'package:flutter/material.dart';
-import '../../services/user_service.dart';
-import '../../services/auth_service.dart';
+import '../../services/UserService.dart';
+import '../../services/AuthService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -120,10 +126,16 @@ class _ProfileState extends State<Profile> {
     return Column(
       children: [
         _buildActionButton(Icons.post_add, 'Đăng tin mới', () {
-          // Điều hướng tới trang đăng tin mới
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PostScreen()),
+          );
         }),
         _buildActionButton(Icons.manage_accounts, 'Quản lý tin đăng', () {
-          // Điều hướng tới trang quản lý tin đăng
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PostManager()),
+          );
         }),
         _buildActionButton(
             Icons.account_balance_wallet, 'Nạp tiền vào tài khoản', () {
@@ -133,22 +145,20 @@ class _ProfileState extends State<Profile> {
           // Điều hướng tới trang lịch sử nạp tiền
         }),
         _buildActionButton(Icons.payment, 'Lịch sử thanh toán', () {
-          // Điều hướng tới trang lịch sử thanh toán
+
         }),
         _buildActionButton(Icons.price_check, 'Bảng giá dịch vụ', () {
           // Điều hướng tới trang bảng giá dịch vụ
         }),
         _buildActionButton(Icons.edit, 'Sửa thông tin cá nhân', () {
-          // Điều hướng tới trang sửa thông tin cá nhân
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => EditProfileScreen()),
+          );
         }),
-        _buildActionButton(Icons.favorite, 'Tin đã lưu', () {
-          // Điều hướng tới trang tin đã lưu
-        }),
-        _buildActionButton(Icons.phone, 'Đổi số điện thoại', () {
-          // Điều hướng tới trang đổi số điện thoại
-        }),
+
         _buildActionButton(Icons.lock, 'Đổi mật khẩu', () {
-          // Điều hướng tới trang đổi mật khẩu
+
         }),
       ],
     );

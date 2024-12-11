@@ -59,6 +59,11 @@ dev_dependencies:
   url_launcher: ^6.3.1
   image_picker: ^1.1.2
   cloudinary_public: ^0.23.1
+  image: ^4.3.0
+  interactive_viewer_2: ^0.0.10
+  provider: ^6.1.2
+  fluttertoast: ^8.2.8
+  webview_flutter: ^4.2.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

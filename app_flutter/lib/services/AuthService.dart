@@ -6,7 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import "package:jwt_decode/jwt_decode.dart";
 
 class AuthService {
-  final String baseUrl = 'http://10.40.6.110:3000/api/auth';
+  final String baseUrl = 'http://192.168.100.243:3000/api/auth';
   final storage = FlutterSecureStorage();
 
   Future<void> register(
@@ -135,9 +135,9 @@ class AuthService {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
 
-        if (responseData['user'] != null &&
-            responseData['user']['_id'] != null) {
-          final String userId = responseData['user']['_id'];
+        if (responseData != null &&
+            responseData['_id'] != null) {
+          final String userId = responseData['_id'];
           final String token = responseData['accessToken'];
 
           final prefs = await SharedPreferences.getInstance();
