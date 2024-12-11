@@ -657,3 +657,8 @@
 2024-12-09T17:03:25.604Z [INFO] - Request: GET /api/
 2024-12-09T17:04:08.885Z [INFO] - Request: GET /api/
 2024-12-10T13:16:11.186Z [INFO] - Request: DELETE /api/post/67583edf67d658e3efc25581
+2024-12-11T00:45:48.803Z [ERROR] - ValidationError: User validation failed: role: `tenant` is not a valid enum value for path `role`.
+    at Document.invalidate (C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\document.js:3318:32)
+    at C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\document.js:3079:17
+    at C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\schemaType.js:1388:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:77:11)

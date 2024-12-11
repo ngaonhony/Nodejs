@@ -279,6 +279,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
 // Đặt lại mật khẩu
 exports.resetPassword = asyncHandler(async (req, res) => {
   const { verificationCode, password } = req.body;
+  console.log('Reset Password Request:', { verificationCode, password });
   const user = await User.findOne({
     verificationCode,
     resetPasswordExpires: { $gt: Date.now() },

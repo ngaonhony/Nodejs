@@ -421,3 +421,8 @@
     at SBMH.push (C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\streamsearch\lib\sbmh.js:104:16)
     at Multipart._write (C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\busboy\lib\types\multipart.js:567:19)
     at writeOrBuffer (node:internal/streams/writable:564:12)
+2024-12-11T00:45:48.803Z [ERROR] - ValidationError: User validation failed: role: `tenant` is not a valid enum value for path `role`.
+    at Document.invalidate (C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\document.js:3318:32)
+    at C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\document.js:3079:17
+    at C:\xampp\htdocs\DOANNHOM1\serverjs\node_modules\mongoose\lib\schemaType.js:1388:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:77:11)

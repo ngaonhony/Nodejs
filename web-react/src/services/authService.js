@@ -64,3 +64,28 @@ export const resendVerificationCode = async (email) => {
     throw new Error(errorMessage); // Ném lỗi với thông điệp cụ thể
   }
 };
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${API_URL}/forgot-password`, { email });
+    return response.data; // Dữ liệu từ server
+  } catch (error) {
+    console.error('Forgot password error:', error.response?.data);
+    const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi gửi yêu cầu quên mật khẩu';
+    throw new Error(errorMessage);
+  }
+};
+
+// Hàm gọi API để đặt lại mật khẩu
+export const resetPassword = async (verificationCode, password) => {
+  try {
+    const response = await axios.post(`${API_URL}/reset-password`, {
+      verificationCode,
+      password,
+    });
+    return response.data; // Dữ liệu từ server
+  } catch (error) {
+    console.error('Reset password error:', error.response?.data);
+    const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi đặt lại mật khẩu';
+    throw new Error(errorMessage);
+  }
+};

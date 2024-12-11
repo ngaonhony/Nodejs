@@ -67,6 +67,23 @@ export const fetchUserById = createAsyncThunk(
       }
     }
   );
+  export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (email, { rejectWithValue }) => {
+    try {
+        const response = await user.forgotPassword(email);
+        return response; // Trả về phản hồi từ server
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
+
+export const resetPassword = createAsyncThunk('auth/resetPassword', async ({ verificationCode, password }, { rejectWithValue }) => {
+    try {
+        const response = await user.resetPassword(verificationCode, password);
+        return response; // Trả về phản hồi từ server
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
 
 // Tạo slice
 const authSlice = createSlice({
@@ -156,6 +173,30 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
               })
+              .addCase(forgotPassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(forgotPassword.fulfilled, (state, action) => {
+                state.loading = false;
+                // Handle success case if needed
+            })
+            .addCase(forgotPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(resetPassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(resetPassword.fulfilled, (state, action) => {
+                state.loading = false;
+                // Handle success case if needed
+            })
+            .addCase(resetPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
               .addCase(updateUserProfile.pending, (state) => {
                 state.loading = true;
                 state.error = null; // Reset error when starting update
