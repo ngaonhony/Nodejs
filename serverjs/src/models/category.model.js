@@ -16,8 +16,6 @@ const categorySchema = new Schema({
     enum: ['active', 'inactive'], 
     default: 'active', 
   },
-}, {
-  timestamps: true, 
-});
+},);
 
 module.exports = mongoose.model("Category", categorySchema);

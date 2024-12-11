@@ -11,7 +11,7 @@ const serviceSchema = new mongoose.Schema({
   title_color: { type: String, required: true },
   auto_approval: { type: Boolean, default: false },
   prominent_badge: { type: Boolean, default: false },
-}, { timestamps: true });
+},);
 
 const Service = mongoose.model('Service', serviceSchema);
 
