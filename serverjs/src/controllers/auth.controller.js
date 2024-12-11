@@ -276,10 +276,8 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     .json({ message: "Vui lòng kiểm tra email để đặt lại mật khẩu" });
 });
 
-// Đặt lại mật khẩu
 exports.resetPassword = asyncHandler(async (req, res) => {
   const { verificationCode, password } = req.body;
-  console.log('Reset Password Request:', { verificationCode, password });
   const user = await User.findOne({
     verificationCode,
     resetPasswordExpires: { $gt: Date.now() },
@@ -291,13 +289,17 @@ exports.resetPassword = asyncHandler(async (req, res) => {
       .json({ message: "Mã khôi phục mật khẩu không hợp lệ hoặc đã hết hạn" });
   }
 
-  const saltRounds = 10;
-  const salt = await bcrypt.genSalt(saltRounds);
-  user.password = await bcrypt.hash(password, salt);
-  user.verificationCode = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
-
-  winston.info(`Người dùng ${user.email} đã đặt lại mật khẩu thành công`);
-  res.status(200).json({ message: "Đặt lại mật khẩu thành công" });
+  try {
+    user.password = password;
+    user.verificationCode = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    winston.info(`Người dùng ${user.email} đã đặt lại mật khẩu thành công`);
+    res.status(200).json({ message: "Đặt lại mật khẩu thành công" });
+  } catch (error) {
+    console.error("Lỗi khi thay đổi mật khẩu:", error);
+    res
+      .status(500)
+      .json({ message: "Đã có lỗi xảy ra trong quá trình thay đổi mật khẩu" });
+  }
 });
