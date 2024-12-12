@@ -143,11 +143,11 @@ const NewPost = () => {
       </div>
       <div className="flex">
         <div className="border flex flex-col gap-4 justify-start items-center">
-          <div className="w-full sticky top-16 bg-white z-10 shadow-md">
+          <div className="w-full sticky top-16 bg-white z-10 ">
             <UserBar />
           </div>
         </div>
-        <div className="flex flex-col mt-4 w-[1200px] mx-auto pl-8 pr-8 bg-gray-50 rounded shadow-lg">
+        <div className="flex flex-col mt-4 w-[1200px] mx-auto pl-8 pr-8 bg-gray-50 rounded">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
               <li className="inline-flex items-center">

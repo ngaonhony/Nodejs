@@ -36,7 +36,8 @@ const UserBar = () => {
           <img
               className="avatar size-50 w-20 h-20 rounded-full "
               src="https://phongtro123.com/images/default-user.png" // Sử dụng ảnh mặc định nếu không có avatar
-              alt={'Không xác định'} // Hiển thị 'Không xác định' nếu không có tên
+              alt={'Không xác định'} 
+              loading="lazy"
             />
           </div>
           <div className="text-center ml-4">

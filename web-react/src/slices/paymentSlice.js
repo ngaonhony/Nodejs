@@ -5,14 +5,14 @@ export const fetchPostsAndPayments = createAsyncThunk(
     'payments/fetchPostsAndPayments',
     async (_, { rejectWithValue }) => {
         try {
-            const data = await getPostsAndPaymentsByUserId(); // Gọi hàm mà không cần tham số
-            return data; // Trả về dữ liệu nhận được từ API
+            const data = await getPostsAndPaymentsByUserId(); 
+            return data; 
         } catch (error) {
-            return rejectWithValue(error.message); // Xử lý lỗi và trả về thông điệp lỗi
+            return rejectWithValue(error.message); 
         }
     }
 );
-// Tạo slice
+
 const paymentSlice = createSlice({
     name: 'payments',
     initialState: {

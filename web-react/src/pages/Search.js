@@ -14,22 +14,20 @@ const Search = () => {
   const handleInputChange = (event) => {
     const input = event.target.value;
     setSearchTerm(input);
-
-    // Lọc danh sách bài viết dựa trên chữ nhập
     if (input) {
       const filtered = posts.filter(post => 
         post.title.toLowerCase().includes(input.toLowerCase())
       );
       setFilteredPosts(filtered);
-      setVisibleCount(5); // Reset số lượng hiển thị khi tìm kiếm mới
+      setVisibleCount(5); 
     } else {
       setFilteredPosts([]);
-      setVisibleCount(5); // Reset khi không có gì tìm kiếm
+      setVisibleCount(5);
     }
   };
 
   const handleShowMore = () => {
-    setVisibleCount(prevCount => prevCount + 5); // Tăng số lượng hiển thị thêm 5
+    setVisibleCount(prevCount => prevCount + 5); 
   };
 
   return (

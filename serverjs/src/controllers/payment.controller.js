@@ -64,11 +64,11 @@ const deletePostAndPaymentById = async (req, res) => {
 };
 const getAllPayments = async (req, res) => {
     try {
-      const payments = await Payment.find(); // Lấy tất cả các bản ghi
-      res.status(200).json(payments); // Trả về dữ liệu với mã trạng thái 200
+      const payments = await Payment.find(); 
+      res.status(200).json(payments);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Lỗi khi lấy dữ liệu thanh toán' }); // Trả về lỗi
+      res.status(500).json({ message: 'Lỗi khi lấy dữ liệu thanh toán' }); 
     }
   };
   

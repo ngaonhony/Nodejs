@@ -28,7 +28,7 @@ const postSchema = new mongoose.Schema(
     expiredAt: {
       type: Date,
     },
-    status: {  // Thêm thuộc tính status
+    status: {  
       type: String,
       enum: ['active', 'inactive', 'deleted'],
       default: 'active',

@@ -15,7 +15,6 @@ exports.createService = async (req, res) => {
       prominent_badge: req.body.prominent_badge,
       rating: req.body.rating, // Include rating
     });
-
     await service.save();
     res.status(201).send(service);
   } catch (error) {

@@ -13,7 +13,8 @@ const User = ({ user }) => {
             <img
               className="avatar size-10"
               src={defaultAvatar||"https://phongtro123.com/images/default-user.png"} // Sử dụng ảnh mặc định nếu không có avatar
-              alt={user.name || 'Không xác định'} // Hiển thị 'Không xác định' nếu không có tên
+              alt={user.name || 'Không xác định'} 
+              loading="lazy"
             />
           </div>
         <div className="flex-grow-1 ms-2 ps-1">

@@ -3,7 +3,7 @@
 
   function App() {
     return (
-      <div className="h-screen w-screen">
+      <div className="h-screen w-screen bg-primary">
         <Routes>
           <Route path='/*' element={<Home />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />

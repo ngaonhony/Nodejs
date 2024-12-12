@@ -3,12 +3,10 @@ import axios from 'axios';
 // Định nghĩa API endpoint với cổng
 const API_URL = 'http://localhost:3000/api/auth'; // Cập nhật URL với cổng
 
-// Hàm gọi API để đăng nhập
+
 export const login = async (account, password) => {
   try {
-    // Xác định xem tài khoản là email hay số điện thoại
     const isEmail = /\S+@\S+\.\S+/.test(account);
-    
     const response = await axios.post(`${API_URL}/login`, 
       { 
         [isEmail ? 'email' : 'phone']: account,
@@ -20,20 +18,19 @@ export const login = async (account, password) => {
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại';
-    throw new Error(errorMessage); // Ném lỗi với thông điệp cụ thể
+    throw new Error(errorMessage);
   }
 };
 
-// Hàm gọi API để đăng ký
+
 export const register = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/register`, userData);
-    return response.data; // Trả về dữ liệu từ server
+    return response.data; 
   } catch (error) {
-    // Xử lý lỗi và trả về thông báo phù hợp
-    console.error('Registration error:', error.response?.data); // Log chi tiết lỗi
+    console.error('Registration error:', error.response?.data);
     const errorMessage = error.response?.data?.message || 'Đăng ký thất bại';
-    throw new Error(errorMessage); // Ném lỗi với thông điệp cụ thể
+    throw new Error(errorMessage); 
   }
 };
 
@@ -67,22 +64,20 @@ export const resendVerificationCode = async (email) => {
 export const forgotPassword = async (email) => {
   try {
     const response = await axios.post(`${API_URL}/forgot-password`, { email });
-    return response.data; // Dữ liệu từ server
+    return response.data; 
   } catch (error) {
     console.error('Forgot password error:', error.response?.data);
     const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi gửi yêu cầu quên mật khẩu';
     throw new Error(errorMessage);
   }
 };
-
-// Hàm gọi API để đặt lại mật khẩu
 export const resetPassword = async (verificationCode, password) => {
   try {
     const response = await axios.post(`${API_URL}/reset-password`, {
       verificationCode,
       password,
     });
-    return response.data; // Dữ liệu từ server
+    return response.data;
   } catch (error) {
     console.error('Reset password error:', error.response?.data);
     const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi đặt lại mật khẩu';

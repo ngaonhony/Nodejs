@@ -15,11 +15,10 @@ export const getPosts = async () => {
     }
 };
 
-// Hàm lấy bài viết theo ID
 export const getPostById = async (id) => {
     try {
         const response = await axios.get(`${API_URL}/${id}`);
-        return response.data; // Trả về bài viết cụ thể
+        return response.data; 
     } catch (error) {
         console.error('Error fetching post by ID:', error);
         throw new Error('Error fetching post: ' + error.message);
@@ -27,7 +26,7 @@ export const getPostById = async (id) => {
 };
 
 export const createPost = async (postData) => {
-    const token = getToken(); // Retrieve the token
+    const token = getToken();
     try {
         const response = await axios.post(API_URL, postData, {
             headers: {

@@ -43,14 +43,6 @@ const ManagePostsPage = () => {
       ? title.substring(0, maxLength) + "..."
       : title;
   };
-  const handleStatusChange = async (postId, newStatus) => {
-    try {
-      await dispatch(updatePost({ postId, status: newStatus })).unwrap();
-      dispatch(getPosts()); // Tải lại danh sách bài đăng sau khi cập nhật
-    } catch (error) {
-      console.error("Failed to update status:", error);
-    }
-  };
   return (
     <div className="flex flex-col">
       <div className="w-full sticky top-0 bg-white z-10">
@@ -58,17 +50,17 @@ const ManagePostsPage = () => {
       </div>
       <div className="flex ">
         <div className="border flex flex-col gap-4 justify-start items-center">
-          <div className="w-full sticky top-16 bg-white z-10 shadow-md">
+          <div className="w-full sticky top-16 bg-white z-10 ">
             {" "}
             <UserBar />
           </div>
         </div>
-        <div className="flex flex-col mt-4 w-[1200px] mx-auto pl-8 pr-8 bg-gray-50 rounded shadow-lg">
+        <div className="flex flex-col mt-4 w-[1200px] mx-auto pl-8 pr-8 bg-gray-50 rounded ">
           <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+          <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
               <li className="inline-flex items-center">
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                   <svg
                     className="w-3 h-3 me-2.5"
@@ -79,7 +71,7 @@ const ManagePostsPage = () => {
                     <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
                   </svg>
                   Trang chủ
-                </a>
+                </Link>
               </li>
               <li>
                 <div className="flex items-center">
@@ -97,11 +89,11 @@ const ManagePostsPage = () => {
                       d="m1 9 4-4-4-4"
                     />
                   </svg>
-                  <a
-                    href="#"
+                  <Link
+                    to="#"
                     className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
-                    Quản lý
-                  </a>
+                   quản lý
+                  </Link>
                 </div>
               </li>
               <li aria-current="page">
@@ -291,6 +283,7 @@ const ManagePostsPage = () => {
                           <img
                             src={post.images}
                             alt={post.title}
+                            loading="lazy"
                             className="w-20 h-20 object-cover"
                           />
                         )}

@@ -7,9 +7,8 @@ exports.createCategory = async (req, res, next) => {
     const category = new Category({
       name,
       description,
-      status: status || 'active', // Mặc định là 'active' nếu không có
+      status: status || 'active',
     });
-
     await category.save();
     res.status(201).send(category);
   } catch (error) {

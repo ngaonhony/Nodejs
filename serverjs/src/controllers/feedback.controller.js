@@ -7,7 +7,6 @@ exports.createFeedback = async (req, res) => {
       phone: req.body.phone, 
       comment: req.body.comment,
     });
-
     await feedback.save(); 
     res.status(201).send(feedback);
   } catch (error) {
@@ -21,6 +20,17 @@ exports.getAllFeedbacks = async (req, res) => {
     res.send(feedbacks);
   } catch (error) {
     res.status(500).send({ message: "Error fetching feedbacks", error });
+  }
+};
+exports.deleteFeedback = async (req, res) => {
+  try {
+    const feedback = await Feedback.findByIdAndDelete(req.params.id);
+    if (!feedback) {
+      return res.status(404).send({ message: "Feedback not found" });
+    }
+    res.send({ message: "Feedback deleted successfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Error deleting feedback", error });
   }
 };
 
@@ -39,14 +49,3 @@ exports.updateFeedback = async (req, res) => {
   }
 };
 
-exports.deleteFeedback = async (req, res) => {
-  try {
-    const feedback = await Feedback.findByIdAndDelete(req.params.id);
-    if (!feedback) {
-      return res.status(404).send({ message: "Feedback not found" });
-    }
-    res.send({ message: "Feedback deleted successfully" });
-  } catch (error) {
-    res.status(500).send({ message: "Error deleting feedback", error });
-  }
-};

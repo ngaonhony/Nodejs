@@ -25,14 +25,12 @@ const generateRefreshToken = (user) => {
   });
 };
 
-// Đăng ký người dùng mới
 exports.register = async (req, res) => {
   const { email, password, name, phone, role } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "Email đã được sử dụng" });
-
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{6,})/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
@@ -40,7 +38,6 @@ exports.register = async (req, res) => {
           "Mật khẩu phải chứa ít nhất 6 ký tự, bao gồm 1 ký tự in hoa và 1 ký tự đặc biệt",
       });
     }
-
     const verificationCode = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
@@ -52,10 +49,8 @@ exports.register = async (req, res) => {
       role,
       verificationCode,
     });
-
     await user.save();
     await sendVerificationEmail(email, verificationCode);
-
     res.status(201).json({
       message: "Đăng ký thành công, vui lòng kiểm tra email để xác thực",
     });
@@ -70,32 +65,26 @@ exports.login = asyncHandler(async (req, res) => {
   const user = await User.findOne({ $or: [{ email }, { phone }] }).select(
     "+password"
   );
-
   if (!user) {
     return res
       .status(401)
       .json({ message: "Email, số điện thoại hoặc mật khẩu không chính xác" });
   }
-
   if (!user.verified) {
     return res.status(403).json({ message: "Tài khoản chưa được xác thực" });
   }
-
   const isMatch = await user.matchPassword(password);
   if (!isMatch) {
     return res
       .status(401)
       .json({ message: "Email, số điện thoại hoặc mật khẩu không chính xác" });
   }
-
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
-
-  // Lưu Refresh Token vào cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
   });
 
   res.status(200).json({
@@ -114,13 +103,10 @@ exports.login = asyncHandler(async (req, res) => {
 
 exports.adminLogin = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
-
-  // Tìm kiếm người dùng với quyền admin
   const admin = await User.findOne({
     $or: [{ email }, { phone }],
-    role: "admin", // Kiểm tra xem người dùng có phải là admin không
+    role: "admin", 
   }).select("+password");
-
   if (!admin) {
     return res.status(401).json({
       message: "Email, số điện thoại hoặc mật khẩu không chính xác",
@@ -253,20 +239,17 @@ exports.resendVerificationCode = async (req, res) => {
 exports.forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
-
   if (!user) {
     return res.status(404).json({ message: "Email không tồn tại" });
   }
-
   if (!user.verified) {
     return res.status(400).json({ message: "Tài khoản chưa được xác thực" });
   }
-
   const verificationCode = Math.floor(
     100000 + Math.random() * 900000
   ).toString();
   user.verificationCode = verificationCode;
-  user.resetPasswordExpires = Date.now() + 3600000; // 1 giờ
+  user.resetPasswordExpires = Date.now() + 3600000; 
   await user.save();
   await sendResetPasswordEmail(email, verificationCode);
 
