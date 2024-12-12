@@ -18,6 +18,7 @@
     if (!posts) {
       return <p className="text-gray-500">Loading posts...</p>;
     }
+    //let filteredPosts = posts.filter((post) => post.serviceId && post.status === "active");
     let filteredPosts = posts.filter((post) => {
       const isActive = post.serviceId && post.status === "active";
       const isNotExpired = new Date(post.expiredAt) > new Date(); // Kiểm tra ngày hết hạn
